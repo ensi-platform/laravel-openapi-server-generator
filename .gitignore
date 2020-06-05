@@ -1,0 +1,8 @@
+# IDE
+*.sublime-project
+*.sublime-workspace
+/.idea/
+*.komodoproject
+.vscode
+
+vendor

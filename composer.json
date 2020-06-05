@@ -1,0 +1,29 @@
+{
+    "name": "greensight/laravel-openapi-server-generator",
+    "description": "",
+    "type": "library",
+    "authors": [
+      {
+        "name": "Nikita Kutselay",
+        "email": "kutselaj@greensight.ru"
+      }
+    ],
+    "require": {
+      "php": "^7.1.3"
+    },
+    "autoload": {
+      "psr-4": {
+        "Greensight\\LaravelOpenapiServerGenerator\\": "src/"
+      }
+    },
+    "require-dev": {
+        "laravel/framework": "^5.8"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Greensight\\LaravelOpenapiServerGenerator\\OpenapiServerGeneratorServiceProvider"
+            ]
+        }
+    }
+}
