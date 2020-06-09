@@ -53,7 +53,7 @@ class EnumPatcher {
     private function patchConstantProperties(string $enum, string $value, string $name, string $title): string
     {
         $enum = preg_replace(
-            '/' . "const $value = $value" .'/m',
+            '/' . "const $value = $value;" .'/m',
             "public const $name = $value; // $title",
             $enum
         );
