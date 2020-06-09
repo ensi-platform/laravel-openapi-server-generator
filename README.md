@@ -11,7 +11,7 @@
 3. `php artisan vendor:publish --provider="Greensight\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider"` - копирует конфиг генератора в конфиги приложения
 
 ## Запуск:
-Перед запуском убедиться, что структура описания апи соответствует [этим требованиям]().
+Перед запуском убедиться, что структура описания апи соответствует [этим требованиям](https://github.com/greensight/laravel-openapi-server-generator/blob/master/docs/api_schema_requirements.md).
 
 Запускать командой: `php artisan openapi:generate-server`
 
