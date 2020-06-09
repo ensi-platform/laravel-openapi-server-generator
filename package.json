@@ -7,15 +7,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Baristanko/laravel-openapi-server-generator.git"
+    "url": "git+https://github.com/greensight/laravel-openapi-server-generator.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Baristanko/laravel-openapi-server-generator/issues"
+    "url": "https://github.com/greensight/laravel-openapi-server-generator/issues"
   },
-  "homepage": "https://github.com/Baristanko/laravel-openapi-server-generator#readme",
+  "homepage": "https://github.com/greensight/laravel-openapi-server-generator#readme",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^1.0.13-4.3.1"
   }
