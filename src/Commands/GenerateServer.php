@@ -3,8 +3,16 @@
 namespace Greensight\LaravelOpenapiServerGenerator\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+
+use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\EnumPatcher;
+use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\ModelPatcher;
+use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\SerializerPatcher;
 
 class GenerateServer extends Command {
+
+    const MODEL_PACKAGE = 'Dto';
+    const ENUM_PACKAGE = 'Enums';
 
     /**
      * @var string
@@ -14,11 +22,24 @@ class GenerateServer extends Command {
     /**
      * @var string
      */
-    protected $description = 'Generate server by from openapi spec files by OpenApi Generator';
+    protected $description = 'Generate server from openapi spec files by OpenApi Generator';
+
+    /**
+     * @var string
+     */
+    private $outputDir;
+
+    /**
+     * @var string
+     */
+    private $appDir;
 
     public function __construct()
     {
         parent::__construct();
+
+        $this->outputDir = config('openapi-server-generator.output_dir');
+        $this->appDir = config('openapi-server-generator.app_dir');
     }
 
     /**
@@ -29,58 +50,108 @@ class GenerateServer extends Command {
     public function handle()
     {
         $this->generateDto();
-        $this->copyDtoToApp();
+        $this->copyGeneratedDtoToApp();
         $this->patchEnums();
         $this->patchModels();
+        $this->patchSerializer();
     }
 
     private function generateDto(): void
     {
-        $outputDir = config('openapi-server-generator.output_dir');
-        shell_exec("./node_modules/.bin/openapi-generator generate -i public/api-docs/index.yaml -g php -p 'invokerPackage=App\\\\OpenApiGenerated,modelPackage=Dto' -o $outputDir");
+        $apidocDir = config('openapi-server-generator.apidoc_dir');
+        $bin = config('openapi-server-generator.openapi_generator_bin');
+
+        $invokerPackage = 'App\\\\' . str_replace(DIRECTORY_SEPARATOR, '\\\\', $this->appDir);
+        $modelPackage = self::MODEL_PACKAGE;
+
+        shell_exec(
+            "$bin generate -i $apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir"
+        );
     }
 
-    private function copyDtoToApp(): void
+    private function copyGeneratedDtoToApp(): void
     {
-        $outputDir = config('openapi-server-generator.output_dir');
-        $appDir = config('openapi-server-generator.app_dir');
+        $this->clearAppDir();
 
-        shell_exec("rm -rf $appDir");
-        shell_exec("mkdir -p $appDir");
-        shell_exec("cp -rf $outputDir/lib/Dto $appDir");
-        shell_exec("cp -f $outputDir/lib/Configuration.php $appDir");
-        shell_exec("cp -f $outputDir/lib/ObjectSerializer.php $appDir");
+        Log::info('Clear app dir: ' . $this->getAppPathToDto());
+
+        $this->copyDto();
+
+        Log::info('Copy generated dto files to app dir: ' . $this->getAppPathToDto());
+
+        $this->removeGeneratedDto();
+
+        Log::info('Remote generated dto dir: ' . $this->outputDir);
+    }
+
+    private function clearAppDir(): void {
+        shell_exec('rm -rf ' . implode(' ', [ $this->getAppPathToModels(), $this->getAppPathToEnums() ]));
+        shell_exec('mkdir -p ' . implode(' ', [ $this->getAppPathToModels(), $this->getAppPathToEnums() ]));
+    }
+
+    private function copyDto(): void
+    {
+        shell_exec("cp -rf $this->outputDir/lib/Dto " . app_path($this->appDir));
+        shell_exec("cp -f $this->outputDir/lib/Configuration.php " . app_path($this->appDir));
+        shell_exec("cp -n $this->outputDir/lib/ObjectSerializer.php " . app_path($this->appDir));
+    }
+
+    private function removeGeneratedDto(): void
+    {
+        shell_exec("rm -rf $this->outputDir");
     }
 
     private function patchEnums(): void
     {
-        $appDir = config('openapi-server-generator.app_dir');
+        $apidocDir = config('openapi-server-generator.apidoc_dir');
 
-        shell_exec("mkdir -p $appDir/Enums");
+        foreach (glob($this->getAppPathToDto() . '/Dto/*Enum.php') as $file) {
+            Log::info("Patch enum: $file");
 
-        foreach (glob("$appDir/Dto/*Enum.php") as $file) {
-            echo "\nEnum: $file";
+            $patcher = new EnumPatcher($file, $apidocDir);
 
-            $fileName = basename($file);
-            rename($file, "$appDir/Enums/$fileName");
+            $patcher->patch();
+
+            rename(
+                $file,
+                $this->getAppPathToEnums() . DIRECTORY_SEPARATOR . basename($file)
+            );
         }
     }
 
     private function patchModels(): void
     {
-        $appDir = $appDir = config('openapi-server-generator.app_dir');
+        foreach (glob($this->getAppPathToDto() . '/Dto/*.php') as $file) {
+            Log::info("Patch model: $file");
 
-        foreach (glob("$appDir/Dto/*.php") as $file) {
-            $content = file_get_contents($file);
+            $patcher = new ModelPatcher($file);
 
-            if (preg_match('/^class/m', $content) > 0) {
-                echo "\nModel: $file";
-
-                $content = preg_replace('/^}/m', "\n    public function jsonSerialize()\n    {\n        return ObjectSerializer::sanitizeForSerialization(\$this);\n    }\n}", $content);
-                $content = preg_replace('/^}/m', "\n    public static function fromRequest(\\Illuminate\\Http\\Request \$request): self\n    {\n        return ObjectSerializer::deserialize(json_encode(\$request->all()), static::class);\n    }\n}", $content);
-
-                file_put_contents($file, $content);
-            }
+            $patcher->patch();
         }
+    }
+
+    private function patchSerializer(): void
+    {
+        $file = $this->getAppPathToDto() . DIRECTORY_SEPARATOR . 'ObjectSerializer.php';
+
+        Log::info("Patch serializer: $file");
+
+        $patcher = new SerializerPatcher($file);
+
+        $patcher->patch();
+    }
+
+    private function getAppPathToDto() {
+        return app_path($this->appDir);
+    }
+
+    private function getAppPathToModels()
+    {
+        return $this->getAppPathToDto() . DIRECTORY_SEPARATOR . self::MODEL_PACKAGE;
+    }
+
+    private function getAppPathToEnums()
+    {
+        return $this->getAppPathToDto() . DIRECTORY_SEPARATOR . self::ENUM_PACKAGE;
     }
 }
