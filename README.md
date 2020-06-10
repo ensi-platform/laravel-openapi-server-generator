@@ -4,11 +4,11 @@
 
 ## Зависимости:
 1. Java 8 и выше.
+2. npm 5.2 и выше.
 
 ## Установка:
 1. `composer require --dev greensight/laravel-openapi-server-generator`
-2. `npm install --save-dev @openapitools/openapi-generator-cli` - установка npm обертки для бинарника openapi-generator
-3. `php artisan vendor:publish --provider="Greensight\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider"` - копирует конфиг генератора в конфиги приложения
+2. `php artisan vendor:publish --provider="Greensight\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider"` - копирует конфиг генератора в конфиги приложения
 
 ## Запуск:
 Перед запуском убедиться, что структура описания апи соответствует [этим требованиям](https://github.com/greensight/laravel-openapi-server-generator/blob/master/docs/api_schema_requirements.md).

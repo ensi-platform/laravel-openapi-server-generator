@@ -1,0 +1,7 @@
+in: query
+name: filter
+description: Фильтры
+schema:
+  type: array
+  items:
+    type: object

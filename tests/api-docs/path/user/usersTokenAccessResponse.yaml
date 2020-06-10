@@ -1,0 +1,5 @@
+properties:
+  id:
+    type: integer
+    description: ID нового пользователя
+    example: 1

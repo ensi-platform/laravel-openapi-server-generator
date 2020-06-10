@@ -1,0 +1,35 @@
+properties:
+  login:
+    type: integer
+    description: Логин пользователя
+    example: "exampleLogin"
+  password:
+    type: string
+    description: Пароль пользователя
+    example: "qwerty"
+  front:
+    type: integer
+    description: ID Фронта
+  first_name:
+    type: string
+    description: Имя
+    example: "Иван"
+  last_name:
+    type: string
+    description: Фамилия
+    example: "Иванов"
+  middle_name:
+    type: string
+    description: Отчество
+    example: "Иванович"
+  phone:
+    type: string
+    description: Номер телефона
+    example: "+79998887766"
+  email:
+    type: string
+    description: Почта
+    example: "example@test.ru"
+required:
+  - login
+  - front

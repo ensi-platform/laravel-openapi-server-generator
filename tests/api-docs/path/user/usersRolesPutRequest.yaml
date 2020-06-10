@@ -1,0 +1,10 @@
+properties:
+  roles:
+    type: array
+    items:
+      type: integer
+      description: ID роли
+  expires:
+    type: string
+    description: Дата, когда роль снимется с пользователя
+    nullable: true

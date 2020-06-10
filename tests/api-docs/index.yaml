@@ -1,0 +1,270 @@
+openapi: 3.0.1
+info:
+  title: Ашан. OMS. Получение токена
+  contact:
+    url: https://greensight.pro/
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: token
+    description: Получение токена
+  - name: users
+    description: Пользователи
+paths:
+  /tokenByPassword:
+    post:
+      tags:
+        - token
+      summary: Получить токен по паре логин-пароль
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/token/tokenByPasswordRequest.yaml'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/token/tokenResponse.yaml'
+        404:
+          description: Пользователь не найден
+        403:
+          description: Пароль не подходит
+  /tokenByUserId:
+    post:
+      tags:
+        - token
+      summary: Получить токен по ид пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/token/tokenByUserIdRequest.yaml'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/token/tokenResponse.yaml'
+        404:
+          description: Пользователь не найден
+  /refresh:
+    post:
+      tags:
+        - token
+      summary: Обновить токен
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/token/refreshRequest.yaml'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/token/refreshResponse.yaml'
+        400:
+          description: Ошибка при обновлении токена
+  /users/exists:
+    get:
+      tags:
+        - users
+      summary: Проверка существования пользователя
+      parameters:
+        - name: login
+          in: query
+          description: Логин пользователя
+          required: true
+          example: "login@example.ru"
+          schema:
+            type: string
+        - name: front
+          in: query
+          required: true
+          schema:
+            type: integer
+            description: ID Фронта
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/user/usersExistsResponse.yaml'
+        400:
+          description: Ошибка валидации
+  /users/tokenAccess:
+    post:
+      tags:
+        - users
+      summary: Создать пользователя по токену CMD
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/user/usersTokenAccessRequest.yaml'
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/user/usersTokenAccessResponse.yaml'
+        404:
+          description: Пользователь по токену не найден
+        500:
+          description: Ошибка сохранения
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Получить пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/user/usersGetResponse.yaml'
+        404:
+          description: Пользователь не найден
+    put:
+      tags:
+        - users
+      summary: Обновить пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/user/usersPutRequest.yaml'
+      responses:
+        204:
+          description: Успех
+        404:
+          description: Пользователь не найден
+        500:
+          description: Ошибка при сохранении
+    delete:
+      tags:
+        - users
+      summary: Удалить пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        204:
+          description: Успех
+        404:
+          description: Пользователь не найден
+        500:
+          description: Ошибка удаления
+  /users:
+    post:
+      tags:
+        - users
+      summary: Создать пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/user/usersPostRequest.yaml'
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/user/usersPostResponse.yaml'
+        500:
+          description: Ошибка сохранения
+  /users/{id}/roles:
+    get:
+      tags:
+        - users
+      summary: Получить роли пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: './path/user/usersRolesGetResponse.yaml'
+    put:
+      tags:
+        - users
+      summary: Добавить роли пользователю
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: './path/user/usersRolesPutRequest.yaml'
+      responses:
+        204:
+          description: Успех
+  /users/{id}/roles/{roleId}:
+    delete:
+      tags:
+        - users
+      summary: Открепить роль от пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+        - $ref: '#/components/parameters/RoleId'
+      responses:
+        204:
+          description: Успех
+        404:
+          description: Пользователь не найден или роль не связана с пользователем
+        500:
+          description: Ошибка удаления
+components:
+  schemas:
+    FrontEnum:
+      $ref: './components/front_enum.yaml'
+    RoleEnum:
+      $ref: './components/role_enum.yaml'
+    TokenData:
+      description: Данные, закодированные в авторизационном токене
+      properties:
+        id:
+          type: integer
+          description: ID пользователя
+          example: 1
+        front:
+          type: integer
+          description: ID Фронта
+        roles:
+          type: array
+          description: Роли пользователя
+          items:
+            type: integer
+            description: ID Роли
+  parameters:
+    UserId:
+      name: id
+      description: ID пользователя
+      in: path
+      required: true
+      schema:
+        type: integer
+      example: 11
+    RoleId:
+      name: roleId
+      description: ID Роли
+      in: path
+      required: true
+      schema:
+        type: integer
+        description: ID роли

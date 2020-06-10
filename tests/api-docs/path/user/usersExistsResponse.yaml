@@ -1,0 +1,4 @@
+properties:
+  exists:
+    type: integer
+    description: Кол-во пользователей, соответствующих запросу

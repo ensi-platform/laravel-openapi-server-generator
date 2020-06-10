@@ -1,0 +1,7 @@
+properties:
+  token:
+    type: string
+    description: Токен с авторизационными данными (описание закодированных данных в схеме TokenData)
+  refresh:
+    type: string
+    description: Токен для обновления авторизационного токена, когда он просрочится

@@ -1,0 +1,5 @@
+in: query
+name: sort
+description: Поле для cортировки
+schema:
+  type: string

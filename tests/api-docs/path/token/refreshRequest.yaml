@@ -1,0 +1,4 @@
+properties:
+  refreshToken:
+    type: string
+    description: Токен для обновления авторизационного токена, когда он просрочится

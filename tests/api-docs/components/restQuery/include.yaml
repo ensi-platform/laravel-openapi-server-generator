@@ -1,0 +1,5 @@
+in: query
+name: include
+description: Какие подгрузить связанные данные
+schema:
+  type: string

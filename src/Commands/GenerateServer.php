@@ -34,12 +34,18 @@ class GenerateServer extends Command {
      */
     private $appDir;
 
+    /**
+     * @var string
+     */
+    private $apidocDir;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->outputDir = config('openapi-server-generator.output_dir');
         $this->appDir = config('openapi-server-generator.app_dir');
+        $this->apidocDir = config('openapi-server-generator.apidoc_dir');
     }
 
     /**
@@ -58,14 +64,11 @@ class GenerateServer extends Command {
 
     private function generateDto(): void
     {
-        $apidocDir = config('openapi-server-generator.apidoc_dir');
-        $bin = config('openapi-server-generator.openapi_generator_bin');
-
         $invokerPackage = 'App\\\\' . str_replace(DIRECTORY_SEPARATOR, '\\\\', $this->appDir);
         $modelPackage = self::MODEL_PACKAGE;
 
         shell_exec(
-            "$bin generate -i $apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir"
+            "npx @openapitools/openapi-generator-cli generate -i $this->apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir"
         );
     }
 
@@ -73,15 +76,15 @@ class GenerateServer extends Command {
     {
         $this->clearAppDir();
 
-        Log::info('Clear app dir: ' . $this->getAppPathToDto());
+        echo "\nClear app dir: " . $this->getAppPathToDto();
 
         $this->copyDto();
 
-        Log::info('Copy generated dto files to app dir: ' . $this->getAppPathToDto());
+        echo "\nCopy generated dto files to app dir: " . $this->getAppPathToDto();
 
         $this->removeGeneratedDto();
 
-        Log::info('Remote generated dto dir: ' . $this->outputDir);
+        echo "\nRemove generated dto dir: " . $this->outputDir;
     }
 
     private function clearAppDir(): void {
@@ -103,12 +106,10 @@ class GenerateServer extends Command {
 
     private function patchEnums(): void
     {
-        $apidocDir = config('openapi-server-generator.apidoc_dir');
-
         foreach (glob($this->getAppPathToDto() . '/Dto/*Enum.php') as $file) {
-            Log::info("Patch enum: $file");
+            echo "\nPatch enum: $file";
 
-            $patcher = new EnumPatcher($file, $apidocDir);
+            $patcher = new EnumPatcher($file, $this->apidocDir);
 
             $patcher->patch();
 
@@ -122,7 +123,7 @@ class GenerateServer extends Command {
     private function patchModels(): void
     {
         foreach (glob($this->getAppPathToDto() . '/Dto/*.php') as $file) {
-            Log::info("Patch model: $file");
+            echo "\nPatch model: $file";
 
             $patcher = new ModelPatcher($file);
 
@@ -134,7 +135,7 @@ class GenerateServer extends Command {
     {
         $file = $this->getAppPathToDto() . DIRECTORY_SEPARATOR . 'ObjectSerializer.php';
 
-        Log::info("Patch serializer: $file");
+        echo "\nPatch serializer: $file";
 
         $patcher = new SerializerPatcher($file);
 

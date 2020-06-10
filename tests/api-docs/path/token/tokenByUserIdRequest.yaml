@@ -1,0 +1,5 @@
+properties:
+  userId:
+    type: integer
+    description: ID пользователя
+    example: 1
