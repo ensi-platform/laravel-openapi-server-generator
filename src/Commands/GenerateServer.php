@@ -66,9 +66,10 @@ class GenerateServer extends Command {
     {
         $invokerPackage = 'App\\\\' . str_replace(DIRECTORY_SEPARATOR, '\\\\', $this->appDir);
         $modelPackage = self::MODEL_PACKAGE;
+        $bin = 'npx @openapitools/openapi-generator-cli';
 
         shell_exec(
-            "npx @openapitools/openapi-generator-cli generate -i $this->apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir"
+            "$bin generate -i $this->apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir"
         );
     }
 
@@ -76,15 +77,15 @@ class GenerateServer extends Command {
     {
         $this->clearAppDir();
 
-        echo "\nClear app dir: " . $this->getAppPathToDto();
+        $this->info("Clear app dir: " . $this->getAppPathToDto());
 
         $this->copyDto();
 
-        echo "\nCopy generated dto files to app dir: " . $this->getAppPathToDto();
+        $this->info("Copy generated dto files to app dir: " . $this->getAppPathToDto());
 
         $this->removeGeneratedDto();
 
-        echo "\nRemove generated dto dir: " . $this->outputDir;
+        $this->info("Remove generated dto dir: " . $this->outputDir);
     }
 
     private function clearAppDir(): void {
@@ -107,7 +108,7 @@ class GenerateServer extends Command {
     private function patchEnums(): void
     {
         foreach (glob($this->getAppPathToDto() . '/Dto/*Enum.php') as $file) {
-            echo "\nPatch enum: $file";
+            $this->info("Patch enum: $file");
 
             $patcher = new EnumPatcher($file, $this->apidocDir);
 
@@ -123,7 +124,7 @@ class GenerateServer extends Command {
     private function patchModels(): void
     {
         foreach (glob($this->getAppPathToDto() . '/Dto/*.php') as $file) {
-            echo "\nPatch model: $file";
+            $this->info("Patch model: $file");
 
             $patcher = new ModelPatcher($file);
 
@@ -135,7 +136,7 @@ class GenerateServer extends Command {
     {
         $file = $this->getAppPathToDto() . DIRECTORY_SEPARATOR . 'ObjectSerializer.php';
 
-        echo "\nPatch serializer: $file";
+        $this->info("Patch serializer: $file");
 
         $patcher = new SerializerPatcher($file);
 
