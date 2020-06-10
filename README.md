@@ -20,11 +20,3 @@
 2. Enums - директория с перечислениями, которые используются в апи;
 3. ObjectSerializer.php и Configuration.php - вспомогательные файлы для Dto;
 
-### Важно:
-После первой генерации в файле ObjectSerializer.php в функции sanitizeForSerialization нужно добавить следующие строки:
-```php
-if ($value !== null) {
-    $values[$data::attributeMap()[$property]] = self::sanitizeForSerialization($value, $openAPIType, $formats[$property]);
-} else { // новые строки, который нужно добавить
-    $values[$data::attributeMap()[$property]] = null;
-}
