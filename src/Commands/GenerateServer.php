@@ -68,9 +68,11 @@ class GenerateServer extends Command {
         $modelPackage = self::MODEL_PACKAGE;
         $bin = 'npx @openapitools/openapi-generator-cli';
 
-        shell_exec(
-            "$bin generate -i $this->apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir"
-        );
+        $command = "$bin generate -i $this->apidocDir/index.yaml -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir";
+
+        $this->info("Execute command: $command");
+
+        shell_exec($command);
     }
 
     private function copyGeneratedDtoToApp(): void

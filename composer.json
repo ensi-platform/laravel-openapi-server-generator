@@ -8,6 +8,7 @@
         "email": "kutselaj@greensight.ru"
       }
     ],
+    "license": "MIT",
     "require": {
       "php": "^7.1.3"
     },
