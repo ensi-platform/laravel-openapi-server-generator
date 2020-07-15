@@ -2,6 +2,8 @@
 
 namespace Greensight\LaravelOpenapiServerGenerator\Core\Patchers;
 
+use Illuminate\Support\Str;
+
 class EnumPatcher {
 
     /**
@@ -39,7 +41,7 @@ class EnumPatcher {
                 $enum = $this->patchConstantProperties(
                     $enum,
                     $constant['value'],
-                    $constant['name'],
+                    Str::upper($constant['name']),
                     $constant['title']
                 );
             }
