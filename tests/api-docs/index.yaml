@@ -58,6 +58,9 @@ paths:
           description: Пользователь не найден
   /users:
     get:
+      tags:
+        - users
+      operationId: getUsers
       summary: Получить пользователей, удовлетворяющих фильтру
       parameters:
         - $ref: '#/components/parameters/RestQueryFilter'
