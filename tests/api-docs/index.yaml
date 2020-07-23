@@ -16,19 +16,21 @@ paths:
     post:
       tags:
         - token
+      operationId: getTokenByPassword
       summary: Получить токен по паре логин-пароль
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: './path/token/tokenByPasswordRequest.yaml'
+              $ref: '#/components/schemas/GetTokenByPasswordRequest'
       responses:
         200:
           description: Успех
           content:
             application/json:
               schema:
-                $ref: './path/token/tokenResponse.yaml'
+                $ref: '#/components/schemas/GetTokenByPasswordResponse'
         404:
           description: Пользователь не найден
         403:
@@ -37,93 +39,40 @@ paths:
     post:
       tags:
         - token
+      operationId: getTokenByUserId
       summary: Получить токен по ид пользователя
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: './path/token/tokenByUserIdRequest.yaml'
+              $ref: '#/components/schemas/GetTokenByUserIdRequest'
       responses:
         200:
           description: Успех
           content:
             application/json:
               schema:
-                $ref: './path/token/tokenResponse.yaml'
+                $ref: '#/components/schemas/GetTokenByUserIdResponse'
         404:
           description: Пользователь не найден
-  /refresh:
-    post:
-      tags:
-        - token
-      summary: Обновить токен
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './path/token/refreshRequest.yaml'
-      responses:
-        200:
-          description: Успех
-          content:
-            application/json:
-              schema:
-                $ref: './path/token/refreshResponse.yaml'
-        400:
-          description: Ошибка при обновлении токена
-  /users/exists:
+  /users:
     get:
-      tags:
-        - users
-      summary: Проверка существования пользователя
+      summary: Получить пользователей, удовлетворяющих фильтру
       parameters:
-        - name: login
-          in: query
-          description: Логин пользователя
-          required: true
-          example: "login@example.ru"
-          schema:
-            type: string
-        - name: front
-          in: query
-          required: true
-          schema:
-            type: integer
-            description: ID Фронта
+        - $ref: '#/components/parameters/RestQueryFilter'
+        - $ref: '#/components/parameters/RestQueryInclude'
+        - $ref: '#/components/parameters/RestQueryFields'
+        - $ref: '#/components/parameters/RestQuerySort'
+        - $ref: '#/components/parameters/RestQueryPage'
       responses:
         200:
-          description: Успех
-          content:
-            application/json:
-              schema:
-                $ref: './path/user/usersExistsResponse.yaml'
-        400:
-          description: Ошибка валидации
-  /users/tokenAccess:
-    post:
-      tags:
-        - users
-      summary: Создать пользователя по токену CMD
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './path/user/usersTokenAccessRequest.yaml'
-      responses:
-        201:
-          description: Успех
-          content:
-            application/json:
-              schema:
-                $ref: './path/user/usersTokenAccessResponse.yaml'
-        404:
-          description: Пользователь по токену не найден
-        500:
-          description: Ошибка сохранения
+          $ref: '#/components/responses/RestQueryRead'
   /users/{id}:
     get:
       tags:
         - users
+      operationId: getUserById
       summary: Получить пользователя
       parameters:
         - $ref: '#/components/parameters/UserId'
@@ -133,20 +82,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './path/user/usersGetResponse.yaml'
+                $ref: '#/components/schemas/GetUserByIdResponse'
         404:
           description: Пользователь не найден
     put:
       tags:
         - users
+      operationId: updateUser
       summary: Обновить пользователя
       parameters:
         - $ref: '#/components/parameters/UserId'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: './path/user/usersPutRequest.yaml'
+              $ref: '#/components/schemas/UpdateUserRequest'
       responses:
         204:
           description: Успех
@@ -154,103 +105,28 @@ paths:
           description: Пользователь не найден
         500:
           description: Ошибка при сохранении
-    delete:
-      tags:
-        - users
-      summary: Удалить пользователя
-      parameters:
-        - $ref: '#/components/parameters/UserId'
-      responses:
-        204:
-          description: Успех
-        404:
-          description: Пользователь не найден
-        500:
-          description: Ошибка удаления
-  /users:
-    post:
-      tags:
-        - users
-      summary: Создать пользователя
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './path/user/usersPostRequest.yaml'
-      responses:
-        201:
-          description: Успех
-          content:
-            application/json:
-              schema:
-                $ref: './path/user/usersPostResponse.yaml'
-        500:
-          description: Ошибка сохранения
-  /users/{id}/roles:
-    get:
-      tags:
-        - users
-      summary: Получить роли пользователя
-      parameters:
-        - $ref: '#/components/parameters/UserId'
-      responses:
-        200:
-          description: Успех
-          content:
-            application/json:
-              schema:
-                $ref: './path/user/usersRolesGetResponse.yaml'
-    put:
-      tags:
-        - users
-      summary: Добавить роли пользователю
-      parameters:
-        - $ref: '#/components/parameters/UserId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: './path/user/usersRolesPutRequest.yaml'
-      responses:
-        204:
-          description: Успех
-  /users/{id}/roles/{roleId}:
-    delete:
-      tags:
-        - users
-      summary: Открепить роль от пользователя
-      parameters:
-        - $ref: '#/components/parameters/UserId'
-        - $ref: '#/components/parameters/RoleId'
-      responses:
-        204:
-          description: Успех
-        404:
-          description: Пользователь не найден или роль не связана с пользователем
-        500:
-          description: Ошибка удаления
 components:
   schemas:
+    RestQueryCount:
+      $ref: './restQuery.yaml#/Count'
+    RestQueryRead:
+      $ref: './restQuery.yaml#/Read'
     FrontEnum:
-      $ref: './components/front_enum.yaml'
+      $ref: './front_enum.yaml'
     RoleEnum:
-      $ref: './components/role_enum.yaml'
-    TokenData:
-      description: Данные, закодированные в авторизационном токене
-      properties:
-        id:
-          type: integer
-          description: ID пользователя
-          example: 1
-        front:
-          type: integer
-          description: ID Фронта
-        roles:
-          type: array
-          description: Роли пользователя
-          items:
-            type: integer
-            description: ID Роли
+      $ref: './role_enum.yaml'
+    GetTokenByPasswordRequest:
+      $ref: './tokens.yaml#/GetTokenByPasswordRequest'
+    GetTokenByPasswordResponse:
+      $ref: './common.yaml#/TokenData'
+    GetTokenByUserIdRequest:
+      $ref: './tokens.yaml#/GetTokenByUserIdRequest'
+    GetTokenByUserIdResponse:
+      $ref: './common.yaml#/TokenData'
+    GetUserByIdResponse:
+      $ref: './users.yaml#/GetUserByIdResponse'
+    UpdateUserRequest:
+      $ref: './users.yaml#/UpdateUserRequest'
   parameters:
     UserId:
       name: id
@@ -268,3 +144,13 @@ components:
       schema:
         type: integer
         description: ID роли
+    RestQueryInclude:
+      $ref: './restQuery.yaml#/Include'
+    RestQuerySort:
+      $ref: './restQuery.yaml#/Sort'
+    RestQueryFilter:
+      $ref: './restQuery.yaml#/Filter'
+    RestQueryFields:
+      $ref: './restQuery.yaml#/Fields'
+    RestQueryPage:
+      $ref: './restQuery.yaml#/Page'

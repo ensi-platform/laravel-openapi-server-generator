@@ -1,7 +1,0 @@
-in: query
-name: fields
-description: Какие поля загружать
-schema:
-  type: array
-  items:
-    type: object

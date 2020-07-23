@@ -1,7 +1,0 @@
-in: query
-name: page
-description: Настройки пагинации
-schema:
-  type: array
-  items:
-    type: object

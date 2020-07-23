@@ -24,7 +24,7 @@ class EnumPatcher {
 
     public function patch(): void {
         $enumName = basename($this->enumFile, '.php');
-        $spec = "$this->apidocDir/components/" . $this->toSnakeCase($enumName) . '.yaml';
+        $spec = "$this->apidocDir/" . $this->toSnakeCase($enumName) . '.yaml';
 
         preg_match_all(
             '/\s-\s(?<value>[\d]+)\s#\s(?<name>[\w]+)\s\|\s(?<title>.+)/mu',

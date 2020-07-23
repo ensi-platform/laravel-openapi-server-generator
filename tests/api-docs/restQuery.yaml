@@ -1,0 +1,68 @@
+Count:
+  type: object
+  description: Информация по кол-ву
+  properties:
+    total:
+      type: integer
+      description: Общее кол-во записей
+      example: 150
+    pages:
+      type: integer
+      description: Кол-во страниц
+      example: 15
+    pageSize:
+      type: integer
+      description: Кол-во элементов на странице
+      example: 10
+Fields:
+  in: query
+  name: fields
+  required: false
+  description: Какие поля загружать
+  schema:
+    type: array
+    items:
+      type: object
+Filter:
+  in: query
+  name: filter
+  required: false
+  description: Фильтры
+  schema:
+    type: array
+    items:
+      type: object
+Include:
+  in: query
+  name: include
+  required: false
+  description: Какие подгрузить связанные данные
+  schema:
+    type: string
+Page:
+  in: query
+  name: page
+  required: false
+  description: Настройки пагинации
+  schema:
+    type: array
+    items:
+      type: object
+Read:
+  type: object
+  description: Записи, удовлетворяющие фильтру
+  properties:
+    items:
+      type: array
+      description: Массив объектов
+      items:
+        type: object
+        description: Объекты сущности
+Sort:
+  in: query
+  name: sort
+  required: false
+  description: Поле для cортировки
+  schema:
+    type: string
+

@@ -1,4 +1,0 @@
-properties:
-  token:
-    type: string
-    description: Токен с авторизационными данными (описание закодированных данных в схеме TokenData)
