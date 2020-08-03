@@ -47,8 +47,6 @@ class EnumPatcher {
             }
         }
 
-        $enum = $this->patchNamespace($enum);
-
         file_put_contents($this->enumFile, $enum);
     }
 
@@ -67,15 +65,6 @@ class EnumPatcher {
         );
 
         return $enum;
-    }
-
-    private function patchNamespace(string $enum): string
-    {
-        return preg_replace(
-            '/^namespace ((?:[\w]+\\\)+)([\w]+)?/m',
-            'namespace $1Enums;',
-            $enum
-        );
     }
 
     private function toSnakeCase(string $str)

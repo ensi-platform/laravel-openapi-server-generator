@@ -2,8 +2,12 @@
 
 namespace Greensight\LaravelOpenapiServerGenerator\Commands;
 
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
+
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\EnumPatcher;
 use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\ModelPatcher;
@@ -12,7 +16,6 @@ use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\SerializerPatcher;
 class GenerateServer extends Command {
 
     const MODEL_PACKAGE = 'Dto';
-    const ENUM_PACKAGE = 'Enums';
 
     /**
      * @var string
@@ -91,8 +94,8 @@ class GenerateServer extends Command {
     }
 
     private function clearAppDir(): void {
-        shell_exec('rm -rf ' . implode(' ', [ $this->getAppPathToModels(), $this->getAppPathToEnums() ]));
-        shell_exec('mkdir -p ' . implode(' ', [ $this->getAppPathToModels(), $this->getAppPathToEnums() ]));
+        shell_exec('rm -rf ' . $this->getAppPathToModels());
+        shell_exec('mkdir -p ' . $this->getAppPathToModels());
     }
 
     private function copyDto(): void
@@ -109,26 +112,43 @@ class GenerateServer extends Command {
 
     private function patchEnums(): void
     {
-        foreach (glob($this->getAppPathToDto() . '/Dto/*Enum.php') as $file) {
-            $this->info("Patch enum: $file");
+        $enums = new RegexIterator(
+            new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $this->getAppPathToModels(),
+                    FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS
+                )
+            ),
+            '/Enum\.php$/i',
+            RegexIterator::MATCH
+        );
 
-            $patcher = new EnumPatcher($file, $this->apidocDir);
+        foreach ($enums as $enum) {
+            $this->info("Patch enum: $enum");
+
+            $patcher = new EnumPatcher($enum, $this->apidocDir);
 
             $patcher->patch();
-
-            rename(
-                $file,
-                $this->getAppPathToEnums() . DIRECTORY_SEPARATOR . basename($file)
-            );
         }
     }
 
     private function patchModels(): void
     {
-        foreach (glob($this->getAppPathToDto() . '/Dto/*.php') as $file) {
-            $this->info("Patch model: $file");
+        $models = new RegexIterator(
+            new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $this->getAppPathToModels(),
+                    FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS
+                )
+            ),
+            '/(?<!Enum)\.php$/i',
+            RegexIterator::MATCH
+        );
 
-            $patcher = new ModelPatcher($file);
+        foreach ($models as $model) {
+            $this->info("Patch model: $model");
+
+            $patcher = new ModelPatcher($model);
 
             $patcher->patch();
         }
@@ -152,10 +172,5 @@ class GenerateServer extends Command {
     private function getAppPathToModels()
     {
         return $this->getAppPathToDto() . DIRECTORY_SEPARATOR . self::MODEL_PACKAGE;
-    }
-
-    private function getAppPathToEnums()
-    {
-        return $this->getAppPathToDto() . DIRECTORY_SEPARATOR . self::ENUM_PACKAGE;
     }
 }
