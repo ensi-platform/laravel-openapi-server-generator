@@ -1,0 +1,159 @@
+openapi: 3.0.1
+info:
+  title: Ашан. OMS. Получение токена
+  contact:
+    url: https://greensight.pro/
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: token
+    description: Получение токена
+  - name: users
+    description: Пользователи
+paths:
+  /tokenByPassword:
+    post:
+      tags:
+        - token
+      operationId: getTokenByPassword
+      summary: Получить токен по паре логин-пароль
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetTokenByPasswordRequest'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTokenByPasswordResponse'
+        404:
+          description: Пользователь не найден
+        403:
+          description: Пароль не подходит
+  /tokenByUserId:
+    post:
+      tags:
+        - token
+      operationId: getTokenByUserId
+      summary: Получить токен по ид пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetTokenByUserIdRequest'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTokenByUserIdResponse'
+        404:
+          description: Пользователь не найден
+  /users:
+    get:
+      tags:
+        - users
+      operationId: getUsers
+      summary: Получить пользователей, удовлетворяющих фильтру
+      parameters:
+        - $ref: '#/components/parameters/RestQueryFilter'
+        - $ref: '#/components/parameters/RestQueryInclude'
+        - $ref: '#/components/parameters/RestQueryFields'
+        - $ref: '#/components/parameters/RestQuerySort'
+        - $ref: '#/components/parameters/RestQueryPage'
+      responses:
+        200:
+          $ref: '#/components/responses/RestQueryRead'
+  /users/{id}:
+    get:
+      tags:
+        - users
+      operationId: getUserById
+      summary: Получить пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserByIdResponse'
+        404:
+          description: Пользователь не найден
+    put:
+      tags:
+        - users
+      operationId: updateUser
+      summary: Обновить пользователя
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        204:
+          description: Успех
+        404:
+          description: Пользователь не найден
+        500:
+          description: Ошибка при сохранении
+components:
+  schemas:
+    RestQueryCount:
+      $ref: './restQuery.yaml#/Count'
+    RestQueryRead:
+      $ref: './restQuery.yaml#/Read'
+    FrontEnum:
+      $ref: './front_enum.yaml'
+    RoleEnum:
+      $ref: './role_enum.yaml'
+    GetTokenByPasswordRequest:
+      $ref: './tokens.yaml#/GetTokenByPasswordRequest'
+    GetTokenByPasswordResponse:
+      $ref: './common.yaml#/TokenData'
+    GetTokenByUserIdRequest:
+      $ref: './tokens.yaml#/GetTokenByUserIdRequest'
+    GetTokenByUserIdResponse:
+      $ref: './common.yaml#/TokenData'
+    GetUserByIdResponse:
+      $ref: './users.yaml#/GetUserByIdResponse'
+    UpdateUserRequest:
+      $ref: './users.yaml#/UpdateUserRequest'
+  parameters:
+    UserId:
+      name: id
+      description: ID пользователя
+      in: path
+      required: true
+      schema:
+        type: integer
+      example: 11
+    RoleId:
+      name: roleId
+      description: ID Роли
+      in: path
+      required: true
+      schema:
+        type: integer
+        description: ID роли
+    RestQueryInclude:
+      $ref: './restQuery.yaml#/Include'
+    RestQuerySort:
+      $ref: './restQuery.yaml#/Sort'
+    RestQueryFilter:
+      $ref: './restQuery.yaml#/Filter'
+    RestQueryFields:
+      $ref: './restQuery.yaml#/Fields'
+    RestQueryPage:
+      $ref: './restQuery.yaml#/Page'

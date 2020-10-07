@@ -1,0 +1,25 @@
+GetTokenByPasswordRequest:
+  type: object
+  properties:
+    login:
+      type: string
+      description: Логин пользователя
+      example: "login@example.ru"
+    password:
+      type: string
+      description: Пароль пользователя
+      example: "qwerty"
+    front:
+      type: integer
+      description: ID Фронта
+  required:
+    - login
+    - password
+    - front
+GetTokenByUserIdRequest:
+  type: object
+  properties:
+    userId:
+      type: integer
+      description: ID пользователя
+      example: 1
