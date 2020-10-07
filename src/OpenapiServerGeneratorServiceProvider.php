@@ -4,6 +4,7 @@ namespace Greensight\LaravelOpenapiServerGenerator;
 
 use Illuminate\Support\ServiceProvider;
 
+use Greensight\LaravelOpenapiServerGenerator\Commands\GenerateServerVersion;
 use Greensight\LaravelOpenapiServerGenerator\Commands\GenerateServer;
 
 class OpenapiServerGeneratorServiceProvider extends ServiceProvider
@@ -31,6 +32,7 @@ class OpenapiServerGeneratorServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
+                GenerateServerVersion::class,
                 GenerateServer::class
             ]);
         }
