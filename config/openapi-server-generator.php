@@ -13,7 +13,7 @@ return [
      */
     'output_dir' => base_path('generated'),
 
-    /*
+    /**
      * Path relative to the app directory where dto models will be located
      */
     'app_dir' => 'OpenApiGenerated'

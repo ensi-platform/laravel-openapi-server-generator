@@ -1,0 +1,104 @@
+GetUserByIdResponse:
+  type: object
+  properties:
+    items:
+      properties:
+        id:
+          type: integer
+          description: ID пользователя
+        login:
+          type: integer
+          description: Логин пользователя
+          example: "exampleLogin"
+        front:
+          type: integer
+          description: ID Фронта
+        first_name:
+          type: string
+          description: Имя
+          example: "Иван"
+        last_name:
+          type: string
+          description: Фамилия
+          example: "Иванов"
+        middle_name:
+          type: string
+          description: Отчество
+          example: "Иванович"
+        phone:
+          type: string
+          description: Номер телефона
+          example: "+79998887766"
+        email:
+          type: string
+          description: Почта
+          example: "example@test.ru"
+        magento_id:
+          type: integer
+          description: ID пользователя в magento
+        created_at:
+          type: string
+          description: Дата регистрации
+        updated_at:
+          type: string
+          description: Дата обновления
+        short_name:
+          type: string
+          description: ФИО. Коротко
+          example: "Иванов И. И."
+        full_name:
+          type: string
+          description: ФИО. Полностью
+          example: "Иванов Иван Иванович"
+        roles:
+          type: object
+          description: Роли пользователя. Объект, в котором ключ - ID роли
+          additionalProperties:
+            type: object
+            properties:
+              created_at:
+                type: string
+                description: Дата назначения роли
+        userMerchants:
+          type: array
+          description: Мерчант, к которому прикреплен пользователь
+          items:
+            type: integer
+UpdateUserRequest:
+  properties:
+    id:
+      type: integer
+      description: ID пользователя
+    active:
+      type: boolean
+      description: Активность пользователя
+    password:
+      type: string
+      description: Пароль пользователя
+      example: "qwerty"
+    login:
+      type: integer
+      description: Логин пользователя
+      example: "exampleLogin"
+    first_name:
+      type: string
+      description: Имя
+      example: "Иван"
+    last_name:
+      type: string
+      description: Фамилия
+      example: "Иванов"
+    middle_name:
+      type: string
+      description: Отчество
+      example: "Иванович"
+    phone:
+      type: string
+      description: Номер телефона
+      example: "+79998887766"
+    email:
+      type: string
+      description: Почта
+      example: "example@test.ru"
+  required:
+    - id
