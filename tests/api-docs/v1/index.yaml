@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Ашан. OMS. Получение токена
+  title: Тестовое API
   contact:
     url: https://greensight.pro/
   version: 1.0.0
