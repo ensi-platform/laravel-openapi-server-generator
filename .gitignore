@@ -5,6 +5,7 @@
 *.komodoproject
 .vscode
 .phpunit.result.cache
+composer.lock
 
 build
 generated
