@@ -32,19 +32,19 @@ class GenerateServerVersion extends Command {
     /**
      * @var string
      */
-    private $outputDir;
+    private $tempDir;
 
     /**
      * @var string
      */
-    private $appDir;
+    private $destinationDir;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->outputDir = config('openapi-server-generator.output_dir');
-        $this->appDir = config('openapi-server-generator.app_dir');
+        $this->tempDir = config('openapi-server-generator.temp_dir', config('openapi-server-generator.output_dir'));
+        $this->destinationDir = config('openapi-server-generator.destination_dir', config('openapi-server-generator.app_dir'));
     }
 
     /**
@@ -57,7 +57,7 @@ class GenerateServerVersion extends Command {
         $file = $this->getFile();
         $version = $this->getVersion();
 
-        $this->info("Generate Dto for file: $file, version: $version");
+        $this->info("Generating DTOs for file: $file, version: $version");
 
         $this->generateDto();
         $this->copyGeneratedDtoToApp();
@@ -73,7 +73,7 @@ class GenerateServerVersion extends Command {
         $inputFile = $this->getFile();
         $invokerPackage = $this->getInvokerPackage();
 
-        $command = "$bin generate -i $inputFile -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->outputDir";
+        $command = "$bin generate -i $inputFile -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->tempDir";
 
         $this->info("Execute command: $command");
 
@@ -82,17 +82,17 @@ class GenerateServerVersion extends Command {
 
     private function copyGeneratedDtoToApp(): void
     {
+        $this->info("Clearing destination dir: " . $this->getAppPathToDto());
+        
         $this->clearAppDir();
 
-        $this->info("Clear app dir: " . $this->getAppPathToDto());
-
+        $this->info("Copying generated DTO files to destination dir: " . $this->getAppPathToDto());
+        
         $this->copyDto();
 
-        $this->info("Copy generated dto files to app dir: " . $this->getAppPathToDto());
+        $this->info("Removing temporary generated dir: " . $this->tempDir);
 
         $this->removeGeneratedDto();
-
-        $this->info("Remove generated dto dir: " . $this->outputDir);
     }
 
     private function clearAppDir(): void {
@@ -102,14 +102,14 @@ class GenerateServerVersion extends Command {
 
     private function copyDto(): void
     {
-        shell_exec("cp -rf $this->outputDir/lib/Dto " . $this->getAppPathToDto());
-        shell_exec("cp -f $this->outputDir/lib/Configuration.php " . $this->getAppPathToDto());
-        shell_exec("cp -n $this->outputDir/lib/ObjectSerializer.php " . $this->getAppPathToDto());
+        shell_exec("cp -rf $this->tempDir/lib/Dto " . $this->getAppPathToDto());
+        shell_exec("cp -f $this->tempDir/lib/Configuration.php " . $this->getAppPathToDto());
+        shell_exec("cp -n $this->tempDir/lib/ObjectSerializer.php " . $this->getAppPathToDto());
     }
 
     private function removeGeneratedDto(): void
     {
-        shell_exec("rm -rf $this->outputDir");
+        shell_exec("rm -rf $this->tempDir");
     }
 
     private function patchModels(): void
@@ -153,8 +153,22 @@ class GenerateServerVersion extends Command {
         return $this->argument('file');
     }
 
-    private function getAppPathToDto() {
-        return app_path($this->appDir . DIRECTORY_SEPARATOR . Str::upper($this->getVersion()));
+    private function replaceVersionPlaceHolderInPath(string $pathWithPossiblePlaceholder): string
+    {
+        $version = Str::upper($this->getVersion());
+
+        $count = 0;
+        $path = str_replace("{version}", $version, $pathWithPossiblePlaceholder, $count);
+        if ($count) {
+            return $path;
+        }
+
+        return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $version;
+    }
+
+    private function getAppPathToDto() 
+    {
+        return app_path($this->replaceVersionPlaceHolderInPath($this->destinationDir));
     }
 
     private function getAppPathToModels()
@@ -162,11 +176,11 @@ class GenerateServerVersion extends Command {
         return $this->getAppPathToDto() . DIRECTORY_SEPARATOR . self::MODEL_PACKAGE;
     }
 
-    private function getInvokerPackage() {
+    private function getInvokerPackage() 
+    {
         return collect([
             'App',
-            str_replace(DIRECTORY_SEPARATOR, '\\\\', $this->appDir),
-            Str::upper($this->getVersion())
+            str_replace(DIRECTORY_SEPARATOR, '\\\\', $this->replaceVersionPlaceHolderInPath($this->destinationDir))
         ])->join('\\\\');
     }
 }

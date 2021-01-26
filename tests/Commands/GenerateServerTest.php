@@ -12,9 +12,9 @@ class GenerateServerTest extends TestCase
     }
 
     protected function getEnvironmentSetUp($app): void {
-        $app['config']->set('openapi-server-generator.apidoc_dir', ('./tests/api-docs'));
-        $app['config']->set('openapi-server-generator.output_dir', './generated');
-        $app['config']->set('openapi-server-generator.app_dir', 'OpenApiGenerated');
+        $app['config']->set('openapi-server-generator.apidoc_dir', './tests/api-docs');
+        $app['config']->set('openapi-server-generator.temp_dir', './generated');
+        $app['config']->set('openapi-server-generator.destination_dir', 'OpenApiGenerated');
     }
 
     protected function getPackageProviders($app)

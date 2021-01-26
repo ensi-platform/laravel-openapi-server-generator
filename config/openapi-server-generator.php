@@ -8,13 +8,15 @@ return [
     'apidoc_dir' => public_path('api-docs'),
 
     /**
-     * Path to the directory where dto model files are generated
+     * Path to the directory where DTO files are temporary generated.
      * Matches the -o option in openapi generator
+     * Old name: `output_dir`
      */
-    'output_dir' => base_path('generated'),
+    'temp_dir' => base_path('generated'),
 
     /**
-     * Path relative to the app directory where dto models will be located
+     * Path relative to the app/ directory where DTO files will be located.
+     * Old name: `app_dir`
      */
-    'app_dir' => 'OpenApiGenerated'
+    'destination_dir' => 'Http/Api{version}/OpenApiGenerated'
 ];

@@ -4,6 +4,9 @@
 /.idea/
 *.komodoproject
 .vscode
+.phpunit.result.cache
 
+build
+generated
 vendor
 node_modules

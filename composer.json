@@ -28,5 +28,8 @@
                 "Greensight\\LaravelOpenapiServerGenerator\\OpenapiServerGeneratorServiceProvider"
             ]
         }
-    }
+    },
+    "scripts": {
+      "test": "phpunit --colors=always"
+  }
 }
