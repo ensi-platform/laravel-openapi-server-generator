@@ -35,9 +35,19 @@ class GenerateServerVersion extends Command {
     private $tempDir;
 
     /**
+     * @var boolean
+     */
+    private $onlyEnumsMode;
+
+    /**
      * @var string
      */
     private $destinationDir;
+
+    /**
+     * @var string
+     */
+    private $templateDir;
 
     public function __construct()
     {
@@ -45,6 +55,8 @@ class GenerateServerVersion extends Command {
 
         $this->tempDir = config('openapi-server-generator.temp_dir', config('openapi-server-generator.output_dir'));
         $this->destinationDir = config('openapi-server-generator.destination_dir', config('openapi-server-generator.app_dir'));
+        $this->templateDir = config("openapi-server-generator.template_dir", '');
+        $this->onlyEnumsMode = config('openapi-server-generator.only_enums_mode', false);
     }
 
     /**
@@ -75,7 +87,11 @@ class GenerateServerVersion extends Command {
 
         $command = "$bin generate -i $inputFile -g php -p 'invokerPackage=$invokerPackage,modelPackage=$modelPackage' -o $this->tempDir";
 
-        $this->info("Execute command: $command");
+        if ($this->templateDir) {
+            $command .= " -t " . escapeshellarg($this->templateDir);
+        }
+
+        $this->info("Executing command: $command");
 
         shell_exec($command);
     }
@@ -102,9 +118,14 @@ class GenerateServerVersion extends Command {
 
     private function copyDto(): void
     {
-        shell_exec("cp -rf $this->tempDir/lib/Dto " . $this->getAppPathToDto());
-        shell_exec("cp -f $this->tempDir/lib/Configuration.php " . $this->getAppPathToDto());
-        shell_exec("cp -n $this->tempDir/lib/ObjectSerializer.php " . $this->getAppPathToDto());
+        if ($this->onlyEnumsMode) {
+            $modelsPath = $this->getAppPathToModels();
+            shell_exec("find $this->tempDir/lib/Dto -name \*Enum.php -exec cp {} $modelsPath \;");
+        } else {
+            shell_exec("cp -rf $this->tempDir/lib/Dto " . $this->getAppPathToDto());
+            shell_exec("cp -f $this->tempDir/lib/Configuration.php " . $this->getAppPathToDto());
+            shell_exec("cp -n $this->tempDir/lib/ObjectSerializer.php " . $this->getAppPathToDto());
+        }
     }
 
     private function removeGeneratedDto(): void
@@ -138,7 +159,12 @@ class GenerateServerVersion extends Command {
     {
         $file = $this->getAppPathToDto() . DIRECTORY_SEPARATOR . 'ObjectSerializer.php';
 
-        $this->info("Patch serializer: $file");
+        if (!file_exists($file)) {
+            $this->info("Skipping serializer patching, no such file: $file");
+            return;
+        }
+
+        $this->info("Patching serializer: $file");
 
         $patcher = new SerializerPatcher($file);
 
