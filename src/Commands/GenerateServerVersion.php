@@ -124,7 +124,7 @@ class GenerateServerVersion extends Command {
         } else {
             shell_exec("cp -rf $this->tempDir/lib/Dto " . $this->getAppPathToDto());
             shell_exec("cp -f $this->tempDir/lib/Configuration.php " . $this->getAppPathToDto());
-            shell_exec("cp -n $this->tempDir/lib/ObjectSerializer.php " . $this->getAppPathToDto());
+            shell_exec("cp -f $this->tempDir/lib/ObjectSerializer.php " . $this->getAppPathToDto());
         }
     }
 
