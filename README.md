@@ -1,7 +1,5 @@
 # Laravel OpenApi Server Generator
 
-Deprecated, use https://github.com/ensi-platform/laravel-openapi-server-generator instead
-
 Пакет для Laravel, который генерирует Dto модели при помощи [OpenApi Generator](https://openapi-generator.tech/).
 
 ## Зависимости:
@@ -9,11 +7,11 @@ Deprecated, use https://github.com/ensi-platform/laravel-openapi-server-generato
 2. npm 5.2 и выше.
 
 ## Установка:
-1. `composer require --dev greensight/laravel-openapi-server-generator`
-2. `php artisan vendor:publish --provider="Greensight\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider"` - копирует конфиг генератора в конфиги приложения
+1. `composer require --dev ensi/laravel-openapi-server-generator`
+2. `php artisan vendor:publish --provider="Ensi\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider"` - копирует конфиг генератора в конфиги приложения
 
 ## Запуск:
-Перед запуском убедиться, что структура описания апи соответствует [этим требованиям](https://github.com/greensight/laravel-openapi-server-generator/blob/master/docs/api_schema_requirements.md).
+Перед запуском убедиться, что структура описания апи соответствует [этим требованиям](https://github.com/ensi/laravel-openapi-server-generator/blob/master/docs/api_schema_requirements.md).
 
 Запускать командой: `php artisan openapi:generate-server`
 

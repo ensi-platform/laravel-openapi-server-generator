@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenapiServerGenerator\Commands;
+namespace Ensi\LaravelOpenapiServerGenerator\Commands;
 
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
@@ -10,8 +10,8 @@ use RegexIterator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\ModelPatcher;
-use Greensight\LaravelOpenapiServerGenerator\Core\Patchers\SerializerPatcher;
+use Ensi\LaravelOpenapiServerGenerator\Core\Patchers\ModelPatcher;
+use Ensi\LaravelOpenapiServerGenerator\Core\Patchers\SerializerPatcher;
 
 class GenerateServerVersion extends Command {
 

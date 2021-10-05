@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenapiServerGenerator\Core\Patchers;
+namespace Ensi\LaravelOpenapiServerGenerator\Core\Patchers;
 
 use Illuminate\Support\Str;
 

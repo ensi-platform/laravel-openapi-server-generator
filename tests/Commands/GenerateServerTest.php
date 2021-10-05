@@ -20,7 +20,7 @@ class GenerateServerTest extends TestCase
     protected function getPackageProviders($app)
     {
         return [
-            'Greensight\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider'
+            'Ensi\LaravelOpenapiServerGenerator\OpenapiServerGeneratorServiceProvider'
         ];
     }
 

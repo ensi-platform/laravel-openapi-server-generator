@@ -1,11 +1,11 @@
 {
-    "name": "greensight/laravel-openapi-server-generator",
+    "name": "ensi/laravel-openapi-server-generator",
     "description": "",
     "type": "library",
     "authors": [
       {
-        "name": "Nikita Kutselay",
-        "email": "kutselaj@greensight.ru"
+        "name": "Nekrasov Ilya",
+        "email": "nekrasov@greensight.ru"
       }
     ],
     "license": "MIT",
@@ -14,7 +14,7 @@
     },
     "autoload": {
       "psr-4": {
-        "Greensight\\LaravelOpenapiServerGenerator\\": "src/"
+        "Ensi\\LaravelOpenapiServerGenerator\\": "src/"
       }
     },
     "require-dev": {
@@ -25,7 +25,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Greensight\\LaravelOpenapiServerGenerator\\OpenapiServerGeneratorServiceProvider"
+                "Ensi\\LaravelOpenapiServerGenerator\\OpenapiServerGeneratorServiceProvider"
             ]
         }
     },

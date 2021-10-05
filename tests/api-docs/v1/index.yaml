@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: Тестовое API
   contact:
-    url: https://greensight.pro/
+    url: https://ensi.pro/
   version: 1.0.0
 servers:
   - url: /api

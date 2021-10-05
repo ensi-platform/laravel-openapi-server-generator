@@ -6,7 +6,7 @@ index.yaml - Основной файл описания api.
 #### 1.1 Версионирование
 
 Для версиоинирования каждую версию api нужно описать в отдельной папке: v1, v2 и так далее.  
-В каждой папке должен быть свой собственный index.yaml: [пример](https://github.com/greensight/laravel-openapi-server-generator/tree/master/tests/api-docs).  
+В каждой папке должен быть свой собственный index.yaml: [пример](https://github.com/ensi-platform/laravel-openapi-server-generator/tree/master/tests/api-docs).  
 Если директории с версиями отсутствуют index.yaml считается первой версией апи.  
 
 ### 2. Правила генерации

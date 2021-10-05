@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenapiServerGenerator\Commands;
+namespace Ensi\LaravelOpenapiServerGenerator\Commands;
 
 use FilesystemIterator;
 use RecursiveDirectoryIterator;

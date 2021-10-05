@@ -1,11 +1,11 @@
 <?php
 
-namespace Greensight\LaravelOpenapiServerGenerator;
+namespace Ensi\LaravelOpenapiServerGenerator;
 
 use Illuminate\Support\ServiceProvider;
 
-use Greensight\LaravelOpenapiServerGenerator\Commands\GenerateServerVersion;
-use Greensight\LaravelOpenapiServerGenerator\Commands\GenerateServer;
+use Ensi\LaravelOpenapiServerGenerator\Commands\GenerateServerVersion;
+use Ensi\LaravelOpenapiServerGenerator\Commands\GenerateServer;
 
 class OpenapiServerGeneratorServiceProvider extends ServiceProvider
 {
