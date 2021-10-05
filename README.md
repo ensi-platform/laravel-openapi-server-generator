@@ -1,5 +1,7 @@
 # Laravel OpenApi Server Generator
 
+Deprecated, use https://github.com/ensi-platform/laravel-openapi-server-generator instead
+
 Пакет для Laravel, который генерирует Dto модели при помощи [OpenApi Generator](https://openapi-generator.tech/).
 
 ## Зависимости:
