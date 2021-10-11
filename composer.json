@@ -30,7 +30,8 @@
     "pestphp/pest-plugin-laravel": "^1.1",
     "spatie/laravel-ray": "^1.23",
     "vimeo/psalm": "^4.8",
-    "friendsofphp/php-cs-fixer": "^3.2"
+    "friendsofphp/php-cs-fixer": "^3.2",
+    "php-parallel-lint/php-var-dump-check": "^0.5.0"
   },
   "extra": {
     "laravel": {
