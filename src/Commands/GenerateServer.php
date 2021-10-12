@@ -9,7 +9,6 @@ use LogicException;
 
 class GenerateServer extends Command
 {
-
     /** var @string */
     protected $signature = 'openapi:generate-server {--e|entities=}';
 
