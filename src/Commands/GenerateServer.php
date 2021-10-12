@@ -4,10 +4,7 @@ namespace Greensight\LaravelOpenApiServerGenerator\Commands;
 
 use cebe\openapi\Reader;
 use cebe\openapi\SpecObjectInterface;
-use Greensight\LaravelOpenApiServerGenerator\Generators\EnumsGenerator;
-use Greensight\LaravelOpenApiServerGenerator\Generators\RoutesGenerator;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use LogicException;
 
 class GenerateServer extends Command
@@ -23,11 +20,8 @@ class GenerateServer extends Command
 
     private array $enabledEntities = [];
 
-    public function __construct(
-        private Filesystem $filesystem,
-        private RoutesGenerator $routesGenerator,
-        private EnumsGenerator $enumsGenerator
-    ) {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->config = config('openapi-server-generator', []);
@@ -36,7 +30,7 @@ class GenerateServer extends Command
     /**
      * Execute the console command.
      *
-     * @return void
+     * @return int
      */
     public function handle()
     {

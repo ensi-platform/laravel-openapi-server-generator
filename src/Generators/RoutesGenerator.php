@@ -59,7 +59,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         $parts = array_map(function ($m) {
             $trimmedMiddleware = trim($m);
 
-            return "'{$trimmedMiddleware}'";
+            return str_ends_with($trimmedMiddleware, '::class') ? "{$trimmedMiddleware}" : "'{$trimmedMiddleware}'";
         }, explode(",", $middleware));
 
         return '[' . implode(', ', $parts) . ']';

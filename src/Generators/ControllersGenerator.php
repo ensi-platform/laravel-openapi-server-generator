@@ -78,6 +78,11 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
             $namespace = $controller['namespace'];
             $className = $controller['className'];
 
+            $filePath = $this->getNamespacedFilePath($className, $namespace);
+            if ($this->filesystem->exists($filePath)) {
+                continue;
+            }
+
             $methodsString = '';
             foreach ($controller['actions'] as $action) {
                 $methodName = $action['name'];
@@ -92,11 +97,6 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                 METHOD;
             }
             $methodsString = trim($methodsString, "\n");
-
-            $filePath = $this->getNamespacedFilePath($className, $namespace);
-            if ($this->filesystem->exists($filePath)) {
-                continue;
-            }
 
             $this->filesystem->put(
                 $filePath,
