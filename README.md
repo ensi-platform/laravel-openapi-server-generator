@@ -58,7 +58,7 @@ if (file_exists($generatedRoutes)) { // prevents your app and artisan from break
 
 Generates Controller class for each non-existing class specified in `x-lg-handler`  
 Supports invocable Controllers.  
-If several openapi paths point to several methods in one Controller/Handler then the genereted class includes all of them.  
+If several openapi paths point to several methods in one Controller/Handler then the generated class includes all of them.  
 If a class already exists it is NOT overriden.  
 Controller class IS meant to be modified after generation.  
 
