@@ -11,6 +11,8 @@ use InvalidArgumentException;
 
 class BaseGenerator
 {
+    protected array $options = [];
+
     public function __construct(
         protected Filesystem $filesystem,
         protected TemplatesManager $templatesManager,
@@ -18,6 +20,13 @@ class BaseGenerator
         protected RouteHandlerParser $routeHandlerParser,
         protected TypesMapper $typesMapper,
     ) {
+    }
+
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+
+        return $this;
     }
 
     protected function replacePlaceholders(string $content, array $placeholders): string

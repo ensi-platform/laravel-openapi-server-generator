@@ -69,7 +69,9 @@ Destination must be configured with array as namespace instead of string.
 E.g 
 
 ```php
- 'requests' => ["Controllers" => "Requests"],
+'requests' => [
+    'namespace' => ["Controllers" => "Requests"]
+],
 ```
 
 This means "Get handler (x-lg-handler) namespace and replace Controllers with Requests in it"  

@@ -40,9 +40,9 @@ class GenerateServer extends Command
             return self::FAILURE;
         }
 
-        foreach ($this->config['api_docs_mappings'] as $sourcePath => $toNamespaces) {
+        foreach ($this->config['api_docs_mappings'] as $sourcePath => $optionsPerEntity) {
             $this->info("Generating [" . implode(', ', $this->enabledEntities) . "] for specification file \"$sourcePath\"");
-            if (self::FAILURE === $this->handleMapping($sourcePath, $toNamespaces)) {
+            if (self::FAILURE === $this->handleMapping($sourcePath, $optionsPerEntity)) {
                 return self::FAILURE;
             }
         }
@@ -50,7 +50,7 @@ class GenerateServer extends Command
         return self::SUCCESS;
     }
 
-    public function handleMapping(string $sourcePath, array $toNamespaces)
+    public function handleMapping(string $sourcePath, array $optionsPerEntity)
     {
         $specObject = $this->parseSpec($sourcePath);
 
@@ -59,14 +59,14 @@ class GenerateServer extends Command
                 continue;
             }
 
-            if (!isset($toNamespaces[$entity])) {
-                $this->error("Namespace for entity \"$entity\" is not set in \"api_docs_mappings\" config for source \"$sourcePath\"");
+            if (!isset($optionsPerEntity[$entity])) {
+                $this->error("Options for entity \"$entity\" are not set in \"api_docs_mappings\" config for source \"$sourcePath\"");
 
                 return self::FAILURE;
             }
 
             $this->infoIfVerbose("Generating files for entity \"$entity\" using generator \"$generatorClass\"");
-            resolve($generatorClass)->generate($specObject, $toNamespaces[$entity]);
+            resolve($generatorClass)->setOptions($optionsPerEntity[$entity])->generate($specObject);
         }
 
         return self::SUCCESS;

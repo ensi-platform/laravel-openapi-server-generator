@@ -6,5 +6,7 @@ use cebe\openapi\SpecObjectInterface;
 
 interface GeneratorInterface
 {
-    public function generate(SpecObjectInterface $specObject, string|array $namespaceData): void;
+    public function generate(SpecObjectInterface $specObject): void;
+
+    public function setOptions(array $options): static;
 }

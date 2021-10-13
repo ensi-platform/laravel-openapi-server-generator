@@ -9,10 +9,11 @@ use stdClass;
 
 class EnumsGenerator extends BaseGenerator implements GeneratorInterface
 {
-    public function generate(SpecObjectInterface $specObject, string|array $namespaceData): void
+    public function generate(SpecObjectInterface $specObject): void
     {
+        $namespaceData = $this->options['namespace'] ?? null;
         if (!is_string($namespaceData)) {
-            throw new InvalidArgumentException("EnumsGenerator supports only strings as namespaceData");
+            throw new InvalidArgumentException("EnumsGenerator must be configured with string as 'namespace'");
         }
 
         $namespace = rtrim($namespaceData, "\\");

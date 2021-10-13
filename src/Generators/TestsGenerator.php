@@ -14,10 +14,11 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
 
     abstract protected function getTemplateName(): string;
 
-    public function generate(SpecObjectInterface $specObject, string|array $namespaceData): void
+    public function generate(SpecObjectInterface $specObject): void
     {
+        $namespaceData = $this->options['namespace'] ?? null;
         if (!is_array($namespaceData)) {
-            throw new InvalidArgumentException("TestsGenerator supports only arrays as namespaceData");
+            throw new InvalidArgumentException("TestsGenerator must be configured with array as 'namespace'");
         }
 
         $openApiData = $specObject->getSerializableData();
