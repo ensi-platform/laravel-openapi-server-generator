@@ -56,28 +56,28 @@ if (file_exists($generatedRoutes)) { // prevents your app and artisan from break
 
 ### 'controllers' => ControllersGenerator::class
 
-Generates Controller class for each non-existing class specified in `x-lg-handler`
-Supports invocable Controllers.
-If several openapi paths point to several methods in one Controller/Handler then the genereted class includes all of them.
-If a class already exists it is NOT overriden.
-Controller class IS meant to be modified after generation. 
+Generates Controller class for each non-existing class specified in `x-lg-handler`  
+Supports invocable Controllers.  
+If several openapi paths point to several methods in one Controller/Handler then the genereted class includes all of them.  
+If a class already exists it is NOT overriden.  
+Controller class IS meant to be modified after generation.  
 
 ### 'requests' => RequestsGenerator::class
 
-Generates Laravel Form Requests for DELETE, PATCH, POST, PUT paths
-Destination must be configured with array as namespace instead of string.
+Generates Laravel Form Requests for DELETE, PATCH, POST, PUT paths  
+Destination must be configured with array as namespace instead of string.  
 E.g 
 
 ```php
  'requests' => ["Controllers" => "Requests"],
 ```
 
-This means "Get handler (x-lg-handler) namespace and replace Controllers with Requests in it"
-Form Request class IS meant to be modified after generation. You can treat it as a template generated with `php artisan make:request FooRequest`
-If the file already exists it IS NOT overriden with each generation.
+This means "Get handler (x-lg-handler) namespace and replace Controllers with Requests in it"  
+Form Request class IS meant to be modified after generation. You can treat it as a template generated with `php artisan make:request FooRequest`  
+If the file already exists it IS NOT overriden with each generation.  
 
-Form Request class name is `ucFirst(operationId)`. You can override it with `x-lg-request-class-name`
-You can skip generating form request for a give route with `x-lg-skip-request-generation: true` directive.
+Form Request class name is `ucFirst(operationId)`. You can override it with `x-lg-request-class-name`  
+You can skip generating form request for a give route with `x-lg-skip-request-generation: true` directive.  
 
 ### 'enums' => EnumsGenerator::class
 
@@ -88,9 +88,9 @@ Enums generator does NOT support `allOf`, `anyOf` and `oneOf` at the moment.
 
 ### 'pest_tests' => PestTestsGenerator::class
 
-Generates Pest test file for each `x-lg-handler`
-If a test file already exists it is NOT overriden.
-Controller class IS meant to be modified after generation. 
+Generates Pest test file for each `x-lg-handler`  
+If a test file already exists it is NOT overriden.  
+Controller class IS meant to be modified after generation.   
 
 ## Contributing
 
