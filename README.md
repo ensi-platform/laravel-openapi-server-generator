@@ -2,7 +2,7 @@
 
 Generates Laravel application code from Open Api Specification files
 
-## Installation
+## Installationfss
 
 You can install the package via composer:
 
