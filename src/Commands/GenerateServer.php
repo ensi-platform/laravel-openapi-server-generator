@@ -1,70 +1,107 @@
 <?php
 
-namespace Ensi\LaravelOpenapiServerGenerator\Commands;
+namespace Greensight\LaravelOpenApiServerGenerator\Commands;
 
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RegexIterator;
-
+use cebe\openapi\Reader;
+use cebe\openapi\SpecObjectInterface;
 use Illuminate\Console\Command;
+use LogicException;
 
-class GenerateServer extends Command {
-    /**
-     * @var string
-     */
-    protected $signature = 'openapi:generate-server';
+class GenerateServer extends Command
+{
+    /** var @string */
+    protected $signature = 'openapi:generate-server {--e|entities=}';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Generate server from openapi spec files by OpenApi Generator';
+    /** var @string */
+    protected $description = 'Generate application files from openapi specification files';
 
-    /**
-     * @var string
-     */
-    private $apidocDir;
+    private array $config = [];
+
+    private array $enabledEntities = [];
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->apidocDir = config('openapi-server-generator.apidoc_dir');
+        $this->config = config('openapi-server-generator', []);
     }
 
     /**
      * Execute the console command.
      *
-     * @return void
+     * @return int
      */
     public function handle()
     {
-        $apiDocs = $this->apiDocs();
+        $inputEntities = $this->option('entities') ? explode(',', $this->option('entities')) : [];
+        $this->enabledEntities = $inputEntities ?: $this->config['default_entities_to_generate'];
 
-        foreach ($apiDocs as $apiDoc) {
-            $this->call('openapi:generate-server-version', $apiDoc);
+        if (!$this->validateEntities()) {
+            return self::FAILURE;
         }
+
+        foreach ($this->config['api_docs_mappings'] as $sourcePath => $toNamespaces) {
+            $this->info("Generating [" . implode(', ', $this->enabledEntities) . "] for specification file \"$sourcePath\"");
+            if (self::FAILURE === $this->handleMapping($sourcePath, $toNamespaces)) {
+                return self::FAILURE;
+            }
+        }
+
+        return self::SUCCESS;
     }
 
-    private function apiDocs() {
-        $indexFiles = new RegexIterator(
-            new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator(
-                    $this->apidocDir,
-                    FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS
-                )
-            ),
-            '/index\.yaml$/i',
-            RegexIterator::MATCH
-        );
+    public function handleMapping(string $sourcePath, array $toNamespaces)
+    {
+        $specObject = $this->parseSpec($sourcePath);
 
-        return collect($indexFiles)->map(function ($indexFile) {
-            $version = basename(dirname($indexFile));
-            $version = preg_match('/v\d/i', $version) ? $version : null;
-            return [
-                'file' => $indexFile,
-                'version' => $version
-            ];
-        });
+        foreach ($this->config['supported_entities'] as $entity => $generatorClass) {
+            if (!$this->shouldEntityBeGenerated($entity)) {
+                continue;
+            }
+
+            if (!isset($toNamespaces[$entity])) {
+                $this->error("Namespace for entity \"$entity\" is not set in \"api_docs_mappings\" config for source \"$sourcePath\"");
+
+                return self::FAILURE;
+            }
+
+            $this->infoIfVerbose("Generating files for entity \"$entity\" using generator \"$generatorClass\"");
+            resolve($generatorClass)->generate($specObject, $toNamespaces[$entity]);
+        }
+
+        return self::SUCCESS;
+    }
+
+    private function validateEntities(): bool
+    {
+        $supportedEntities = array_keys($this->config['supported_entities'] ?? []);
+        foreach ($this->enabledEntities as $entity) {
+            if (!in_array($entity, $supportedEntities)) {
+                $this->error("Invalid entity \"$entity\", supported entities: [" . implode(', ', $supportedEntities) ."]");
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function shouldEntityBeGenerated(string $entity): bool
+    {
+        return in_array($entity, $this->enabledEntities);
+    }
+
+    private function parseSpec(string $sourcePath): SpecObjectInterface
+    {
+        return match (substr($sourcePath, -5)) {
+            '.yaml' => Reader::readFromYamlFile(realpath($sourcePath)),
+            '.json' => Reader::readFromJsonFile(realpath($sourcePath)),
+            default => throw new LogicException("You should specify .yaml or .json file as a source. \"$sourcePath\" was given instead"),
+        };
+    }
+
+    protected function infoIfVerbose(string $message): void
+    {
+        $this->info($message, 'v');
     }
 }

@@ -1,0 +1,8 @@
+{
+    "hooks": {
+        "post-checkout": ".git_hooks/post-checkout/install-dependecies.sh",
+        "post-merge": ".git_hooks/post-merge/install-dependecies.sh",
+        "pre-commit": ".git_hooks/pre-commit/lint-php.sh && .git_hooks/pre-commit/php-cs-fixer.sh",
+        "pre-push": ".git_hooks/pre-push/composer-validate.sh && .git_hooks/pre-push/var-dump-checker.sh && composer test"
+    }
+}
