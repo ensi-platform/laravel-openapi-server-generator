@@ -12,17 +12,20 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
 
     abstract protected function convertRoutesToImportsString(array $routes): string;
 
+    abstract protected function getTemplateName(): string;
+
     public function generate(SpecObjectInterface $specObject, string|array $namespaceData): void
     {
         if (!is_array($namespaceData)) {
-            throw new InvalidArgumentException("PestTestsGenerator supports only arrays as namespaceData");
+            throw new InvalidArgumentException("TestsGenerator supports only arrays as namespaceData");
         }
 
         $openApiData = $specObject->getSerializableData();
         $serversUrl = $openApiData?->servers[0]?->url ?? '';
         $tests = $this->constructTests($openApiData, $namespaceData);
+        $template = $this->templatesManager->getTemplate($this->getTemplateName());
 
-        $this->createTestsFiles($tests, $this->templatesManager->getTemplate('PestTest.template'), $serversUrl);
+        $this->createTestsFiles($tests, $template, $serversUrl);
     }
 
     protected function constructTests(stdClass $openApiData, array $namespaceData): array

@@ -61,4 +61,9 @@ class PestTestsGenerator extends TestsGenerator
 
         return implode("\n", $testsFunctions);
     }
+
+    protected function getTemplateName(): string
+    {
+        return "PestTest.template";
+    }
 }
