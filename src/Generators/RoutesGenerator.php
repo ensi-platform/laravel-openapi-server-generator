@@ -7,9 +7,9 @@ use InvalidArgumentException;
 
 class RoutesGenerator extends BaseGenerator implements GeneratorInterface
 {
-    public function generate(SpecObjectInterface $specObject, array $options): void
+    public function generate(SpecObjectInterface $specObject): void
     {
-        $namespaceData = $options['namespace'] ?? null;
+        $namespaceData = $this->options['namespace'] ?? null;
         if (!is_string($namespaceData)) {
             throw new InvalidArgumentException("RoutesGenerator must be configured with string as 'namespace'");
         }

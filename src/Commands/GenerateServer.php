@@ -66,7 +66,7 @@ class GenerateServer extends Command
             }
 
             $this->infoIfVerbose("Generating files for entity \"$entity\" using generator \"$generatorClass\"");
-            resolve($generatorClass)->generate($specObject, $optionsPerEntity[$entity]);
+            resolve($generatorClass)->setOptions($optionsPerEntity[$entity])->generate($specObject);
         }
 
         return self::SUCCESS;

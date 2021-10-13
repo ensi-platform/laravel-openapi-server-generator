@@ -9,9 +9,9 @@ use stdClass;
 
 class EnumsGenerator extends BaseGenerator implements GeneratorInterface
 {
-    public function generate(SpecObjectInterface $specObject, array $options): void
+    public function generate(SpecObjectInterface $specObject): void
     {
-        $namespaceData = $options['namespace'] ?? null;
+        $namespaceData = $this->options['namespace'] ?? null;
         if (!is_string($namespaceData)) {
             throw new InvalidArgumentException("EnumsGenerator must be configured with string as 'namespace'");
         }
