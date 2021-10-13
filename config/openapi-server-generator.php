@@ -10,17 +10,23 @@ return [
     /**
      * You can use as many yaml/json openapi entrypoints as you want.
      * Key = openapi entrypoint file with path.
-     * Value = one of
-     *  - string: fixed PSR-4 namespace where the result of generation should be placed.
-     *  - array: relative PSR-4 namespace. Base namespace is taken from `x-lg-handler` and selected parts are replaced.
+     * Value = list of entities and their generator params.
      */
     'api_docs_mappings' => [
         public_path('api-docs/v1/index.yaml') => [
             'controllers' => [],
-            'enums' => "App\\Http\\ApiV1\\OpenApiGenerated\\Enums\\",
-            'requests' => ["Controllers" => "Requests"],
-            'routes' => "App\\Http\\ApiV1\\OpenApiGenerated\\",
-            'pest_tests' => ["Controllers" => "Tests"],
+            'enums' => [
+                'namespace' => "App\\Http\\ApiV1\\OpenApiGenerated\\Enums\\",
+            ],
+            'requests' => [
+                'namespace' => ["Controllers" => "Requests"],
+            ],
+            'routes' => [
+                'namespace' => "App\\Http\\ApiV1\\OpenApiGenerated\\",
+            ],
+            'pest_tests' => [
+                'namespace' => ["Controllers" => "Tests"],
+            ],
         ],
     ],
 

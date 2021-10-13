@@ -9,7 +9,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 {
     private array $methodsWithRequests = ['PATCH', 'POST', 'PUT', 'DELETE'];
 
-    public function generate(SpecObjectInterface $specObject, string|array $namespaceData): void
+    public function generate(SpecObjectInterface $specObject, array $options): void
     {
         $controllers = $this->extractControllers($specObject);
         $this->createControllersFiles($controllers, $this->templatesManager->getTemplate('Controller.template'));

@@ -9,10 +9,11 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 {
     private array $methods = ['PATCH', 'POST', 'PUT', 'DELETE'];
 
-    public function generate(SpecObjectInterface $specObject, string|array $namespaceData): void
+    public function generate(SpecObjectInterface $specObject, array $options): void
     {
+        $namespaceData = $options['namespace'] ?? null;
         if (!is_array($namespaceData)) {
-            throw new InvalidArgumentException("RequestsGenerator supports only arrays as namespaceData");
+            throw new InvalidArgumentException("RequestsGenerator must be configured with array as 'namespace'");
         }
 
         $requests = $this->extractRequests($specObject, $namespaceData);
