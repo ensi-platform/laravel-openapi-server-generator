@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\Generators;
+namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
 use InvalidArgumentException;

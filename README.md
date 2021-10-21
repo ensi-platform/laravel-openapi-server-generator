@@ -10,7 +10,7 @@ You can install the package via composer:
 
 Next you need to publish config file like this:
 
-`php artisan vendor:publish --provider="Greensight\LaravelOpenApiServerGenerator\LaravelOpenApiServerGeneratorServiceProvider"`
+`php artisan vendor:publish --provider="Ensi\LaravelOpenApiServerGenerator\LaravelOpenApiServerGeneratorServiceProvider"`
 
 and configure all the options.
 

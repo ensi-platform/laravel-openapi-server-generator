@@ -1,7 +1,7 @@
 <?php
 
-use Greensight\LaravelOpenApiServerGenerator\DTO\ParsedRouteHandler;
-use Greensight\LaravelOpenApiServerGenerator\Utils\RouteHandlerParser;
+use Ensi\LaravelOpenApiServerGenerator\DTO\ParsedRouteHandler;
+use Ensi\LaravelOpenApiServerGenerator\Utils\RouteHandlerParser;
 
 it('can parse handler without action', function () {
     $result = (new RouteHandlerParser())->parse("App\\Http\\Controllers\\CreateUser");

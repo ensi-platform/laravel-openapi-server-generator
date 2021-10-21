@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\Generators;
+namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 class PestTestsGenerator extends TestsGenerator
 {

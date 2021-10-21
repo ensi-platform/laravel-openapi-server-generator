@@ -1,6 +1,6 @@
 <?php
 
-use Greensight\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
+use Ensi\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
 
 it('throws InvalidArgumentException for unregistred namespaces', function () {
     $converter = new PSR4PathConverter(["App\\" =>"/var/www/acme/app"]);

@@ -1,10 +1,10 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator;
+namespace Ensi\LaravelOpenApiServerGenerator;
 
-use Greensight\LaravelOpenApiServerGenerator\Commands\GenerateServer;
-use Greensight\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
-use Greensight\LaravelOpenApiServerGenerator\Utils\TemplatesManager;
+use Ensi\LaravelOpenApiServerGenerator\Commands\GenerateServer;
+use Ensi\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
+use Ensi\LaravelOpenApiServerGenerator\Utils\TemplatesManager;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelOpenApiServerGeneratorServiceProvider extends ServiceProvider

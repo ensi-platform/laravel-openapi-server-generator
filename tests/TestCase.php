@@ -1,8 +1,8 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\Tests;
+namespace Ensi\LaravelOpenApiServerGenerator\Tests;
 
-use Greensight\LaravelOpenApiServerGenerator\LaravelOpenApiServerGeneratorServiceProvider;
+use Ensi\LaravelOpenApiServerGenerator\LaravelOpenApiServerGeneratorServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

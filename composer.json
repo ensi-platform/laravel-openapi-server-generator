@@ -15,12 +15,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Greensight\\LaravelOpenApiServerGenerator\\": "src/"
+      "Ensi\\LaravelOpenApiServerGenerator\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-        "Greensight\\LaravelOpenApiServerGenerator\\Tests\\": "tests"
+        "Ensi\\LaravelOpenApiServerGenerator\\Tests\\": "tests"
     }
   },
   "require-dev": {
@@ -36,7 +36,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Greensight\\LaravelOpenApiServerGenerator\\LaravelOpenApiServerGeneratorServiceProvider"
+        "Ensi\\LaravelOpenApiServerGenerator\\LaravelOpenApiServerGeneratorServiceProvider"
       ]
     }
   },

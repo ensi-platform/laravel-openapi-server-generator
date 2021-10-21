@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\Commands;
+namespace Ensi\LaravelOpenApiServerGenerator\Commands;
 
 use cebe\openapi\Reader;
 use cebe\openapi\SpecObjectInterface;

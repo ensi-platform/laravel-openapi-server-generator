@@ -1,6 +1,6 @@
 <?php
 
-use Greensight\LaravelOpenApiServerGenerator\Utils\TypesMapper;
+use Ensi\LaravelOpenApiServerGenerator\Utils\TypesMapper;
 
 it('can convert openapi types to php', function (string $input, string $expected) {
     $result = (new TypesMapper())->openApiToPhp($input);

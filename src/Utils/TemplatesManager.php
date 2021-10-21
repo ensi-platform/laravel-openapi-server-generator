@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\Utils;
+namespace Ensi\LaravelOpenApiServerGenerator\Utils;
 
 use Illuminate\Filesystem\Filesystem;
 

@@ -1,10 +1,10 @@
 <?php
 
-use Greensight\LaravelOpenApiServerGenerator\Generators\ControllersGenerator;
-use Greensight\LaravelOpenApiServerGenerator\Generators\EnumsGenerator;
-use Greensight\LaravelOpenApiServerGenerator\Generators\PestTestsGenerator;
-use Greensight\LaravelOpenApiServerGenerator\Generators\RequestsGenerator;
-use Greensight\LaravelOpenApiServerGenerator\Generators\RoutesGenerator;
+use Ensi\LaravelOpenApiServerGenerator\Generators\ControllersGenerator;
+use Ensi\LaravelOpenApiServerGenerator\Generators\EnumsGenerator;
+use Ensi\LaravelOpenApiServerGenerator\Generators\PestTestsGenerator;
+use Ensi\LaravelOpenApiServerGenerator\Generators\RequestsGenerator;
+use Ensi\LaravelOpenApiServerGenerator\Generators\RoutesGenerator;
 
 return [
     /**

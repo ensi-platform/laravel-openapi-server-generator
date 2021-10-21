@@ -1,6 +1,6 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\DTO;
+namespace Ensi\LaravelOpenApiServerGenerator\DTO;
 
 class ParsedRouteHandler
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Greensight\LaravelOpenApiServerGenerator\Generators;
+namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
-use Greensight\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
-use Greensight\LaravelOpenApiServerGenerator\Utils\RouteHandlerParser;
-use Greensight\LaravelOpenApiServerGenerator\Utils\TemplatesManager;
-use Greensight\LaravelOpenApiServerGenerator\Utils\TypesMapper;
+use Ensi\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
+use Ensi\LaravelOpenApiServerGenerator\Utils\RouteHandlerParser;
+use Ensi\LaravelOpenApiServerGenerator\Utils\TemplatesManager;
+use Ensi\LaravelOpenApiServerGenerator\Utils\TypesMapper;
 use Illuminate\Filesystem\Filesystem;
 use InvalidArgumentException;
 
