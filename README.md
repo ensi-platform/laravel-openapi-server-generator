@@ -1,4 +1,4 @@
-# Laravel OpenApi PHP Server Generator
+# Laravel OpenApi Server Generator
 
 Generates Laravel application code from Open Api Specification files
 
