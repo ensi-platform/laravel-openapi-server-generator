@@ -12,7 +12,8 @@ class PSR4PathConverter
 
     public function addMappings(array $mappings): static
     {
-        foreach ($mappings as $namespace => $path) {
+        foreach ($mappings as $namespace => $path) 
+        {
             $this->mappings[$namespace] =  $path;
         }
 
