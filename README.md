@@ -1,8 +1,8 @@
 # Laravel OpenApi Server Generator
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/ensi-platform/laravel-openapi-server-generator.svg?style=flat-square)](https://packagist.org/packages/ensi/laravel-openapi-server-generator)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/ensi/laravel-openapi-server-generator.svg?style=flat-square)](https://packagist.org/packages/ensi/laravel-openapi-server-generator)
 [![Tests](https://github.com/ensi-platform/laravel-openapi-server-generator/actions/workflows/run-tests.yml/badge.svg?branch=master)](https://github.com/ensi-platform/laravel-openapi-server-generator/actions/workflows/run-tests.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/ensi-platform/laravel-openapi-server-generator.svg?style=flat-square)](https://packagist.org/packages/ensi/laravel-openapi-server-generator)
+[![Total Downloads](https://img.shields.io/packagist/dt/ensi/laravel-openapi-server-generator.svg?style=flat-square)](https://packagist.org/packages/ensi/laravel-openapi-server-generator)
 
 Generates Laravel application code from Open Api Specification files
 
