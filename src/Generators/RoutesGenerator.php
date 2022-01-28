@@ -25,10 +25,12 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                 $handler = $route->{'x-lg-handler'} ?? null;
                 $routeName = $route->{'x-lg-route-name'} ?? null;
                 $routeMiddleware = $route->{'x-lg-middleware'} ?? null;
+                $routeWithoutMiddleware = $route->{'x-lg-without-middleware'} ?? null;
                 if ($handler) {
                     $routesStrings .= "Route::{$method}('{$this->trimPath($path)}', {$this->formatHandler($handler)})";
                     $routesStrings .= $routeName ? "->name('{$routeName}')": "";
                     $routesStrings .= $routeMiddleware ? "->middleware({$this->formatMiddleware($routeMiddleware)})": "";
+                    $routesStrings .= $routeWithoutMiddleware ? "->withoutMiddleware({$this->formatMiddleware($routeWithoutMiddleware)})": "";
                     $routesStrings .= ";\n";
                 }
             }

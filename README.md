@@ -46,6 +46,7 @@ The following [extension properties](https://github.com/OAI/OpenAPI-Specificatio
 x-lg-handler: '\App\Http\Controllers\CustomersController@create' // Optional. Path is ignored if this field is empty. You can use :: instead of @ if you want
 x-lg-route-name: 'createCustomer' // Optional. Translates to `->name('createCustomer')`
 x-lg-middleware: '\App\Http\Middleware\Authenticate::class,web'  // Optional. Translates to `->middleware([\App\Http\Middleware\Authenticate::class, 'web'])`
+x-lg-without-middleware: '\App\Http\Middleware\Authenticate::class,web'  // Optional. Translates to `->withoutMiddleware([\App\Http\Middleware\Authenticate::class, 'web'])`
 ```
 
 `route.php` file IS overriden with each generation.  
