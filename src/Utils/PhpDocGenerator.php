@@ -6,9 +6,10 @@ class PhpDocGenerator
 {
     public function fromText(string $text, int $spaces = 0, bool $deleteEmptyLines = false): string
     {
-        $result = $this->prependSpaces("/**\n", $spaces);
+        $eol = PHP_EOL;
+        $result = $this->prependSpaces("/**{$eol}", $spaces);
         foreach ($this->convertTextToLines($text, $deleteEmptyLines) as $line) {
-            $result .= $this->prependSpaces(" * {$this->safeLine($line)}\n", $spaces);
+            $result .= $this->prependSpaces(" * {$this->safeLine($line)}{$eol}", $spaces);
         }
         $result .= $this->prependSpaces(" */", $spaces);
 
