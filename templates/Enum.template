@@ -6,15 +6,8 @@
  */
 
 namespace {{ namespace }};
-
-class {{ className }}
+{{ enumPhpDoc }}
+enum {{ enumName }}: {{ enumType }}
 {
-{{ constants }}
-    /**
-     * @return {{ enumType }}[]
-     */
-    public static function cases(): array
-    {
-        return {{ valuesArray }};
-    }
+{{ cases }}
 }
