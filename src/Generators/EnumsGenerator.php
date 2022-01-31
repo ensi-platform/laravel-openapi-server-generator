@@ -3,7 +3,6 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
-use Ensi\LaravelOpenApiServerGenerator\Utils\PhpDocGenerator;
 use InvalidArgumentException;
 use LogicException;
 use stdClass;
@@ -50,7 +49,7 @@ class EnumsGenerator extends BaseGenerator implements GeneratorInterface
 
     private function getEnumType(stdClass $schema, string $enumName): string
     {
-        return match($schema->type){
+        return match ($schema->type) {
             "integer" => "int",
             "string" => "string",
             default => throw new LogicException("Enum {$enumName} has invalid type '{$schema->type}'. Supported types are: ['integer', 'string']"),
@@ -78,8 +77,8 @@ class EnumsGenerator extends BaseGenerator implements GeneratorInterface
 
     private function convertEnumSchemaToPhpDoc(stdClass $schema): string
     {
-        return $schema->description 
-        ? "\n" . $this->phpDocGenerator->fromText(text: $schema->description, deleteEmptyLines: true) 
+        return $schema->description
+        ? "\n" . $this->phpDocGenerator->fromText(text: $schema->description, deleteEmptyLines: true)
         : "\n";
     }
 }
