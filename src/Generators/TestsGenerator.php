@@ -59,7 +59,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
 
                 $firstResponse = null;
                 if (isset($route->responses)) {
-                    $firstResponse = current((array)$route?->responses) ?? null;
+                    $firstResponse = current((array)$route->responses) ?? null;
                 }
                 if (!$firstResponse) {
                     continue;
