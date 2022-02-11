@@ -30,10 +30,11 @@ paths:
       responses:
         "200":
           description: Успешный ответ
-  /resources:test-without-context:
+  /resources:test-rename-request:
     post:
-      operationId: testWithoutContext
-      x-lg-handler: '\App\Http\Controllers\ResourcesController@testWithoutContext'
+      operationId: testRenameRequest
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testRenameRequest'
+      x-lg-request-class-name: 'TestFooRenameRequest'
       responses:
         "200":
           description: Успешный ответ
@@ -46,6 +47,7 @@ paths:
   /resources:test-with-skip:
     post:
       operationId: testWithSkip
+      x-lg-handler: '\App\Http\Controllers\SkipController@testWithSkip'
       x-lg-skip-controller-generation: true
       x-lg-skip-request-generation: true
       x-lg-skip-tests-generation: true
@@ -55,14 +57,22 @@ paths:
   /resources:test-bad-handler:
     post:
       operationId: testBadHandler
-      x-lg-handler: 'bad'
+      x-lg-handler: ''
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-global-namespace:
+    post:
+      operationId: withoutNamespace
+      x-lg-handler: 'WithoutNamespaceController@testWithoutContext'
       responses:
         "200":
           description: Успешный ответ
   /resources:test-without-responses:
     post:
       operationId: testWithoutResponses
-      x-lg-handler: '\App\Http\Controllers\ResourcesController@testWithoutResponses'
+      x-lg-handler: '\App\Http\Controllers\WithoutResponsesController@testWithoutResponses'
+      x-lg-skip-request-generation: true
 
 components:
   responses:

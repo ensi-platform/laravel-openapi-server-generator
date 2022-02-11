@@ -4,6 +4,7 @@ namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
 use InvalidArgumentException;
+use RuntimeException;
 use stdClass;
 
 abstract class TestsGenerator extends BaseGenerator implements GeneratorInterface
@@ -47,11 +48,14 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                 }
 
                 $handler = $this->routeHandlerParser->parse($route->{'x-lg-handler'});
-                if (!$handler->namespace || !str_contains($handler->namespace, $replaceFromNamespace)) {
+
+                try {
+                    $newNamespace = $this->getReplacedNamespace($handler->namespace, $replaceFromNamespace, $replaceToNamespace);
+                } catch (RuntimeException) {
                     continue;
                 }
 
-                $newNamespace = str_replace($replaceFromNamespace, $replaceToNamespace, $handler->namespace);
+
                 $className = str_replace("Controller", "", $handler->class) . "ComponentTest";
                 if (!$className) {
                     continue;

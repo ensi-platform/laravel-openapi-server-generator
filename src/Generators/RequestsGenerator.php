@@ -4,6 +4,7 @@ namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
 use InvalidArgumentException;
+use RuntimeException;
 
 class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 {
@@ -40,11 +41,13 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                 }
 
                 $handler = $this->routeHandlerParser->parse($route->{'x-lg-handler'});
-                if (!$handler->namespace || !str_contains($handler->namespace, $replaceFromNamespace)) {
+
+                try {
+                    $newNamespace = $this->getReplacedNamespace($handler->namespace, $replaceFromNamespace, $replaceToNamespace);
+                } catch (RuntimeException) {
                     continue;
                 }
 
-                $newNamespace = str_replace($replaceFromNamespace, $replaceToNamespace, $handler->namespace);
                 $className = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
                 if (!$className) {
                     continue;

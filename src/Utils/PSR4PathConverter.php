@@ -19,8 +19,11 @@ class PSR4PathConverter
         return $this;
     }
 
-    public function namespaceToPath(string $namespace): string
+    public function namespaceToPath(?string $namespace): string
     {
+        if (is_null($namespace)) {
+            return '';
+        }
         foreach ($this->mappings as $mappingNamescape => $mappingPath) {
             if (str_starts_with($namespace, $mappingNamescape)) {
                 $namespaceWithoutBase = substr($namespace, strlen($mappingNamescape));
