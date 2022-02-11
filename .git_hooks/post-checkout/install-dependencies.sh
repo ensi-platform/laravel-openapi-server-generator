@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source $(pwd)/.git_hooks/external_runtime
+
 ESC_SEQ="\x1b["
 COL_RESET=$ESC_SEQ"39;49;00m"
 COL_RED=$ESC_SEQ"0;31m"

@@ -9,6 +9,7 @@ use Ensi\LaravelOpenApiServerGenerator\Utils\TemplatesManager;
 use Ensi\LaravelOpenApiServerGenerator\Utils\TypesMapper;
 use Illuminate\Filesystem\Filesystem;
 use InvalidArgumentException;
+use RuntimeException;
 
 class BaseGenerator
 {
@@ -41,7 +42,20 @@ class BaseGenerator
         return $path === '/' ? $path : ltrim($path, '/');
     }
 
-    protected function getNamespacedFilePath(string $fileName, string $namespace, ): string
+    protected function getReplacedNamespace(?string $baseNamespace, string $replaceFromNamespace, string $replaceToNamespace): ?string
+    {
+        if ($baseNamespace) {
+            if (!str_contains($baseNamespace, $replaceFromNamespace)) {
+                throw new RuntimeException("Can't replace namespace");
+            }
+
+            return str_replace($replaceFromNamespace, $replaceToNamespace, $baseNamespace);
+        }
+
+        return null;
+    }
+
+    protected function getNamespacedFilePath(string $fileName, ?string $namespace): string
     {
         $toDir = $this->psr4PathConverter->namespaceToPath($namespace);
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source $(pwd)/.git_hooks/external_runtime
+
 # validate composer 
 
 ESC_SEQ="\x1b["
