@@ -33,7 +33,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
                 $handler = $this->routeHandlerParser->parse($route->{'x-lg-handler'});
                 $fqcn = $handler->fqcn;
-                if (!$fqcn) {
+                if (!$fqcn || !$handler->namespace) {
                     continue;
                 }
 

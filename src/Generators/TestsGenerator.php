@@ -57,7 +57,10 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                     continue;
                 }
 
-                $firstResponse = current((array)$route?->responses) ?? null;
+                $firstResponse = null;
+                if (isset($route->responses)) {
+                    $firstResponse = current((array)$route?->responses) ?? null;
+                }
                 if (!$firstResponse) {
                     continue;
                 }
@@ -75,7 +78,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                     'method' => $method,
                     'path' => $path,
                     'responseCodes' => $route->responses ? array_keys(get_object_vars($route->responses)) : [],
-                    'responseContentType' => $firstResponse->content ? array_keys(get_object_vars($firstResponse->content))[0] : "",
+                    'responseContentType' => isset($firstResponse->content) ? array_keys(get_object_vars($firstResponse->content))[0] : "",
                 ];
             }
         }

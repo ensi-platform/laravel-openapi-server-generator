@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source $(pwd)/.git_hooks/external_runtime
+
 ROOT_DIR="$(pwd)/"
 LIST=$(git diff-index --cached --name-only --diff-filter=ACMR HEAD)
 ERRORS_BUFFER=""
