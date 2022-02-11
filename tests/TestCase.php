@@ -14,6 +14,11 @@ class TestCase extends Orchestra
         ];
     }
 
+    public function makeFilePath(string $path): string
+    {
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
+    }
+
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');

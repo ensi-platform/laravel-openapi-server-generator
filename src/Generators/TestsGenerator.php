@@ -4,6 +4,7 @@ namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
 use InvalidArgumentException;
+use RuntimeException;
 use stdClass;
 
 abstract class TestsGenerator extends BaseGenerator implements GeneratorInterface
@@ -47,17 +48,23 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                 }
 
                 $handler = $this->routeHandlerParser->parse($route->{'x-lg-handler'});
-                if (!$handler->namespace || !str_contains($handler->namespace, $replaceFromNamespace)) {
+
+                try {
+                    $newNamespace = $this->getReplacedNamespace($handler->namespace, $replaceFromNamespace, $replaceToNamespace);
+                } catch (RuntimeException) {
                     continue;
                 }
 
-                $newNamespace = str_replace($replaceFromNamespace, $replaceToNamespace, $handler->namespace);
+
                 $className = str_replace("Controller", "", $handler->class) . "ComponentTest";
                 if (!$className) {
                     continue;
                 }
 
-                $firstResponse = current((array)$route?->responses) ?? null;
+                $firstResponse = null;
+                if (isset($route->responses)) {
+                    $firstResponse = current((array)$route->responses) ?? null;
+                }
                 if (!$firstResponse) {
                     continue;
                 }
@@ -75,7 +82,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                     'method' => $method,
                     'path' => $path,
                     'responseCodes' => $route->responses ? array_keys(get_object_vars($route->responses)) : [],
-                    'responseContentType' => $firstResponse->content ? array_keys(get_object_vars($firstResponse->content))[0] : "",
+                    'responseContentType' => isset($firstResponse->content) ? array_keys(get_object_vars($firstResponse->content))[0] : "",
                 ];
             }
         }

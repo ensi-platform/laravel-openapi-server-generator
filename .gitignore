@@ -12,3 +12,4 @@ build
 generated
 vendor
 node_modules
+coverage

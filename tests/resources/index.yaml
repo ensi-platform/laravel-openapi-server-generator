@@ -1,0 +1,130 @@
+openapi: 3.0.1
+info:
+  title: Test
+  version: 1.0.0
+  description: Тестовый конфиг
+paths:
+  /resources:test-full-generate/{id}:
+    post:
+      operationId: testFullGenerate
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testFullGenerate'
+      x-lg-middleware: 'middleware'
+      x-lg-without-middleware: 'without-middleware'
+      parameters:
+        - name: id
+          in: path
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        "500":
+          $ref: '#/components/responses/ServerError'
+  /resources:test-empty-rename-request:
+    post:
+      operationId: testEmptyRenameRequest
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testEmptyRenameRequest'
+      x-lg-request-class-name: ''
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-rename-request:
+    post:
+      operationId: testRenameRequest
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testRenameRequest'
+      x-lg-request-class-name: 'TestFooRenameRequest'
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-without-handler:
+    post:
+      operationId: testWithoutHandler
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-with-skip:
+    post:
+      operationId: testWithSkip
+      x-lg-handler: '\App\Http\Controllers\SkipController@testWithSkip'
+      x-lg-skip-controller-generation: true
+      x-lg-skip-request-generation: true
+      x-lg-skip-tests-generation: true
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-bad-handler:
+    post:
+      operationId: testBadHandler
+      x-lg-handler: ''
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-global-namespace:
+    post:
+      operationId: withoutNamespace
+      x-lg-handler: 'WithoutNamespaceController@testWithoutContext'
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-without-responses:
+    post:
+      operationId: testWithoutResponses
+      x-lg-handler: '\App\Http\Controllers\WithoutResponsesController@testWithoutResponses'
+      x-lg-skip-request-generation: true
+
+components:
+  responses:
+    ServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                description: Массив ошибок
+            required:
+              - errors
+  schemas:
+    Resource:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор
+    TestIntegerEnum:
+      type: integer
+      description: >
+        Пример перечисления. Расшифровка значений:
+          * `1` - Пример 1
+          * `2` - Пример 2
+      enum:
+        - 1
+        - 2
+      x-enum-varnames:
+        - EXAMPLE_1
+        - EXAMPLE_2
+      x-enum-descriptions:
+        - Пример 1
+        - Пример 2
+    TestStringEnum:
+      type: string
+      description: >
+        Пример перечисления. Расшифровка значений:
+          * `example_1` - Пример 1
+          * `example_2` - Пример 2
+      enum:
+        - example_1
+        - example_2
+      x-enum-varnames:
+        - EXAMPLE_1
+        - EXAMPLE_2
+      x-enum-descriptions:
+        - Пример 1
+        - Пример 2
+
+
+
