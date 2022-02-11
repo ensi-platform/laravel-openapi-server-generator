@@ -29,7 +29,7 @@ test("Command GenerateServer success", function () {
     $appRoot = realpath(makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
     $putFiles = [];
     $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$putFiles, $appRoot) {
-        $putFiles[] = str_replace($appRoot, '', $path);
+        $putFiles[] = makeFilePath(str_replace($appRoot, '', $path));
 
         return true;
     });
