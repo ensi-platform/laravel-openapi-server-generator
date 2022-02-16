@@ -25,16 +25,16 @@ class EnumsGenerator extends BaseGenerator implements GeneratorInterface
         $enums = $this->extractEnums($openApiData);
 
         $template = $this->templatesManager->getTemplate('Enum.template');
-        foreach ($enums as $className => $schema) {
-            $enumType = get_debug_type($schema->enum[0]);
+        foreach ($enums as $enumName => $schema) {
+            $enumType = $this->getEnumType($schema, $enumName);
             $this->filesystem->put(
-                rtrim($toDir, '/') . "/{$className}.php",
+                rtrim($toDir, '/') . "/{$enumName}.php",
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $namespace,
-                    '{{ className }}' => $className,
-                    '{{ constants }}' => $this->convertEnumSchemaToConstants($schema),
+                    '{{ enumName }}' => $enumName,
+                    '{{ cases }}' => $this->convertEnumSchemaToCases($schema),
                     '{{ enumType }}' => $enumType,
-                    '{{ valuesArray }}' => $this->convertEnumSchemaToValuesArray($schema),
+                    '{{ enumPhpDoc }}' => $this->convertEnumSchemaToPhpDoc($schema),
                 ])
             );
         }
@@ -47,7 +47,16 @@ class EnumsGenerator extends BaseGenerator implements GeneratorInterface
         return array_filter($schemas, fn ($schema) => !empty($schema->enum));
     }
 
-    private function convertEnumSchemaToConstants(stdClass $schema): string
+    private function getEnumType(stdClass $schema, string $enumName): string
+    {
+        return match ($schema->type) {
+            "integer" => "int",
+            "string" => "string",
+            default => throw new LogicException("Enum {$enumName} has invalid type '{$schema->type}'. Supported types are: ['integer', 'string']"),
+        };
+    }
+
+    private function convertEnumSchemaToCases(stdClass $schema): string
     {
         $result = '';
         foreach ($schema->enum as $i => $enum) {
@@ -55,21 +64,21 @@ class EnumsGenerator extends BaseGenerator implements GeneratorInterface
             if ($varName === null) {
                 throw new LogicException("x-enum-varnames for enum \"{$enum}\" is not set");
             }
+            $description = $schema->{'x-enum-descriptions'}[$i] ?? null;
+            if ($description) {
+                $result .= "    /** {$description} */\n";
+            }
             $value = var_export($enum, true);
-            $result .= "    public const {$varName} = {$value};\n";
+            $result .= "    case {$varName} = {$value};\n";
         }
 
-        return $result;
+        return rtrim($result, "\n");
     }
 
-    private function convertEnumSchemaToValuesArray(stdClass $schema): string
+    private function convertEnumSchemaToPhpDoc(stdClass $schema): string
     {
-        $result = "[\n";
-        foreach ($schema->{'x-enum-varnames'} as $varName) {
-            $result .= "            self::{$varName},\n";
-        }
-        $result .= '        ]';
-
-        return $result;
+        return $schema->description
+        ? "\n" . $this->phpDocGenerator->fromText(text: $schema->description, deleteEmptyLines: true)
+        : "\n";
     }
 }
