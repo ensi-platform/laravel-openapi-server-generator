@@ -53,7 +53,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
             $routesPath,
             $this->replacePlaceholders($template, [
                 '{{ controller_namespaces }}' => $controllerNamespacesStrings,
-                '{{ routes }}' => $routesStrings
+                '{{ routes }}' => $routesStrings,
             ])
         );
     }
