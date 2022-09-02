@@ -53,16 +53,75 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                $requests[] = compact('className', 'newNamespace');
+                $propertyRules = $this->getPropertyRules($route->requestBody);
+
+                $requests[] = compact('className', 'newNamespace', 'propertyRules');
             }
         }
 
         return $requests;
     }
+    
+    protected function getPropertyRules($requestBody): string
+    {
+        $properties = [];
+
+        $contentType = array_keys(get_object_vars($requestBody->content))[0];
+        switch ($contentType) {
+            case 'application/json':
+                foreach ($requestBody->content->{'application/json'}->schema->allOf as $object) {
+                    if (isset(get_object_vars($object)['properties'])) {
+                        foreach (get_object_vars($object->properties) as $propertyName => $property) {
+                            $properties[$propertyName] = [
+                                'type' => $property->type,
+                            ];
+
+                            if (isset(get_object_vars($property)['nullable'])) {
+                                $properties[$propertyName]['nullable'] = true;
+                            }
+                        }
+                    } elseif (isset(get_object_vars($object)['required'])) {
+                        foreach ($object->required as $requiredProperty) {
+                            if (isset($properties[$requiredProperty])) {
+                                $properties[$requiredProperty]['required'] = true;
+                            } else {
+                                $properties[$requiredProperty] = [
+                                    'required' => true,
+                                ];
+                            }
+                        }
+                    }
+                }
+
+                break;
+            default:
+        }
+
+        return $this->toLaravelValidationsAndFormat($properties);
+    }
+
+    protected function toLaravelValidationsAndFormat(array $properties): string
+    {
+        $laravelValidationRules = [];
+        foreach ($properties as $propertyName => $property) {
+            $validations = [];
+            if (isset($property['required'])) {
+                $validations[] = "'required'";
+            }
+            if (isset($property['nullable'])) {
+                $validations[] = "'nullable'";
+            }
+            $validations[] = "'{$property['type']}'";
+            $validationsString = implode(', ', $validations);
+            $laravelValidationRules[] = "'{$propertyName}' => [{$validationsString}],";
+        }
+
+        return implode("\n            ", $laravelValidationRules);
+    }
 
     protected function createRequestsFiles(array $requests, string $template): void
     {
-        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace]) {
+        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace, 'propertyRules' => $propertyRules]) {
             $filePath = $this->getNamespacedFilePath($className, $newNamespace);
             if ($this->filesystem->exists($filePath)) {
                 continue;
@@ -73,6 +132,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $newNamespace,
                     '{{ className }}' => $className,
+                    '{{ rules }}' => $propertyRules,
                 ])
             );
         }
