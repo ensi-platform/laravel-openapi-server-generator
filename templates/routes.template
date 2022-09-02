@@ -5,6 +5,7 @@
  * Do NOT edit it manually. Run `php artisan openapi:generate-server`.
  */
 
+{{ controller_namespaces }}
 use Illuminate\Support\Facades\Route;
 
 {{ routes }}

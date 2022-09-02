@@ -19,6 +19,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
 
         $routesStrings = '';
 
+        $controllerNamespaces = [];
         $paths = $openApiData->paths ?: [];
         foreach ($paths as $path => $routes) {
             foreach ($routes as $method => $route) {
@@ -27,7 +28,11 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                 $routeMiddleware = $route->{'x-lg-middleware'} ?? null;
                 $routeWithoutMiddleware = $route->{'x-lg-without-middleware'} ?? null;
                 if ($handler) {
-                    $routesStrings .= "Route::{$method}('{$this->trimPath($path)}', {$this->formatHandler($handler)})";
+                    [$handler, $controllerNamespace] = $this->getControllerInfoFromHandler($handler);
+
+                    $controllerNamespaces[] = $controllerNamespace;
+
+                    $routesStrings .= "Route::{$method}('{$this->trimPath($path)}', {$handler})";
                     $routesStrings .= $routeName ? "->name('{$routeName}')": "";
                     $routesStrings .= $routeMiddleware ? "->middleware({$this->formatMiddleware($routeMiddleware)})": "";
                     $routesStrings .= $routeWithoutMiddleware ? "->withoutMiddleware({$this->formatMiddleware($routeWithoutMiddleware)})": "";
@@ -35,6 +40,8 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                 }
             }
         }
+
+        $controllerNamespacesStrings = $this->formatControllerNamespaces($controllerNamespaces);
 
         $routesPath = $this->getNamespacedFilePath("routes", $namespace);
         if ($this->filesystem->exists($routesPath)) {
@@ -44,17 +51,20 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         $template = $this->templatesManager->getTemplate('routes.template');
         $this->filesystem->put(
             $routesPath,
-            $this->replacePlaceholders($template, ['{{ routes }}' => $routesStrings])
+            $this->replacePlaceholders($template, [
+                '{{ controller_namespaces }}' => $controllerNamespacesStrings,
+                '{{ routes }}' => $routesStrings,
+            ])
         );
     }
 
-    private function formatHandler(string $handler): string
+    private function getControllerInfoFromHandler(string $handler): array
     {
         $parsedRouteHandler = $this->routeHandlerParser->parse($handler);
-        $class = '\\' . $parsedRouteHandler->fqcn . '::class';
+        $class = $parsedRouteHandler->class . '::class';
         $method = $parsedRouteHandler->method;
 
-        return $method ? "[$class, '$method']" : "$class";
+        return [$method ? "[$class, '$method']" : "$class", "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class}"];
     }
 
     private function formatMiddleware(string $middleware): string
@@ -66,5 +76,13 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         }, explode(",", $middleware));
 
         return '[' . implode(', ', $parts) . ']';
+    }
+
+    private function formatControllerNamespaces(array $controllerNamespaces): string
+    {
+        $controllerNamespaces = array_unique($controllerNamespaces);
+        sort($controllerNamespaces);
+
+        return implode("\n", array_map(fn (string $controllerNamespace) => "use {$controllerNamespace};", $controllerNamespaces));
     }
 }
