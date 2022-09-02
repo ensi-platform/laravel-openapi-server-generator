@@ -41,7 +41,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
             }
         }
 
-        $controllerNamespacesStrings = $this->formatControllerNamespaces($controllerNamespaces);
+        $controllerNamespacesStrings = $this->formatNamespaces($controllerNamespaces);
 
         $routesPath = $this->getNamespacedFilePath("routes", $namespace);
         if ($this->filesystem->exists($routesPath)) {
@@ -76,13 +76,5 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         }, explode(",", $middleware));
 
         return '[' . implode(', ', $parts) . ']';
-    }
-
-    private function formatControllerNamespaces(array $controllerNamespaces): string
-    {
-        $controllerNamespaces = array_unique($controllerNamespaces);
-        sort($controllerNamespaces);
-
-        return implode("\n", array_map(fn (string $controllerNamespace) => "use {$controllerNamespace};", $controllerNamespaces));
     }
 }
