@@ -61,7 +61,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
         return $requests;
     }
-    
+
     protected function getPropertyRules($requestBody): string
     {
         $properties = [];
