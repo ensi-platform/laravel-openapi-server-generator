@@ -3,6 +3,8 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
+use Ensi\LaravelOpenApiServerGenerator\Data\ObjectProperty;
+use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3ContentTypeEnum;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -53,41 +55,49 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                $propertyRules = $this->getPropertyRules($route->requestBody);
+                [$propertyRules, $usesEnums] = $this->getPropertyRules($route->requestBody);
 
-                $requests[] = compact('className', 'newNamespace', 'propertyRules');
+                $requests[] = compact('className', 'newNamespace', 'propertyRules', 'usesEnums');
             }
         }
 
         return $requests;
     }
 
-    protected function getPropertyRules($requestBody): string
+    protected function getPropertyRules($requestBody): array
     {
+        /** @var ObjectProperty[] $properties */
         $properties = [];
-
         $contentType = array_keys(get_object_vars($requestBody->content))[0];
         switch ($contentType) {
-            case 'application/json':
-                foreach ($requestBody->content->{'application/json'}->schema->allOf as $object) {
+            case OpenApi3ContentTypeEnum::APPLICATION_JSON->value:
+                foreach ($requestBody->content->{OpenApi3ContentTypeEnum::APPLICATION_JSON->value}->schema->allOf as $object) {
                     if (isset(get_object_vars($object)['properties'])) {
                         foreach (get_object_vars($object->properties) as $propertyName => $property) {
-                            $properties[$propertyName] = [
-                                'type' => $property->type,
-                            ];
+                            $objectProperty = new ObjectProperty($propertyName, $property->type);
 
-                            if (isset(get_object_vars($property)['nullable'])) {
-                                $properties[$propertyName]['nullable'] = true;
+                            if (isset(get_object_vars($property)['required'])) {
+                                $objectProperty->required = true;
                             }
+                            if (isset(get_object_vars($property)['nullable'])) {
+                                $objectProperty->nullable = true;
+                            }
+                            if (isset(get_object_vars($property)['format'])) {
+                                $objectProperty->format = $property->format;
+                            }
+                            if (isset(get_object_vars($property)['x-lg-enum-class'])) {
+                                $objectProperty->enumClass = $property->{'x-lg-enum-class'};
+                            }
+
+                            $properties[$propertyName] = $objectProperty;
                         }
                     } elseif (isset(get_object_vars($object)['required'])) {
                         foreach ($object->required as $requiredProperty) {
                             if (isset($properties[$requiredProperty])) {
-                                $properties[$requiredProperty]['required'] = true;
+                                $properties[$requiredProperty]->required = true;
                             } else {
-                                $properties[$requiredProperty] = [
-                                    'required' => true,
-                                ];
+                                $objectProperty = new ObjectProperty($requiredProperty, required: true);
+                                $properties[$requiredProperty] = $objectProperty;
                             }
                         }
                     }
@@ -100,28 +110,35 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
         return $this->toLaravelValidationsAndFormat($properties);
     }
 
-    protected function toLaravelValidationsAndFormat(array $properties): string
+    /**
+     * @param ObjectProperty[] $properties
+     * @return array
+     */
+    protected function toLaravelValidationsAndFormat(array $properties): array
     {
-        $laravelValidationRules = [];
-        foreach ($properties as $propertyName => $property) {
-            $validations = [];
-            if (isset($property['required'])) {
-                $validations[] = "'required'";
+        $propertyRules = [];
+        $usesEnums = [];
+        foreach ($properties as $property) {
+            [$laravelValidationRules, $usesEnum] = $property->toLaravelValidations();
+
+            $propertyRules[] = $laravelValidationRules;
+            if ($usesEnum) {
+                $usesEnums[] = $usesEnum;
             }
-            if (isset($property['nullable'])) {
-                $validations[] = "'nullable'";
-            }
-            $validations[] = "'{$property['type']}'";
-            $validationsString = implode(', ', $validations);
-            $laravelValidationRules[] = "'{$propertyName}' => [{$validationsString}],";
         }
 
-        return implode("\n            ", $laravelValidationRules);
+        if ($usesEnums) {
+            $usesEnums[] = 'use Illuminate\Validation\Rules\Enum;';
+        }
+        $usesEnums[] = 'use Illuminate\Foundation\Http\FormRequest;';
+        sort($usesEnums);
+
+        return [implode("\n            ", $propertyRules), implode("\n", $usesEnums)];
     }
 
     protected function createRequestsFiles(array $requests, string $template): void
     {
-        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace, 'propertyRules' => $propertyRules]) {
+        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace, 'propertyRules' => $propertyRules, 'usesEnums' => $usesEnums]) {
             $filePath = $this->getNamespacedFilePath($className, $newNamespace);
             if ($this->filesystem->exists($filePath)) {
                 continue;
@@ -131,6 +148,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                 $filePath,
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $newNamespace,
+                    '{{ uses }}' => $usesEnums,
                     '{{ className }}' => $className,
                     '{{ rules }}' => $propertyRules,
                 ])

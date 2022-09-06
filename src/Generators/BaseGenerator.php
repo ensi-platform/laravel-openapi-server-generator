@@ -13,6 +13,8 @@ use RuntimeException;
 
 class BaseGenerator
 {
+    const ENUMS_NAMESPACE = 'App\\Http\\ApiV1\\OpenApiGenerated\\Enums';
+
     protected array $options = [];
 
     public function __construct(
