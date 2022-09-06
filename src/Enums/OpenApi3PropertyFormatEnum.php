@@ -22,8 +22,7 @@ enum OpenApi3PropertyFormatEnum: string
 
     public function toLaravelValidationRule(): LaravelValidationRuleEnum
     {
-        return match($this)
-        {
+        return match ($this) {
             OpenApi3PropertyFormatEnum::DATE => LaravelValidationRuleEnum::DATE,
             OpenApi3PropertyFormatEnum::DATE_TIME => LaravelValidationRuleEnum::DATE_TIME_FORMAT,
             OpenApi3PropertyFormatEnum::PASSWORD => LaravelValidationRuleEnum::PASSWORD,

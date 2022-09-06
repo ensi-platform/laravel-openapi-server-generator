@@ -13,8 +13,7 @@ enum OpenApi3PropertyTypeEnum: string
 
     public function toLaravelValidationRule(): LaravelValidationRuleEnum
     {
-        return match($this)
-        {
+        return match ($this) {
             OpenApi3PropertyTypeEnum::INTEGER   =>  LaravelValidationRuleEnum::INTEGER,
             OpenApi3PropertyTypeEnum::STRING    =>  LaravelValidationRuleEnum::STRING,
             OpenApi3PropertyTypeEnum::BOOLEAN   =>  LaravelValidationRuleEnum::BOOLEAN,

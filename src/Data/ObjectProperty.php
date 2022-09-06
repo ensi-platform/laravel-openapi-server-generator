@@ -57,6 +57,7 @@ class ObjectProperty
             case OpenApi3PropertyTypeEnum::BOOLEAN:
             case OpenApi3PropertyTypeEnum::NUMBER:
                 $validations[] = $type->toLaravelValidationRule();
+
                 break;
             case OpenApi3PropertyTypeEnum::STRING:
                 switch ($format) {
@@ -71,14 +72,18 @@ class ObjectProperty
                     case OpenApi3PropertyFormatEnum::URL:
                     case OpenApi3PropertyFormatEnum::UUID:
                         $validations[] = $format->toLaravelValidationRule();
+
                         break;
                     case OpenApi3PropertyFormatEnum::BINARY:
                         $validations[] = LaravelValidationRuleEnum::FILE;
+
                         break;
                     default:
                         $validations[] = $type->toLaravelValidationRule();
+
                         break;
                 }
+
                 break;
             case OpenApi3PropertyTypeEnum::ARRAY:
                 $validations[] = $type->toLaravelValidationRule();
