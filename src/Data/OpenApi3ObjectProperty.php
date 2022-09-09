@@ -44,10 +44,12 @@ class OpenApi3ObjectProperty
             case OpenApi3PropertyTypeEnum::OBJECT:
                 $this->object = new OpenApi3Object();
                 $this->object->getPropertiesFromObject($stdProperty);
+
                 break;
             case OpenApi3PropertyTypeEnum::ARRAY:
                 $this->items = new OpenApi3ObjectProperty();
                 $this->items->getPropertyFromProperty("{$propertyName}.*", $stdProperty->items);
+
                 break;
             default:
         }
@@ -84,6 +86,7 @@ class OpenApi3ObjectProperty
             case OpenApi3PropertyTypeEnum::BOOLEAN:
             case OpenApi3PropertyTypeEnum::NUMBER:
                 $validations[$name][] = "'{$type->toLaravelValidationRule()->value}'";
+
                 break;
             case OpenApi3PropertyTypeEnum::STRING:
                 switch ($format) {
@@ -98,14 +101,18 @@ class OpenApi3ObjectProperty
                     case OpenApi3PropertyFormatEnum::URL:
                     case OpenApi3PropertyFormatEnum::UUID:
                         $validations[$name][] = "'{$format->toLaravelValidationRule()->value}'";
+
                         break;
                     case OpenApi3PropertyFormatEnum::BINARY:
                         $validations[$name][] = "'". LaravelValidationRuleEnum::FILE->value . "'";
+
                         break;
                     default:
                         $validations[$name][] = "'{$type->toLaravelValidationRule()->value}'";
+
                         break;
                 }
+
                 break;
             case OpenApi3PropertyTypeEnum::OBJECT:
                 foreach ($this->object->properties ?? [] as $property) {
@@ -113,6 +120,7 @@ class OpenApi3ObjectProperty
                     $validations = array_merge($validations, $currentValidations);
                     $enums = array_merge($enums, $currentEnums);
                 }
+
                 break;
             case OpenApi3PropertyTypeEnum::ARRAY:
                 $validations[$name][] = "'{$type->toLaravelValidationRule()->value}'";

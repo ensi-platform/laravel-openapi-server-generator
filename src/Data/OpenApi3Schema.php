@@ -10,7 +10,8 @@ abstract class OpenApi3Schema
     public OpenApi3ContentTypeEnum $contentType;
     public OpenApi3Object $object;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->object = new OpenApi3Object();
     }
 

@@ -12,7 +12,8 @@ class OpenApi3Object
     /** @var Collection|OpenApi3ObjectProperty[] */
     public Collection $properties;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->properties = collect();
     }
 
@@ -52,7 +53,7 @@ class OpenApi3Object
             $validations = array_merge($propertyValidations, $validations);
             $enums = array_merge($propertyEnums, $enums);
         }
-        
+
         $validationStrings = [];
         foreach ($validations as $propertyName => $validation) {
             $validationString = implode(', ', $validation);
