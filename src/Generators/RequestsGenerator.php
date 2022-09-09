@@ -3,7 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
-use Ensi\LaravelOpenApiServerGenerator\Data\ObjectProperty;
+use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3RequestSchema;
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3ContentTypeEnum;
 use InvalidArgumentException;
 use RuntimeException;
@@ -55,9 +55,13 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                [$propertyRules, $usesEnums] = $this->getPropertyRules($route->requestBody);
+                $validationRules = '//';
+                $usesEnums = 'use Illuminate\Foundation\Http\FormRequest;';
+                if (isset(get_object_vars($route)['requestBody'])) {
+                    [$validationRules, $usesEnums] = $this->getPropertyRules($route->requestBody);
+                }
 
-                $requests[] = compact('className', 'newNamespace', 'propertyRules', 'usesEnums');
+                $requests[] = compact('className', 'newNamespace', 'validationRules', 'usesEnums');
             }
         }
 
@@ -66,79 +70,15 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
     protected function getPropertyRules($requestBody): array
     {
-        /** @var ObjectProperty[] $properties */
-        $properties = [];
         $contentType = array_keys(get_object_vars($requestBody->content))[0];
-        switch ($contentType) {
-            case OpenApi3ContentTypeEnum::APPLICATION_JSON->value:
-                foreach ($requestBody->content->{OpenApi3ContentTypeEnum::APPLICATION_JSON->value}->schema->allOf as $object) {
-                    if (isset(get_object_vars($object)['properties'])) {
-                        foreach (get_object_vars($object->properties) as $propertyName => $property) {
-                            $objectProperty = new ObjectProperty($propertyName, $property->type);
+        $request = OpenApi3RequestSchema::fromSplClass(OpenApi3ContentTypeEnum::from($contentType), $requestBody);
 
-                            if (isset(get_object_vars($property)['required'])) {
-                                $objectProperty->required = true;
-                            }
-                            if (isset(get_object_vars($property)['nullable'])) {
-                                $objectProperty->nullable = true;
-                            }
-                            if (isset(get_object_vars($property)['format'])) {
-                                $objectProperty->format = $property->format;
-                            }
-                            if (isset(get_object_vars($property)['x-lg-enum-class'])) {
-                                $objectProperty->enumClass = $property->{'x-lg-enum-class'};
-                            }
-
-                            $properties[$propertyName] = $objectProperty;
-                        }
-                    } elseif (isset(get_object_vars($object)['required'])) {
-                        foreach ($object->required as $requiredProperty) {
-                            if (isset($properties[$requiredProperty])) {
-                                $properties[$requiredProperty]->required = true;
-                            } else {
-                                $objectProperty = new ObjectProperty($requiredProperty, required: true);
-                                $properties[$requiredProperty] = $objectProperty;
-                            }
-                        }
-                    }
-                }
-
-                break;
-            default:
-        }
-
-        return $this->toLaravelValidationsAndFormat($properties);
-    }
-
-    /**
-     * @param ObjectProperty[] $properties
-     * @return array
-     */
-    protected function toLaravelValidationsAndFormat(array $properties): array
-    {
-        $propertyRules = [];
-        $usesEnums = [];
-        foreach ($properties as $property) {
-            [$laravelValidationRules, $usesEnum] = $property->toLaravelValidations();
-
-            $propertyRules[] = $laravelValidationRules;
-            if ($usesEnum) {
-                $usesEnums[] = $usesEnum;
-            }
-        }
-
-        if ($usesEnums) {
-            $usesEnums[] = 'use Illuminate\Validation\Rules\Enum;';
-        }
-        $usesEnums[] = 'use Illuminate\Foundation\Http\FormRequest;';
-        sort($usesEnums);
-
-        return [implode("\n            ", $propertyRules), implode("\n", $usesEnums)];
+        return $request->object->toLaravelValidationRules();
     }
 
     protected function createRequestsFiles(array $requests, string $template): void
     {
-        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace, 'propertyRules' => $propertyRules, 'usesEnums' => $usesEnums]) {
+        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace, 'validationRules' => $validationRules, 'usesEnums' => $usesEnums]) {
             $filePath = $this->getNamespacedFilePath($className, $newNamespace);
             if ($this->filesystem->exists($filePath)) {
                 continue;
@@ -150,7 +90,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     '{{ namespace }}' => $newNamespace,
                     '{{ uses }}' => $usesEnums,
                     '{{ className }}' => $className,
-                    '{{ rules }}' => $propertyRules,
+                    '{{ rules }}' => $validationRules,
                 ])
             );
         }
