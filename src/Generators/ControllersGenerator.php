@@ -83,7 +83,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
         if ($methodWithRequest) {
             return [[
                 'name' => $actionName ?? 'request',
-                'type' => $actionType ?? 'Request'
+                'type' => $actionType ?? 'Request',
             ]];
         }
 
