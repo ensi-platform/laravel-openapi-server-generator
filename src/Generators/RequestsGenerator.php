@@ -57,7 +57,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
                 $validationRules = '//';
                 $usesEnums = 'use Illuminate\Foundation\Http\FormRequest;';
-                if (std_object_has($route,'requestBody')) {
+                if (std_object_has($route, 'requestBody')) {
                     $contentType = OpenApi3ContentTypeEnum::tryFrom(array_keys(get_object_vars($route->requestBody->content))[0]);
                     if ($contentType) {
                         [$validationRules, $usesEnums] = $this->getPropertyRules($contentType, $route->requestBody);

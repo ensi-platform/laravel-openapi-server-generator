@@ -24,7 +24,7 @@ class OpenApi3ObjectProperty
 
     public function fillFromStdProperty(string $propertyName, stdClass $stdProperty): void
     {
-        if (std_object_has($stdProperty,'required')) {
+        if (std_object_has($stdProperty, 'required')) {
             $this->required = true;
         }
         if (std_object_has($stdProperty, 'nullable')) {
