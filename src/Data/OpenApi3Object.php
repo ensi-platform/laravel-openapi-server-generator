@@ -3,7 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Data;
 
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3PropertyTypeEnum;
-use Ensi\LaravelOpenApiServerGenerator\Exceptions\RequestsEnumsNamespaceMissingException;
+use Ensi\LaravelOpenApiServerGenerator\Exceptions\EnumsNamespaceMissingException;
 use Illuminate\Support\Collection;
 use stdClass;
 
@@ -17,23 +17,26 @@ class OpenApi3Object
         $this->properties = collect();
     }
 
-    public function getPropertiesFromObject(stdClass $object)
+    public function fillFromStdObject(stdClass $object): void
     {
-        if (isset(get_object_vars($object)['properties'])) {
+        if (std_object_has($object, 'properties')) {
             foreach (get_object_vars($object->properties) as $propertyName => $property) {
-                if (!$objectProperty = $this->properties->get($propertyName)) {
-                    $objectProperty = new OpenApi3ObjectProperty(name: $propertyName, type: $property->type);
+                /** @var OpenApi3ObjectProperty $objectProperty */
+                $objectProperty = $this->properties->get($propertyName);
+                if (!$objectProperty) {
+                    $objectProperty = new OpenApi3ObjectProperty(type: $property->type, name: $propertyName, );
                     $this->properties->put($propertyName, $objectProperty);
                 }
-                $objectProperty->getPropertyFromProperty($propertyName, $property);
+                $objectProperty->fillFromStdProperty($propertyName, $property);
             }
         }
-        if (isset(get_object_vars($object)['required'])) {
+        if (std_object_has($object, 'required')) {
             foreach ($object->required as $requiredProperty) {
-                if (!$objectProperty = $this->properties->get($requiredProperty)) {
+                $objectProperty = $this->properties->get($requiredProperty);
+                if (!$objectProperty) {
                     $objectProperty = new OpenApi3ObjectProperty(
+                        type: OpenApi3PropertyTypeEnum::OBJECT->value,
                         name: $requiredProperty,
-                        type: OpenApi3PropertyTypeEnum::OBJECT->value
                     );
                     $this->properties->put($requiredProperty, $objectProperty);
                 }
@@ -43,7 +46,7 @@ class OpenApi3Object
         }
     }
 
-    public function toLaravelValidationRules(array $options)
+    public function toLaravelValidationRules(array $options): array
     {
         $validations = [];
         $enums = [];
@@ -61,17 +64,20 @@ class OpenApi3Object
         }
         $validationsString = implode("\n            ", $validationStrings);
 
-        throw_unless(isset($options['enums_namespace']), RequestsEnumsNamespaceMissingException::class);
         $enumStrings = [];
-        foreach ($enums as $enumClass => $value) {
-            $enumStrings[] = 'use ' . $options['enums_namespace'] . "{$enumClass};";
+        if ($enums) {
+            throw_unless(isset($options['enums']['namespace']), EnumsNamespaceMissingException::class);
+
+            foreach ($enums as $enumClass => $value) {
+                $enumStrings[] = 'use ' . $options['enums']['namespace'] . "{$enumClass};";
+            }
+            if ($enumStrings) {
+                $enumStrings[] = 'use Illuminate\Validation\Rules\Enum;';
+            }
+            $enumStrings[] = 'use Illuminate\Foundation\Http\FormRequest;';
+            sort($enumStrings);
+            $enumsString = implode("\n", $enumStrings);
         }
-        if ($enumStrings) {
-            $enumStrings[] = 'use Illuminate\Validation\Rules\Enum;';
-        }
-        $enumStrings[] = 'use Illuminate\Foundation\Http\FormRequest;';
-        sort($enumStrings);
-        $enumsString = implode("\n", $enumStrings);
 
         return [$validationsString, $enumsString];
     }

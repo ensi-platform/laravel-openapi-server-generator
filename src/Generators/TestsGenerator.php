@@ -17,7 +17,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
 
     public function generate(SpecObjectInterface $specObject): void
     {
-        $namespaceData = $this->options['namespace'] ?? null;
+        $namespaceData = $this->options['pest_tests']['namespace'] ?? null;
         if (!is_array($namespaceData)) {
             throw new InvalidArgumentException("TestsGenerator must be configured with array as 'namespace'");
         }

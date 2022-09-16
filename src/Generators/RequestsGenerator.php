@@ -3,7 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
-use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3RequestSchema;
+use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3Schema;
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3ContentTypeEnum;
 use InvalidArgumentException;
 use RuntimeException;
@@ -14,7 +14,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
     public function generate(SpecObjectInterface $specObject): void
     {
-        $namespaceData = $this->options['namespace'] ?? null;
+        $namespaceData = $this->options['requests']['namespace'] ?? null;
         if (!is_array($namespaceData)) {
             throw new InvalidArgumentException("RequestsGenerator must be configured with array as 'namespace'");
         }
@@ -57,8 +57,11 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
                 $validationRules = '//';
                 $usesEnums = 'use Illuminate\Foundation\Http\FormRequest;';
-                if (isset(get_object_vars($route)['requestBody'])) {
-                    [$validationRules, $usesEnums] = $this->getPropertyRules($route->requestBody);
+                if (std_object_has($route,'requestBody')) {
+                    $contentType = OpenApi3ContentTypeEnum::tryFrom(array_keys(get_object_vars($route->requestBody->content))[0]);
+                    if ($contentType) {
+                        [$validationRules, $usesEnums] = $this->getPropertyRules($contentType, $route->requestBody);
+                    }
                 }
 
                 $requests[] = compact('className', 'newNamespace', 'validationRules', 'usesEnums');
@@ -68,10 +71,10 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
         return $requests;
     }
 
-    protected function getPropertyRules($requestBody): array
+    protected function getPropertyRules(OpenApi3ContentTypeEnum $contentType, $requestBody): array
     {
-        $contentType = array_keys(get_object_vars($requestBody->content))[0];
-        $request = OpenApi3RequestSchema::fromSplClass(OpenApi3ContentTypeEnum::from($contentType), $requestBody);
+        $request = new OpenApi3Schema();
+        $request->fillFromStdRequestBody($contentType, $requestBody);
 
         return $request->object->toLaravelValidationRules($this->options);
     }

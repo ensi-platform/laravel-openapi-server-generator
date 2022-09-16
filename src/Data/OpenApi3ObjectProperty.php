@@ -10,45 +10,45 @@ use stdClass;
 class OpenApi3ObjectProperty
 {
     public function __construct(
-        public string|null $name = null,
-        public string|null $type = null,
-        public string|null $format = null,
-        public bool|null $required = null,
-        public bool|null $nullable = null,
-        public string|null $enumClass = null,
-        public OpenApi3Object|null $object = null,
-        public OpenApi3ObjectProperty|null $items = null,
+        public string $type,
+        public ?string $name = null,
+        public ?string $format = null,
+        public bool $required = false,
+        public bool $nullable = false,
+        public ?string $enumClass = null,
+        public ?OpenApi3Object $object = null,
+        public ?OpenApi3ObjectProperty $items = null,
     ) {
         //
     }
 
-    public function getPropertyFromProperty(string $propertyName, stdClass $stdProperty)
+    public function fillFromStdProperty(string $propertyName, stdClass $stdProperty): void
     {
-        if (isset(get_object_vars($stdProperty)['required'])) {
+        if (std_object_has($stdProperty,'required')) {
             $this->required = true;
         }
-        if (isset(get_object_vars($stdProperty)['nullable'])) {
+        if (std_object_has($stdProperty, 'nullable')) {
             $this->nullable = true;
         }
-        if (isset(get_object_vars($stdProperty)['format'])) {
+        if (std_object_has($stdProperty, 'format')) {
             $this->format = $stdProperty->format;
         }
-        if (isset(get_object_vars($stdProperty)['x-lg-enum-class'])) {
+        if (std_object_has($stdProperty, 'x-lg-enum-class')) {
             $this->enumClass = $stdProperty->{'x-lg-enum-class'};
         }
-        if (isset(get_object_vars($stdProperty)['type'])) {
+        if (std_object_has($stdProperty, 'type')) {
             $this->type = $stdProperty->type;
         }
 
         switch (OpenApi3PropertyTypeEnum::from($stdProperty->type)) {
             case OpenApi3PropertyTypeEnum::OBJECT:
                 $this->object = new OpenApi3Object();
-                $this->object->getPropertiesFromObject($stdProperty);
+                $this->object->fillFromStdObject($stdProperty);
 
                 break;
             case OpenApi3PropertyTypeEnum::ARRAY:
-                $this->items = new OpenApi3ObjectProperty();
-                $this->items->getPropertyFromProperty("{$propertyName}.*", $stdProperty->items);
+                $this->items = new OpenApi3ObjectProperty(type: $stdProperty->items->type);
+                $this->items->fillFromStdProperty("{$propertyName}.*", $stdProperty->items);
 
                 break;
             default:

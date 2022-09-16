@@ -20,7 +20,6 @@ return [
             ],
             'requests' => [
                 'namespace' => ["Controllers" => "Requests"],
-                'enums_namespace' => "App\\Http\\ApiV1\\OpenApiGenerated\\Enums\\",
             ],
             'routes' => [
                 'namespace' => "App\\Http\\ApiV1\\OpenApiGenerated\\",

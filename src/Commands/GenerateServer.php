@@ -4,7 +4,7 @@ namespace Ensi\LaravelOpenApiServerGenerator\Commands;
 
 use cebe\openapi\Reader;
 use cebe\openapi\SpecObjectInterface;
-use Ensi\LaravelOpenApiServerGenerator\Exceptions\RequestsEnumsNamespaceMissingException;
+use Ensi\LaravelOpenApiServerGenerator\Exceptions\EnumsNamespaceMissingException;
 use Illuminate\Console\Command;
 use LogicException;
 
@@ -69,8 +69,8 @@ class GenerateServer extends Command
             $this->infoIfVerbose("Generating files for entity \"$entity\" using generator \"$generatorClass\"");
 
             try {
-                resolve($generatorClass)->setOptions($optionsPerEntity[$entity])->generate($specObject);
-            } catch (RequestsEnumsNamespaceMissingException) {
+                resolve($generatorClass)->setOptions($optionsPerEntity)->generate($specObject);
+            } catch (EnumsNamespaceMissingException) {
                 $this->error("Option \"enums_namespace\" for entity \"$entity\" are not set in \"api_docs_mappings\" config for source \"$sourcePath\"");
             }
         }
