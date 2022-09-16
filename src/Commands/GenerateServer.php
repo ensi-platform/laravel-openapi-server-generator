@@ -67,6 +67,7 @@ class GenerateServer extends Command
             }
 
             $this->infoIfVerbose("Generating files for entity \"$entity\" using generator \"$generatorClass\"");
+
             try {
                 resolve($generatorClass)->setOptions($optionsPerEntity[$entity])->generate($specObject);
             } catch (RequestsEnumNamespaceMissingException) {
