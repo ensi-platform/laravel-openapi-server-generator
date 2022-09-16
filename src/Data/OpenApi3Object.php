@@ -3,7 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Data;
 
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3PropertyTypeEnum;
-use Ensi\LaravelOpenApiServerGenerator\Exceptions\RequestsEnumNamespaceMissingException;
+use Ensi\LaravelOpenApiServerGenerator\Exceptions\RequestsEnumsNamespaceMissingException;
 use Illuminate\Support\Collection;
 use stdClass;
 
@@ -61,7 +61,7 @@ class OpenApi3Object
         }
         $validationsString = implode("\n            ", $validationStrings);
 
-        throw_unless(isset($options['enums_namespace']), RequestsEnumNamespaceMissingException::class);
+        throw_unless(isset($options['enums_namespace']), RequestsEnumsNamespaceMissingException::class);
         $enumStrings = [];
         foreach ($enums as $enumClass => $value) {
             $enumStrings[] = 'use ' . $options['enums_namespace'] . "{$enumClass};";

@@ -4,7 +4,7 @@ namespace Ensi\LaravelOpenApiServerGenerator\Exceptions;
 
 use Exception;
 
-class RequestsEnumNamespaceMissingException extends Exception
+class RequestsEnumsNamespaceMissingException extends Exception
 {
     //
 }
