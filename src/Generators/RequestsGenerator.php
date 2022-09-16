@@ -73,7 +73,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
         $contentType = array_keys(get_object_vars($requestBody->content))[0];
         $request = OpenApi3RequestSchema::fromSplClass(OpenApi3ContentTypeEnum::from($contentType), $requestBody);
 
-        return $request->object->toLaravelValidationRules();
+        return $request->object->toLaravelValidationRules($this->options);
     }
 
     protected function createRequestsFiles(array $requests, string $template): void

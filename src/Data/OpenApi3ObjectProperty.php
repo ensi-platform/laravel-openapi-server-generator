@@ -55,7 +55,7 @@ class OpenApi3ObjectProperty
         }
     }
 
-    public function getLaravelValidationsAndEnums(array &$validations = [], array &$enums = [], string $namePrefix = null): array
+    public function getLaravelValidationsAndEnums(array $options, array &$validations = [], array &$enums = [], string $namePrefix = null): array
     {
         $name = "{$namePrefix}{$this->name}";
 
@@ -69,7 +69,7 @@ class OpenApi3ObjectProperty
             $validations[$name][] = "new Enum({$this->enumClass}::class)";
             $enums[$this->enumClass] = true;
         } else {
-            [$currentValidations, $currentEnums] = $this->getValidationsAndEnumsByTypeAndFormat($validations, $enums, $name);
+            [$currentValidations, $currentEnums] = $this->getValidationsAndEnumsByTypeAndFormat($options, $validations, $enums, $name);
             $validations = array_merge($validations, $currentValidations);
             $enums = array_merge($enums, $currentEnums);
         }
@@ -77,7 +77,7 @@ class OpenApi3ObjectProperty
         return [$validations, $enums];
     }
 
-    protected function getValidationsAndEnumsByTypeAndFormat(array &$validations, array &$enums, string $name): array
+    protected function getValidationsAndEnumsByTypeAndFormat(array $options, array &$validations, array &$enums, string $name): array
     {
         $type = OpenApi3PropertyTypeEnum::from($this->type);
         $format = OpenApi3PropertyFormatEnum::tryFrom($this->format);
@@ -116,7 +116,7 @@ class OpenApi3ObjectProperty
                 break;
             case OpenApi3PropertyTypeEnum::OBJECT:
                 foreach ($this->object->properties ?? [] as $property) {
-                    [$currentValidations, $currentEnums] = $property->getLaravelValidationsAndEnums($validations, $enums, "{$name}.");
+                    [$currentValidations, $currentEnums] = $property->getLaravelValidationsAndEnums($options, $validations, $enums, "{$name}.");
                     $validations = array_merge($validations, $currentValidations);
                     $enums = array_merge($enums, $currentEnums);
                 }
@@ -124,7 +124,7 @@ class OpenApi3ObjectProperty
                 break;
             case OpenApi3PropertyTypeEnum::ARRAY:
                 $validations[$name][] = "'{$type->toLaravelValidationRule()->value}'";
-                [$currentValidations, $currentEnums] = $this->items->getLaravelValidationsAndEnums($validations, $enums, "{$name}.*");
+                [$currentValidations, $currentEnums] = $this->items->getLaravelValidationsAndEnums($options, $validations, $enums, "{$name}.*");
                 $validations = array_merge($validations, $currentValidations);
                 $enums = array_merge($enums, $currentEnums);
         }
