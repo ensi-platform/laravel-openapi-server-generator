@@ -73,7 +73,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                             $parsedRouteHandler->namespace => [
                                 'class_name' => $class,
                                 'namespace' => "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class} as {$class}",
-                            ]
+                            ],
                         ]
                     ),
                     'count' => $count,
@@ -88,7 +88,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                     $parsedRouteHandler->namespace => [
                         'class_name' => $parsedRouteHandler->class,
                         'namespace' => "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class}",
-                    ]
+                    ],
                 ],
                 'count' => 1,
             ];
