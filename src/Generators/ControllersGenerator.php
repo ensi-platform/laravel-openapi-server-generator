@@ -122,7 +122,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     '{{ namespace }}' => $namespace,
                     '{{ className }}' => $className,
                     '{{ methods }}' => $methodsString,
-                    '{{ requestsNamespaces }}' => $this->formatNamespaces($controller['requestsNamespaces']),
+                    '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
                 ])
             );
         }
@@ -131,5 +131,13 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     private function formatActionParamsAsString(array $params): string
     {
         return implode(', ', array_map(fn (array $param) => $param['type'] . " $" . $param['name'], $params));
+    }
+
+    protected function formatRequestNamespaces(array $namespaces): string
+    {
+        $namespaces = array_unique($namespaces);
+        sort($namespaces);
+
+        return implode("\n", array_map(fn (string $namespaces) => "use {$namespaces};", $namespaces));
     }
 }

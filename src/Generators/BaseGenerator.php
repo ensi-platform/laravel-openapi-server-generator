@@ -71,12 +71,4 @@ class BaseGenerator
         $this->filesystem->ensureDirectoryExists($toDir);
         $this->filesystem->cleanDirectory($toDir);
     }
-
-    protected function formatNamespaces(array $namespaces): string
-    {
-        $namespaces = array_unique($namespaces);
-        sort($namespaces);
-
-        return implode("\n", array_map(fn (string $namespaces) => "use {$namespaces};", $namespaces));
-    }
 }
