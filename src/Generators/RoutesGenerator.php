@@ -28,9 +28,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                 $routeMiddleware = $route->{'x-lg-middleware'} ?? null;
                 $routeWithoutMiddleware = $route->{'x-lg-without-middleware'} ?? null;
                 if ($handler) {
-                    [$handler, $controllerNamespace] = $this->getControllerInfoFromHandler($handler);
-
-                    $controllerNamespaces[] = $controllerNamespace;
+                    $handler = $this->getControllerInfoFromHandler($controllerNamespaces, $handler);
 
                     $routesStrings .= "Route::{$method}('{$this->trimPath($path)}', {$handler})";
                     $routesStrings .= $routeName ? "->name('{$routeName}')": "";
@@ -41,7 +39,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
             }
         }
 
-        $controllerNamespacesStrings = $this->formatNamespaces($controllerNamespaces);
+        $controllerNamespacesStrings = $this->formatControllerNamespaces($controllerNamespaces);
 
         $routesPath = $this->getNamespacedFilePath("routes", $namespace);
         if ($this->filesystem->exists($routesPath)) {
@@ -58,13 +56,45 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         );
     }
 
-    private function getControllerInfoFromHandler(string $handler): array
+    private function getControllerInfoFromHandler(array &$controllerNamespaces, string $handler): string
     {
         $parsedRouteHandler = $this->routeHandlerParser->parse($handler);
         $class = $parsedRouteHandler->class . '::class';
         $method = $parsedRouteHandler->method;
 
-        return [$method ? "[$class, '$method']" : "$class", "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class}"];
+        if (isset($controllerNamespaces[$parsedRouteHandler->class])) {
+            if (!isset($controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace])) {
+                $count = ++$controllerNamespaces[$parsedRouteHandler->class]['count'];
+                $class = "{$parsedRouteHandler->class}{$count}";
+                $controllerNamespaces[$parsedRouteHandler->class] = [
+                    'items' => array_merge(
+                        $controllerNamespaces[$parsedRouteHandler->class]['items'],
+                        [
+                            $parsedRouteHandler->namespace => [
+                                'class_name' => $class,
+                                'namespace' => "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class} as {$class}",
+                            ],
+                        ]
+                    ),
+                    'count' => $count,
+                ];
+                $class = $class . '::class';
+            } else {
+                $class = $controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace]['class_name'] . '::class';
+            }
+        } else {
+            $controllerNamespaces[$parsedRouteHandler->class] = [
+                'items' => [
+                    $parsedRouteHandler->namespace => [
+                        'class_name' => $parsedRouteHandler->class,
+                        'namespace' => "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class}",
+                    ],
+                ],
+                'count' => 1,
+            ];
+        }
+
+        return $method ? "[$class, '$method']" : "$class";
     }
 
     private function formatMiddleware(string $middleware): string
@@ -76,5 +106,19 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         }, explode(",", $middleware));
 
         return '[' . implode(', ', $parts) . ']';
+    }
+
+    private function formatControllerNamespaces(array $controllerNamespaces): string
+    {
+        $namespaces = [];
+        foreach ($controllerNamespaces as $controllerNamespacesByClassName) {
+            foreach ($controllerNamespacesByClassName['items'] as $controllerNamespace) {
+                $namespaces[] = $controllerNamespace['namespace'];
+            }
+        }
+
+        sort($namespaces);
+
+        return implode("\n", array_map(fn (string $namespace) => "use {$namespace};", $namespaces));
     }
 }
