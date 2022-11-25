@@ -23,6 +23,10 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
         $paths = $openApiData->paths ?: [];
         foreach ($paths as $routes) {
             foreach ($routes as $method => $route) {
+                $requestName = null;
+                $requestClassName = null;
+                $methodWithRequest = in_array(strtoupper($method), $this->methodsWithRequests);
+
                 if (!empty($route->{'x-lg-skip-controller-generation'})) {
                     continue;
                 }
@@ -42,12 +46,21 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                         'className' => $handler->class,
                         'namespace' => $handler->namespace,
                         'actions' => [],
+                        'requestsNamespaces' => [],
                     ];
+                }
+
+                if ($methodWithRequest && empty($route->{'x-lg-skip-request-generation'})) {
+                    $requestClassName = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
+                    $requestName = lcfirst($requestClassName);
+                    $controllers[$fqcn]['requestsNamespaces'][] = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Requests') . '\\' .  ucfirst($requestClassName);
+                } elseif ($methodWithRequest) {
+                    $controllers[$fqcn]['requestsNamespaces'][] = 'Illuminate\Http\Request';
                 }
 
                 $controllers[$fqcn]['actions'][] = [
                     'name' => $handler->method ?: '__invoke',
-                    'parameters' => array_merge($this->extractPathParameters($route), $this->getActionExtraParameters($method)),
+                    'parameters' => array_merge($this->extractPathParameters($route), $this->getActionExtraParameters($methodWithRequest, $requestName, $requestClassName)),
                 ];
             }
         }
@@ -65,11 +78,16 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
         ], $oasRoutePath);
     }
 
-    private function getActionExtraParameters(string $method): array
+    private function getActionExtraParameters(bool $methodWithRequest, $requestName = null, $requestClassName = null): array
     {
-        return in_array(strtoupper($method), $this->methodsWithRequests)
-            ? [['name' => 'request', 'type' => 'Request']]
-            : [];
+        if ($methodWithRequest) {
+            return [[
+                'name' => $requestName ?? 'request',
+                'type' => $requestClassName ?? 'Request',
+            ]];
+        }
+
+        return [];
     }
 
     private function createControllersFiles(array $controllers, string $template): void
@@ -104,6 +122,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     '{{ namespace }}' => $namespace,
                     '{{ className }}' => $className,
                     '{{ methods }}' => $methodsString,
+                    '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
                 ])
             );
         }
@@ -112,5 +131,13 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     private function formatActionParamsAsString(array $params): string
     {
         return implode(', ', array_map(fn (array $param) => $param['type'] . " $" . $param['name'], $params));
+    }
+
+    protected function formatRequestNamespaces(array $namespaces): string
+    {
+        $namespaces = array_unique($namespaces);
+        sort($namespaces);
+
+        return implode("\n", array_map(fn (string $namespaces) => "use {$namespaces};", $namespaces));
     }
 }
