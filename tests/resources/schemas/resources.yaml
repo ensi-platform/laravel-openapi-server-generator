@@ -1,0 +1,128 @@
+#Objects
+ResourceFillableForTestValidationRules:
+  type: object
+  properties:
+    field_integer:
+      type: integer
+      description: Поле типа integer
+    field_string:
+      type: string
+      description: Поле типа string
+    field_boolean:
+      type: boolean
+      description: Поле типа boolean
+    field_number:
+      type: number
+      description: Поле типа number
+    field_enum:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+    field_array:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+    field_object:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+
+    field_integer_required:
+      type: integer
+      description: Поле типа integer
+      required: true
+    field_string_required:
+      type: string
+      description: Поле типа string
+      required: true
+    field_boolean_required:
+      type: boolean
+      description: Поле типа boolean
+      required: true
+    field_number_required:
+      type: number
+      description: Поле типа number
+      required: true
+    field_enum_required:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+    field_array_required:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+      required: true
+    field_object_required:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+      required: true
+
+    field_integer_nullable:
+      type: integer
+      description: Поле типа integer
+      nullable: true
+    field_string_nullable:
+      type: string
+      description: Поле типа string
+      nullable: true
+    field_boolean_nullable:
+      type: boolean
+      description: Поле типа boolean
+      nullable: true
+    field_number_nullable:
+      type: number
+      description: Поле типа number
+      nullable: true
+    field_enum_nullable:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+      nullable: true
+    field_array_nullable:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+      nullable: true
+    field_object_nullable:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+      nullable: true
+ResourceRequiredForTestValidationRules:
+  type: object
+  required:
+    - field_integer
+    - field_string
+    - field_boolean
+    - field_number
+    - field_enum
+    - field_array
+    - field_object
+
+#Requests
+ResourceForTestValidationRulesRequest:
+      allOf:
+        - $ref: '#/ResourceFillableForTestValidationRules'
+        - $ref: '#/ResourceRequiredForTestValidationRules'

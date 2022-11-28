@@ -82,17 +82,10 @@ If the file already exists it IS NOT overriden with each generation.
 Form Request class name is `ucFirst(operationId)`. You can override it with `x-lg-request-class-name`  
 You can skip generating form request for a give route with `x-lg-skip-request-generation: true` directive.  
 
-When generating a request, the rules for validating request fields are automatically generated.  
+When generating a request, the Laravel Validation rules for request fields are automatically generated.  
+Validation rules generate based on the field type and required field.    
 For fields whose values should only take the values of some enum, you must specify the `x-lg-enum-class option`.
 E.g.: `x-lg-enum-class: 'CustomerGenderEnum'`.
-For this feature to work correctly, you must set the `enums_namespace` option in the configs for requests.  
-E.g.
-
-```php
-'requests' => [
-    'enums_namespace' => "App\\Http\\ApiV1\\OpenApiGenerated\\Enums\\"
-],
-```
 
 ### 'enums' => EnumsGenerator::class
 

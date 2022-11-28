@@ -1,6 +1,6 @@
 <?php
 
-namespace Ensi\LaravelOpenApiServerGenerator\Data;
+namespace Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3;
 
 use Ensi\LaravelOpenApiServerGenerator\Enums\LaravelValidationRuleEnum;
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3PropertyFormatEnum;

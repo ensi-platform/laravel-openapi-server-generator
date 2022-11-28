@@ -73,6 +73,19 @@ paths:
       operationId: testWithoutResponses
       x-lg-handler: '\App\Http\Controllers\WithoutResponsesController@testWithoutResponses'
       x-lg-skip-request-generation: true
+  /resources:test-laravel-validations-request:
+    post:
+      operationId: laravelValidationsRequest
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testLaravelValidationsRequest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/resources.yaml#/ResourceForTestValidationRulesRequest'
+      responses:
+        "200":
+          description: Успешный ответ
 
 components:
   responses:

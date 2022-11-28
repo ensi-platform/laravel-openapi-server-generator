@@ -32,9 +32,16 @@ class BaseGenerator
         return $this;
     }
 
-    protected function replacePlaceholders(string $content, array $placeholders): string
+    protected function replacePlaceholders(string $content, array $placeholders, bool $removeExcessLineBreaks = false): string
     {
-        return str_replace(array_keys($placeholders), array_values($placeholders), $content);
+        $content = str_replace(array_keys($placeholders), array_values($placeholders), $content);
+
+        // Убираем двойные переносы строк
+        if ($removeExcessLineBreaks) {
+            $content = preg_replace("/([\n]+){3}/", "\n\n", $content);
+        }
+
+        return $content;
     }
 
     protected function trimPath(string $path): string

@@ -3,7 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
-use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3Schema;
+use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3\OpenApi3Schema;
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3ContentTypeEnum;
 use InvalidArgumentException;
 use RuntimeException;
@@ -56,7 +56,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                 }
 
                 $validationRules = '//';
-                $usesEnums = 'use Illuminate\Foundation\Http\FormRequest;';
+                $usesEnums = '';
                 if (std_object_has($route, 'requestBody')) {
                     $contentType = OpenApi3ContentTypeEnum::tryFrom(array_keys(get_object_vars($route->requestBody->content))[0]);
                     if ($contentType) {
@@ -81,7 +81,12 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
     protected function createRequestsFiles(array $requests, string $template): void
     {
-        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace, 'validationRules' => $validationRules, 'usesEnums' => $usesEnums]) {
+        foreach ($requests as [
+            'className' => $className,
+            'newNamespace' => $newNamespace,
+            'validationRules' => $validationRules,
+            'usesEnums' => $usesEnums
+        ]) {
             $filePath = $this->getNamespacedFilePath($className, $newNamespace);
             if ($this->filesystem->exists($filePath)) {
                 continue;
@@ -94,7 +99,8 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     '{{ uses }}' => $usesEnums,
                     '{{ className }}' => $className,
                     '{{ rules }}' => $validationRules,
-                ])
+                ],
+                true)
             );
         }
     }

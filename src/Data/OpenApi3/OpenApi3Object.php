@@ -1,6 +1,6 @@
 <?php
 
-namespace Ensi\LaravelOpenApiServerGenerator\Data;
+namespace Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3;
 
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3PropertyTypeEnum;
 use Ensi\LaravelOpenApiServerGenerator\Exceptions\EnumsNamespaceMissingException;
@@ -57,26 +57,31 @@ class OpenApi3Object
             $enums = array_merge($propertyEnums, $enums);
         }
 
-        $validationStrings = [];
-        foreach ($validations as $propertyName => $validation) {
-            $validationString = implode(', ', $validation);
-            $validationStrings[] = "'{$propertyName}' => [{$validationString}],";
+        if ($validations) {
+            $validationStrings = [];
+            foreach ($validations as $propertyName => $validation) {
+                $validationString = implode(', ', $validation);
+                $validationStrings[] = "'{$propertyName}' => [{$validationString}],";
+            }
+            $validationsString = implode("\n            ", $validationStrings);
+        } else {
+            $validationsString = '';
         }
-        $validationsString = implode("\n            ", $validationStrings);
 
-        $enumStrings = [];
         if ($enums) {
             throw_unless(isset($options['enums']['namespace']), EnumsNamespaceMissingException::class);
 
+            $enumStrings = [];
             foreach ($enums as $enumClass => $value) {
                 $enumStrings[] = 'use ' . $options['enums']['namespace'] . "{$enumClass};";
             }
             if ($enumStrings) {
                 $enumStrings[] = 'use Illuminate\Validation\Rules\Enum;';
             }
-            $enumStrings[] = 'use Illuminate\Foundation\Http\FormRequest;';
             sort($enumStrings);
             $enumsString = implode("\n", $enumStrings);
+        } else {
+            $enumsString = '';
         }
 
         return [$validationsString, $enumsString];
