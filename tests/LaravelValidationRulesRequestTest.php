@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Config;
 use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertStringEqualsFile;
 
-test('Create Request from ResourceForTestValidationRules', function () {
+test('Check creating Laravel Validation Rules in Request', function () {
     /** @var TestCase $this */
     $mapping = Config::get('openapi-server-generator.api_docs_mappings');
     $mappingValue = current($mapping);
@@ -33,5 +33,9 @@ test('Create Request from ResourceForTestValidationRules', function () {
 
     artisan(GenerateServer::class);
 
-    assertStringEqualsFile(__DIR__ . '/expects/LaravelValidationsRequest.php', $request);
+    $validationsStart = strpos($request, "public function rules(): array") + 37;
+    $validationsEnd = strpos($request, '];', $validationsStart) + 2;
+    $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
+
+    assertStringEqualsFile(__DIR__ . '/expects/LaravelValidationsRequest.php', $validations);
 });

@@ -1,20 +1,3 @@
-<?php
-
-namespace App\Http\Requests;
-
-use App\Http\ApiV1\OpenApiGenerated\Enums\TestIntegerEnum;
-use App\Http\ApiV1\Support\Requests\BaseFormRequest;
-use Illuminate\Validation\Rules\Enum;
-
-class LaravelValidationsRequest extends BaseFormRequest
-{
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array
-    {
         return [
             'field_object_nullable' => ['nullable'],
             'field_object_nullable.field' => ['integer'],
@@ -44,5 +27,3 @@ class LaravelValidationsRequest extends BaseFormRequest
             'field_string' => ['required', 'string'],
             'field_integer' => ['required', 'integer'],
         ];
-    }
-}
