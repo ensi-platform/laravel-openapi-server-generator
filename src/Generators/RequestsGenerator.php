@@ -94,13 +94,16 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
             $this->filesystem->put(
                 $filePath,
-                $this->replacePlaceholders($template, [
+                $this->replacePlaceholders(
+                    $template,
+                    [
                     '{{ namespace }}' => $newNamespace,
                     '{{ uses }}' => $usesEnums,
                     '{{ className }}' => $className,
                     '{{ rules }}' => $validationRules,
                 ],
-                true)
+                    true
+                )
             );
         }
     }

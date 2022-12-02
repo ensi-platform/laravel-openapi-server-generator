@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Http\ApiV1\Support\Requests\BaseFormRequest;
 use App\Http\ApiV1\OpenApiGenerated\Enums\TestIntegerEnum;
+use App\Http\ApiV1\Support\Requests\BaseFormRequest;
 use Illuminate\Validation\Rules\Enum;
 
 class LaravelValidationsRequest extends BaseFormRequest
