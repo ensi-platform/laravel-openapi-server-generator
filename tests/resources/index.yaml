@@ -75,14 +75,14 @@ paths:
       x-lg-skip-request-generation: true
   /resources:test-laravel-validations-request:
     post:
-      operationId: laravelValidationsRequest
+      operationId: laravelValidations
       x-lg-handler: '\App\Http\Controllers\ResourcesController@testLaravelValidationsRequest'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './schemas/resources.yaml#/ResourceForTestValidationRulesRequest'
+              $ref: './schemas/resources.yaml#/ResourceForTestValidationRules'
       responses:
         "200":
           description: Успешный ответ
