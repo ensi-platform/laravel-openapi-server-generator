@@ -45,11 +45,18 @@ class BaseGenerator
     protected function getReplacedNamespace(?string $baseNamespace, string $replaceFromNamespace, string $replaceToNamespace): ?string
     {
         if ($baseNamespace) {
-            if (!str_contains($baseNamespace, $replaceFromNamespace)) {
-                throw new RuntimeException("Can't replace namespace");
-            }
+            return $this->replace($baseNamespace, $replaceFromNamespace, $replaceToNamespace)
+                ?? throw new RuntimeException("Can't replace namespace");
+        }
 
-            return str_replace($replaceFromNamespace, $replaceToNamespace, $baseNamespace);
+        return null;
+    }
+
+    protected function getReplacedClassName(?string $baseClassName, string $replaceFromClassName, string $replaceToClassName): ?string
+    {
+        if ($baseClassName) {
+            return $this->replace($baseClassName, $replaceFromClassName, $replaceToClassName)
+                ?? throw new RuntimeException("Can't replace class name");
         }
 
         return null;
@@ -70,5 +77,14 @@ class BaseGenerator
 
         $this->filesystem->ensureDirectoryExists($toDir);
         $this->filesystem->cleanDirectory($toDir);
+    }
+
+    protected function replace(string $base, string $from, string $to): ?string
+    {
+        if (!str_contains($base, $from)) {
+            return null;
+        }
+
+        return str_replace($from, $to, $base);
     }
 }

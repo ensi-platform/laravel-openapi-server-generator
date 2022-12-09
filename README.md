@@ -94,7 +94,15 @@ Enums generator does NOT support `allOf`, `anyOf` and `oneOf` at the moment.
 Generates Pest test file for each `x-lg-handler`  
 You can exclude oas3 path from test generation using `x-lg-skip-tests-generation: true`.  
 If a test file already exists it is NOT overriden.  
-Test file class IS meant to be modified after generation.  
+Test file class IS meant to be modified after generation.
+
+### 'resources' => ResourcesGenerator::class
+
+Generates Pest test file for each `x-lg-handler`
+You can exclude oas3 path from test generation using `x-lg-skip-resource-generation: true`.  
+If a test file already exists it is NOT overriden.  
+Resource file contains a set of fields according to the specification. 
+You also need to specify mixin DocBlock to autocomplete resource.
 
 ## Contributing
 

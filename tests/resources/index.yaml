@@ -92,9 +92,12 @@ components:
     Resource:
       type: object
       properties:
-        id:
-          type: integer
-          description: Идентификатор
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: Идентификатор
     TestIntegerEnum:
       type: integer
       description: >

@@ -1,0 +1,28 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Http\ApiV1\Support\Resources\BaseJsonResource;
+use Illuminate\Http\Request;
+
+/**
+ * Class {{ className }}
+ * @package {{ namespace }}
+ *
+ * @mixin
+ */
+class {{ className }} extends BaseJsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  Request  $request
+     * @return array
+     */
+    public function toArray($request): array
+    {
+        return [
+            {{ properties }}
+        ];
+    }
+}
