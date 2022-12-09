@@ -14,7 +14,7 @@ enum LaravelValidationRuleEnum: string
 
     // formats
     case DATE = 'date';
-    case DATE_TIME_FORMAT = 'date_format:Y-m-d\TH:i:s.u\Z';
+    case DATE_TIME = 'date_format:Y-m-d\TH:i:s.u\Z';
     case PASSWORD = 'password';
     case EMAIL = 'email';
     case IPV4 = 'ipv4';

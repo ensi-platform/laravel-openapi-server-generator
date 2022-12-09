@@ -5,9 +5,57 @@ ResourceFillableForTestValidationRules:
     field_integer:
       type: integer
       description: Поле типа integer
+    field_integer_double:
+      type: integer
+      format: double
+      description: Поле типа integer формат double (не поддерживается)
     field_string:
       type: string
       description: Поле типа string
+    field_string_date:
+      type: string
+      format: date
+      description: Поле типа string с форматом date
+    field_string_password:
+      type: string
+      format: password
+      description: Поле типа string с форматом password
+    field_string_byte:
+      type: string
+      format: byte
+      description: Поле типа string с форматом byte
+    field_string_binary:
+      type: string
+      format: binary
+      description: Поле типа string с форматом binary
+    field_string_email:
+      type: string
+      format: email
+      description: Поле типа string с форматом email
+    field_string_ipv4:
+      type: string
+      format: ipv4
+      description: Поле типа string с форматом ipv4
+    field_string_ipv6:
+      type: string
+      format: ipv6
+      description: Поле типа string с форматом ipv6
+    field_string_timezone:
+      type: string
+      format: timezone
+      description: Поле типа string с форматом timezone
+    field_string_phone:
+      type: string
+      format: phone
+      description: Поле типа string с форматом phone
+    field_string_url:
+      type: string
+      format: url
+      description: Поле типа string с форматом url
+    field_string_uuid:
+      type: string
+      format: uuid
+      description: Поле типа string с форматом uuid
     field_boolean:
       type: boolean
       description: Поле типа boolean
@@ -55,6 +103,7 @@ ResourceFillableForTestValidationRules:
       description: Поле, значение которого задается TestIntegerEnum
       x-lg-enum-class: 'TestIntegerEnum'
       example: 1
+      required: true
     field_array_required:
       type: array
       description: Поле типа array
@@ -71,6 +120,38 @@ ResourceFillableForTestValidationRules:
         field:
           type: integer
       required: true
+
+    field_integer_required_object:
+      type: integer
+      description: Поле типа integer
+    field_string_required_object:
+      type: string
+      description: Поле типа string
+    field_boolean_required_object:
+      type: boolean
+      description: Поле типа boolean
+    field_number_required_object:
+      type: number
+      description: Поле типа number
+    field_enum_required_object:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+    field_array_required_object:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+    field_object_required_object:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
 
     field_integer_nullable:
       type: integer
@@ -114,13 +195,13 @@ ResourceFillableForTestValidationRules:
 ResourceRequiredForTestValidationRules:
   type: object
   required:
-    - field_integer
-    - field_string
-    - field_boolean
-    - field_number
-    - field_enum
-    - field_array
-    - field_object
+    - field_integer_required_object
+    - field_string_required_object
+    - field_boolean_required_object
+    - field_number_required_object
+    - field_enum_required_object
+    - field_array_required_object
+    - field_object_required_object
 
 #Requests
 ResourceForTestValidationRules:
