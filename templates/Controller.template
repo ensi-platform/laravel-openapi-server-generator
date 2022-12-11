@@ -2,10 +2,9 @@
 
 namespace {{ namespace }};
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+{{ requestsNamespaces }}
 
-class {{ className }} extends Controller
+class {{ className }}
 {
 {{ methods }}
 }
