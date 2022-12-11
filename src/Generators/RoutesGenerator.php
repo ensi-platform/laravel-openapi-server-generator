@@ -28,7 +28,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                 $routeMiddleware = $route->{'x-lg-middleware'} ?? null;
                 $routeWithoutMiddleware = $route->{'x-lg-without-middleware'} ?? null;
                 if ($handler) {
-                    $handler = $this->getControllerInfoFromHandler($controllerNamespaces, $handler);
+                    $handler = $this->formatHandler($handler, $controllerNamespaces);
 
                     $routesStrings .= "Route::{$method}('{$this->trimPath($path)}', {$handler})";
                     $routesStrings .= $routeName ? "->name('{$routeName}')": "";
@@ -56,31 +56,24 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
         );
     }
 
-    private function getControllerInfoFromHandler(array &$controllerNamespaces, string $handler): string
+    private function formatHandler(string $handler, array &$controllerNamespaces): string
     {
         $parsedRouteHandler = $this->routeHandlerParser->parse($handler);
-        $class = $parsedRouteHandler->class . '::class';
         $method = $parsedRouteHandler->method;
 
         if (isset($controllerNamespaces[$parsedRouteHandler->class])) {
-            if (!isset($controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace])) {
+            if (isset($controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace])) {
+                $class = $controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace]['class_name'] . '::class';
+            } else {
                 $count = ++$controllerNamespaces[$parsedRouteHandler->class]['count'];
                 $class = "{$parsedRouteHandler->class}{$count}";
-                $controllerNamespaces[$parsedRouteHandler->class] = [
-                    'items' => array_merge(
-                        $controllerNamespaces[$parsedRouteHandler->class]['items'],
-                        [
-                            $parsedRouteHandler->namespace => [
-                                'class_name' => $class,
-                                'namespace' => "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class} as {$class}",
-                            ],
-                        ]
-                    ),
-                    'count' => $count,
+                $controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace] = [
+                    'class_name' => $class,
+                    'namespace' => "{$parsedRouteHandler->namespace}\\{$parsedRouteHandler->class} as {$class}",
                 ];
+                $controllerNamespaces[$parsedRouteHandler->class]['count'] = $count;
+
                 $class = $class . '::class';
-            } else {
-                $class = $controllerNamespaces[$parsedRouteHandler->class]['items'][$parsedRouteHandler->namespace]['class_name'] . '::class';
             }
         } else {
             $controllerNamespaces[$parsedRouteHandler->class] = [
@@ -92,6 +85,8 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                 ],
                 'count' => 1,
             ];
+
+            $class = $parsedRouteHandler->class . '::class';
         }
 
         return $method ? "[$class, '$method']" : "$class";
