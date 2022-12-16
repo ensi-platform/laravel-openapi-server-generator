@@ -106,6 +106,7 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                 }
                 $properties = array_merge($properties, $this->getProperties($partResponseData));
             }
+
             return $properties;
         }
 
@@ -123,6 +124,7 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
         foreach ($properties as $property) {
             $propertyStrings[] = "'$property' => \$this->$property,";
         }
+
         return implode("\n            ", $propertyStrings);
     }
 }
