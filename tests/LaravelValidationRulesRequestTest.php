@@ -103,7 +103,7 @@ test('Check valid creating Laravel Validation Rules in Request with non availabl
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
     // For test on Windows replace \r\n to \n
-    $validations = str_replace($validations, "\r\n", "\n");
+    $validations = str_replace("\r\n", "\n", $validations);
 
     assertStringEqualsFile(__DIR__ . '/expects/LaravelValidationsNonAvailableContentTypeRequest.php', $validations);
 });
