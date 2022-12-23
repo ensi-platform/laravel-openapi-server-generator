@@ -39,7 +39,8 @@ test('Check valid creating Laravel Validation Rules in Request with application/
 
     // For test on Windows replace \r\n to \n
     $actual = str_replace("\r\n", "\n", $validations);
-    $expect = str_replace("\r\n",
+    $expect = str_replace(
+        "\r\n",
         "\n",
         file_get_contents(__DIR__ . '/expects/LaravelValidationsApplicationJsonRequest.php')
     );
@@ -79,7 +80,8 @@ test('Check valid creating Laravel Validation Rules in Request with multipart/fo
 
     // For test on Windows replace \r\n to \n
     $actual = str_replace("\r\n", "\n", $validations);
-    $expect = str_replace("\r\n",
+    $expect = str_replace(
+        "\r\n",
         "\n",
         file_get_contents(__DIR__ . '/expects/LaravelValidationsMultipartFormDataRequest.php')
     );
@@ -119,7 +121,8 @@ test('Check valid creating Laravel Validation Rules in Request with non availabl
 
     // For test on Windows replace \r\n to \n
     $actual = str_replace("\r\n", "\n", $validations);
-    $expect = str_replace("\r\n",
+    $expect = str_replace(
+        "\r\n",
         "\n",
         file_get_contents(__DIR__ . '/expects/LaravelValidationsNonAvailableContentTypeRequest.php')
     );
