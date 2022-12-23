@@ -33,7 +33,8 @@ test('Check valid creating Laravel Validation Rules in Request with application/
 
     artisan(GenerateServer::class);
 
-    $validationsStart = strpos($request, "public function rules(): array") + 37;
+    $validationsStart = strpos($request, "public function rules(): array");
+    $validationsStart = strpos($request, "        return", $validationsStart);
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
 
@@ -74,7 +75,8 @@ test('Check valid creating Laravel Validation Rules in Request with multipart/fo
 
     artisan(GenerateServer::class);
 
-    $validationsStart = strpos($request, "public function rules(): array") + 37;
+    $validationsStart = strpos($request, "public function rules(): array");
+    $validationsStart = strpos($request, "        return", $validationsStart);
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
 
@@ -115,7 +117,8 @@ test('Check valid creating Laravel Validation Rules in Request with non availabl
 
     artisan(GenerateServer::class);
 
-    $validationsStart = strpos($request, "public function rules(): array") + 37;
+    $validationsStart = strpos($request, "public function rules(): array");
+    $validationsStart = strpos($request, "        return", $validationsStart);
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
 
