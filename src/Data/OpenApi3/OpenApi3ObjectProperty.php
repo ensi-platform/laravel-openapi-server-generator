@@ -33,9 +33,6 @@ class OpenApi3ObjectProperty
         if (std_object_has($stdProperty, 'x-lg-enum-class')) {
             $this->enumClass = $stdProperty->{'x-lg-enum-class'};
         }
-        if (std_object_has($stdProperty, 'type')) {
-            $this->type = $stdProperty->type;
-        }
 
         switch (OpenApi3PropertyTypeEnum::from($stdProperty->type)) {
             case OpenApi3PropertyTypeEnum::OBJECT:

@@ -72,6 +72,8 @@ class GenerateServer extends Command
                 resolve($generatorClass)->setOptions($optionsPerEntity)->generate($specObject);
             } catch (EnumsNamespaceMissingException) {
                 $this->error("Option \"enums_namespace\" for entity \"$entity\" are not set in \"api_docs_mappings\" config for source \"$sourcePath\"");
+
+                return self::FAILURE;
             }
         }
 
