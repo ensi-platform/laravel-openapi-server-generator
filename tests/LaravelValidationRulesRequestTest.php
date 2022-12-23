@@ -5,7 +5,7 @@ use Ensi\LaravelOpenApiServerGenerator\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use function Pest\Laravel\artisan;
-use function PHPUnit\Framework\assertStringEqualsFile;
+use function PHPUnit\Framework\assertEquals;
 
 test('Check valid creating Laravel Validation Rules in Request with application/json content type', function () {
     /** @var TestCase $this */
@@ -37,7 +37,14 @@ test('Check valid creating Laravel Validation Rules in Request with application/
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
 
-    assertStringEqualsFile(__DIR__ . '/expects/LaravelValidationsApplicationJsonRequest.php', $validations);
+    // For test on Windows replace \r\n to \n
+    $actual = str_replace("\r\n", "\n", $validations);
+    $expect = str_replace("\r\n",
+        "\n",
+        file_get_contents(__DIR__ . '/expects/LaravelValidationsApplicationJsonRequest.php')
+    );
+
+    assertEquals($expect, $actual, $validations);
 });
 
 test('Check valid creating Laravel Validation Rules in Request with multipart/form-data content type', function () {
@@ -70,7 +77,14 @@ test('Check valid creating Laravel Validation Rules in Request with multipart/fo
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
 
-    assertStringEqualsFile(__DIR__ . '/expects/LaravelValidationsMultipartFormDataRequest.php', $validations);
+    // For test on Windows replace \r\n to \n
+    $actual = str_replace("\r\n", "\n", $validations);
+    $expect = str_replace("\r\n",
+        "\n",
+        file_get_contents(__DIR__ . '/expects/LaravelValidationsMultipartFormDataRequest.php')
+    );
+
+    assertEquals($expect, $actual, $validations);
 });
 
 test('Check valid creating Laravel Validation Rules in Request with non available content type', function () {
@@ -102,8 +116,13 @@ test('Check valid creating Laravel Validation Rules in Request with non availabl
     $validationsStart = strpos($request, "public function rules(): array") + 37;
     $validationsEnd = strpos($request, '];', $validationsStart) + 2;
     $validations = substr($request, $validationsStart, $validationsEnd - $validationsStart);
-    // For test on Windows replace \r\n to \n
-    $validations = str_replace("\r\n", "\n", $validations);
 
-    assertStringEqualsFile(__DIR__ . '/expects/LaravelValidationsNonAvailableContentTypeRequest.php', $validations);
+    // For test on Windows replace \r\n to \n
+    $actual = str_replace("\r\n", "\n", $validations);
+    $expect = str_replace("\r\n",
+        "\n",
+        file_get_contents(__DIR__ . '/expects/LaravelValidationsNonAvailableContentTypeRequest.php')
+    );
+
+    assertEquals($expect, $actual, $validations);
 });
