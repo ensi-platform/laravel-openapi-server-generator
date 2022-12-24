@@ -98,7 +98,15 @@ Test file class IS meant to be modified after generation.
 
 ### 'resources' => ResourcesGenerator::class
 
-Generates Resource file for `x-lg-handler`
+Generates Resource file for `x-lg-handler`  
+Resource properties are generated relative to field in response, which can be set in the config
+```php
+'resources' => [
+    'response_key' => ['data']
+],
+```
+You can also specify `response_key` for endpoint using `x-lg-resource-response-key: data`  
+When specifying `response_key`, you can use the "dot" syntax to specify nesting, for example `data.field`  
 You can exclude resource generation using `x-lg-skip-resource-generation: true`.  
 If a resource file already exists it is NOT overriden.  
 Resource file contains a set of fields according to the specification. 

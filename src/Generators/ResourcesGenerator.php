@@ -8,8 +8,6 @@ use stdClass;
 
 class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
 {
-    private array $methods = ['GET', 'PATCH', 'POST', 'PUT'];
-
     public function generate(SpecObjectInterface $specObject): void
     {
         $resources = $this->extractResources($specObject);
@@ -26,8 +24,8 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
         $resources = [];
         $paths = $openApiData->paths ?: [];
         foreach ($paths as $routes) {
-            foreach ($routes as $method => $route) {
-                if (!in_array(strtoupper($method), $this->methods) || !empty($route->{'x-lg-skip-resource-generation'})) {
+            foreach ($routes as $route) {
+                if (!empty($route->{'x-lg-skip-resource-generation'})) {
                     continue;
                 }
 
@@ -53,9 +51,24 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                $responseData = $response->content?->{'application/json'}?->schema?->properties?->data ?? null;
+                $responseData = $response->content?->{'application/json'}?->schema?->properties ?? null;
+
+                $responseKey = $route->{'x-lg-resource-response-key'} ?? null;
+                if (!$responseKey) {
+                    $responseKey = $this->options['response_key'] ?? '';
+                }
+
+                $responseKeyParts = explode('.', $responseKey);
+                foreach ($responseKeyParts as $responseKeyPart) {
+                    $responseData = $responseData?->$responseKeyPart ?? null;
+                }
+
                 if (!$responseData) {
                     continue;
+                }
+
+                if (isset($responseData->type) && $responseData->type == 'array') {
+                    $responseData = $responseData->items;
                 }
 
                 $properties = $this->convertToString($this->getProperties($responseData));
@@ -92,10 +105,6 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
 
     private function getProperties(stdClass $responseData): array
     {
-        if (isset($responseData->type) && $responseData->type == 'array') {
-            $responseData = $responseData->items;
-        }
-
         if (isset($responseData->allOf)) {
             $properties = [];
 

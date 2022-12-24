@@ -28,7 +28,9 @@ return [
             'pest_tests' => [
                 'namespace' => ["Controllers" => "Tests"],
             ],
-            'resources' => [],
+            'resources' => [
+                'response_key' => 'data'
+            ],
         ],
     ],
 

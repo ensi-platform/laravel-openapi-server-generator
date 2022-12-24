@@ -2,16 +2,16 @@
 
 namespace {{ namespace }};
 
-use App\Http\ApiV1\Support\Resources\BaseJsonResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
 /**
  * Class {{ className }}
  * @package {{ namespace }}
  *
- * @mixin
+ * @mixin //todo
  */
-class {{ className }} extends BaseJsonResource
+class {{ className }} extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,6 +21,7 @@ class {{ className }} extends BaseJsonResource
      */
     public function toArray($request): array
     {
+        // todo
         return [
             {{ properties }}
         ];
