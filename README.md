@@ -67,7 +67,7 @@ Controller class IS meant to be modified after generation.
 
 Generates Laravel Form Requests for DELETE, PATCH, POST, PUT paths  
 Destination must be configured with array as namespace instead of string.  
-E.g 
+E.g.
 
 ```php
 'requests' => [
@@ -81,6 +81,11 @@ If the file already exists it IS NOT overriden with each generation.
 
 Form Request class name is `ucFirst(operationId)`. You can override it with `x-lg-request-class-name`  
 You can skip generating form request for a give route with `x-lg-skip-request-generation: true` directive.  
+
+When generating a request, the Laravel Validation rules for request fields are automatically generated.  
+Validation rules generate based on the field type and required field.    
+For fields whose values should only take the values of some enum, you must specify the `x-lg-enum-class option`.
+E.g.: `x-lg-enum-class: 'CustomerGenderEnum'`.
 
 ### 'enums' => EnumsGenerator::class
 

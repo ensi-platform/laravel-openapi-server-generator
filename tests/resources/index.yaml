@@ -73,6 +73,46 @@ paths:
       operationId: testWithoutResponses
       x-lg-handler: '\App\Http\Controllers\WithoutResponsesController@testWithoutResponses'
       x-lg-skip-request-generation: true
+  /resources:test-laravel-validations-application-json-request:
+    post:
+      operationId: laravelValidationsApplicationJson
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testLaravelValidationsApplicationJsonRequest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/resources.yaml#/ResourceForTestValidationRules'
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-laravel-validations-multipart-form-data-request:
+    post:
+      operationId: laravelValidationsMultipartFormData
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testLaravelValidationsMultipartFormDataRequest'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: './common_schemas.yaml#/MultipartFileUploadRequest'
+      responses:
+        "200":
+          description: Успешный ответ
+  /resources:test-laravel-validations-non-available-content-type:
+    post:
+      operationId: laravelValidationsNonAvailableContentType
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testLaravelValidationsNonAvailableContentTypeRequest'
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: pong
+      responses:
+        "200":
+          description: Успешный ответ
 
 components:
   responses:

@@ -3,6 +3,8 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
+use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3\OpenApi3Schema;
+use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3ContentTypeEnum;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -12,7 +14,7 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
     public function generate(SpecObjectInterface $specObject): void
     {
-        $namespaceData = $this->options['namespace'] ?? null;
+        $namespaceData = $this->options['requests']['namespace'] ?? null;
         if (!is_array($namespaceData)) {
             throw new InvalidArgumentException("RequestsGenerator must be configured with array as 'namespace'");
         }
@@ -53,16 +55,38 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                $requests[] = compact('className', 'newNamespace');
+                $validationRules = '//';
+                $usesEnums = '';
+                if (std_object_has($route, 'requestBody')) {
+                    $contentType = OpenApi3ContentTypeEnum::tryFrom(array_keys(get_object_vars($route->requestBody->content))[0]);
+                    if ($contentType) {
+                        [$validationRules, $usesEnums] = $this->getPropertyRules($contentType, $route->requestBody);
+                    }
+                }
+
+                $requests[] = compact('className', 'newNamespace', 'validationRules', 'usesEnums');
             }
         }
 
         return $requests;
     }
 
+    protected function getPropertyRules(OpenApi3ContentTypeEnum $contentType, $requestBody): array
+    {
+        $request = new OpenApi3Schema();
+        $request->fillFromStdRequestBody($contentType, $requestBody);
+
+        return $request->object->toLaravelValidationRules($this->options);
+    }
+
     protected function createRequestsFiles(array $requests, string $template): void
     {
-        foreach ($requests as ['className' => $className, 'newNamespace' => $newNamespace]) {
+        foreach ($requests as [
+            'className' => $className,
+            'newNamespace' => $newNamespace,
+            'validationRules' => $validationRules,
+            'usesEnums' => $usesEnums
+        ]) {
             $filePath = $this->getNamespacedFilePath($className, $newNamespace);
             if ($this->filesystem->exists($filePath)) {
                 continue;
@@ -70,10 +94,16 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 
             $this->filesystem->put(
                 $filePath,
-                $this->replacePlaceholders($template, [
+                $this->replacePlaceholders(
+                    $template,
+                    [
                     '{{ namespace }}' => $newNamespace,
+                    '{{ uses }}' => $usesEnums,
                     '{{ className }}' => $className,
-                ])
+                    '{{ rules }}' => $validationRules,
+                ],
+                    true
+                )
             );
         }
     }

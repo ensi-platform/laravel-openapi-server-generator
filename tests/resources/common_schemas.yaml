@@ -1,0 +1,7 @@
+MultipartFileUploadRequest:
+  type: object
+  properties:
+    file:
+      type: string
+      format: binary
+      description: Загружаемый файл

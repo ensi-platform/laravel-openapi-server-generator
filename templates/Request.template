@@ -3,6 +3,7 @@
 namespace {{ namespace }};
 
 use Illuminate\Foundation\Http\FormRequest;
+{{ uses }}
 
 class {{ className }} extends FormRequest
 {
@@ -24,7 +25,7 @@ class {{ className }} extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            {{ rules }}
         ];
     }
 }

@@ -16,7 +16,10 @@
     "autoload": {
         "psr-4": {
             "Ensi\\LaravelOpenApiServerGenerator\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
