@@ -41,8 +41,19 @@ class OpenApi3ObjectProperty
 
                 break;
             case OpenApi3PropertyTypeEnum::ARRAY:
-                $this->items = new OpenApi3ObjectProperty(type: $stdProperty->items->type);
-                $this->items->fillFromStdProperty("{$propertyName}.*", $stdProperty->items);
+                if (std_object_has($stdProperty, 'items')) {
+                    if (std_object_has($stdProperty->items, 'type')) {
+                        $this->items = new OpenApi3ObjectProperty(type: $stdProperty->items->type);
+                        $this->items->fillFromStdProperty("{$propertyName}.*", $stdProperty->items);
+                    } elseif (std_object_has($stdProperty->items, 'allOf')) {
+                        foreach ($stdProperty->items->allOf as $allOfItem) {
+                            if (!$this->items && std_object_has($allOfItem, 'type')) {
+                                $this->items = new OpenApi3ObjectProperty(type: $allOfItem->type);
+                            }
+                            $this->items?->fillFromStdProperty("{$propertyName}.*", $allOfItem);
+                        }
+                    }
+                }
 
                 break;
             default:
