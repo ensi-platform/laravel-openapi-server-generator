@@ -24,6 +24,14 @@ ResourceReadonlyForTestValidationRules:
         properties:
           field:
             type: integer
+    field_array_allOf_readonly:
+      type: array
+      description: Поле типа array с allOf
+      items:
+        allOf:
+          - type: string
+          - type: string
+            x-lg-enum-class: 'TestStringEnum'
     field_object_readonly:
       type: object
       description: Поле типа object
