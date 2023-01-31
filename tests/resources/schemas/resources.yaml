@@ -32,6 +32,11 @@ ResourceReadonlyForTestValidationRules:
           - type: string
           - type: string
             x-lg-enum-class: 'TestStringEnum'
+    field_allOf_readonly:
+      allOf:
+        - type: string
+        - type: string
+          x-lg-enum-class: 'TestStringEnum'
     field_object_readonly:
       type: object
       description: Поле типа object
