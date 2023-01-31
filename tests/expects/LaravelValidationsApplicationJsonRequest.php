@@ -38,6 +38,7 @@
             'field_integer_double_fillable' => ['integer'],
             'field_integer_fillable' => ['integer'],
             'field_object_readonly.field' => ['integer'],
+            'field_allOf_readonly' => [new Enum(TestStringEnum::class)],
             'field_array_allOf_readonly' => ['array'],
             'field_array_allOf_readonly.*' => [new Enum(TestStringEnum::class)],
             'field_array_readonly' => ['array'],

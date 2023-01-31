@@ -34,29 +34,26 @@ class OpenApi3ObjectProperty
             $this->enumClass = $stdProperty->{'x-lg-enum-class'};
         }
 
-        switch (OpenApi3PropertyTypeEnum::from($stdProperty->type)) {
-            case OpenApi3PropertyTypeEnum::OBJECT:
-                $this->object = new OpenApi3Object();
-                $this->object->fillFromStdObject($stdProperty);
+        if (std_object_has($stdProperty, 'type')) {
+            switch (OpenApi3PropertyTypeEnum::from($stdProperty->type)) {
+                case OpenApi3PropertyTypeEnum::OBJECT:
+                    $this->object = new OpenApi3Object();
+                    $this->object->fillFromStdObject($stdProperty);
 
-                break;
-            case OpenApi3PropertyTypeEnum::ARRAY:
-                if (std_object_has($stdProperty, 'items')) {
-                    if (std_object_has($stdProperty->items, 'type')) {
-                        $this->items = new OpenApi3ObjectProperty(type: $stdProperty->items->type);
-                        $this->items->fillFromStdProperty("{$propertyName}.*", $stdProperty->items);
-                    } elseif (std_object_has($stdProperty->items, 'allOf')) {
-                        foreach ($stdProperty->items->allOf as $allOfItem) {
-                            if (!$this->items && std_object_has($allOfItem, 'type')) {
-                                $this->items = new OpenApi3ObjectProperty(type: $allOfItem->type);
+                    break;
+                case OpenApi3PropertyTypeEnum::ARRAY:
+                    if (std_object_has($stdProperty, 'items')) {
+                        do_with_all_of($stdProperty->items, function (stdClass $p) use ($propertyName) {
+                            if (!$this->items && std_object_has($p, 'type')) {
+                                $this->items = new OpenApi3ObjectProperty(type: $p->type);
                             }
-                            $this->items?->fillFromStdProperty("{$propertyName}.*", $allOfItem);
-                        }
+                            $this->items?->fillFromStdProperty("{$propertyName}.*", $p);
+                        });
                     }
-                }
 
-                break;
-            default:
+                    break;
+                default:
+            }
         }
     }
 
