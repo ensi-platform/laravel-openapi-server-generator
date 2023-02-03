@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
  * Class {{ className }}
  * @package {{ namespace }}
  *
- * @mixin //todo
+ * @mixin todo
  */
 class {{ className }} extends JsonResource
 {
