@@ -211,36 +211,7 @@ ResourceRequiredForTestValidationRules:
 
 #Requests
 ResourceForTestValidationRules:
-      allOf:
-        - $ref: '#/ResourceReadonlyForTestValidationRules'
-        - $ref: '#/ResourceFillableForTestValidationRules'
-        - $ref: '#/ResourceRequiredForTestValidationRules'
-ResourceForTestResourceGeneration:
   allOf:
-    - $ref: '#/ResourceReadOnlyProperties'
-    - $ref: '#/ResourceFillableProperties'
-    - $ref: '#/ResourceRequired'
-
-ResourceReadOnlyProperties:
-  type: object
-  properties:
-    foo:
-      type: string
-
-ResourceFillableProperties:
-  type: object
-  properties:
-    bar:
-      type: string
-
-ResourceRequired:
-  type: object
-  required:
-    - foo
-
-ResourceForTestResourceGenerationResponse:
-  type: object
-  properties:
-    data:
-      $ref: '#/ResourceForTestResourceGeneration'
-
+    - $ref: '#/ResourceReadonlyForTestValidationRules'
+    - $ref: '#/ResourceFillableForTestValidationRules'
+    - $ref: '#/ResourceRequiredForTestValidationRules'

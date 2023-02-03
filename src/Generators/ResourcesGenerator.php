@@ -33,11 +33,21 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
+                $response = $route->responses->{201} ?? $route->responses->{200} ?? null;
+                if (!$response) {
+                    continue;
+                }
+
+                $responseSchema = $response->content?->{'application/json'}?->schema ?? null;
+                if (!$responseSchema) {
+                    continue;
+                }
+
                 $handler = $this->routeHandlerParser->parse($route->{'x-lg-handler'});
 
                 try {
                     $namespace = $this->getReplacedNamespace($handler->namespace, $replaceFrom, $replaceTo);
-                    $className = $route->{'x-lg-resource-class-name'} ?? $this->getReplacedClassName($handler->class, $replaceFrom, $replaceTo);
+                    $className = $responseSchema->{'x-lg-resource-class-name'} ?? $this->getReplacedClassName($handler->class, $replaceFrom, $replaceTo);
                 } catch (RuntimeException) {
                     continue;
                 }
@@ -46,29 +56,33 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                $response = $route->responses->{201} ?? $route->responses->{200} ?? null;
-                if (!$response) {
-                    continue;
-                }
+                $responseData = $responseSchema;
 
-                $responseData = $response->content?->{'application/json'}?->schema?->properties ?? null;
+                $responseKey = $responseSchema->{'x-lg-resource-response-key'} ??
+                    $this->options['resources']['response_key'] ??
+                    null;
+                if ($responseKey) {
+                    $responseKeyParts = explode('.', $responseKey);
+                    foreach ($responseKeyParts as $responseKeyPart) {
+                        $flag = false;
+                        do_with_all_of($responseData, function (stdClass $p) use (&$responseData, &$flag, $responseKeyPart) {
+                            if (std_object_has($p, 'properties')) {
+                                if (std_object_has($p->properties, $responseKeyPart)) {
+                                    $responseData = $p->properties->$responseKeyPart;
+                                    $flag = true;
+                                }
+                            }
+                        });
+                        if (!$flag) {
+                            $responseData = null;
 
-                $responseKey = $route->{'x-lg-resource-response-key'} ?? null;
-                if (!$responseKey) {
-                    $responseKey = $this->options['response_key'] ?? '';
-                }
-
-                $responseKeyParts = explode('.', $responseKey);
-                foreach ($responseKeyParts as $responseKeyPart) {
-                    $responseData = $responseData?->$responseKeyPart ?? null;
+                            break;
+                        }
+                    }
                 }
 
                 if (!$responseData) {
                     continue;
-                }
-
-                if (isset($responseData->type) && $responseData->type == 'array') {
-                    $responseData = $responseData->items;
                 }
 
                 $properties = $this->convertToString($this->getProperties($responseData));
@@ -103,27 +117,21 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
         }
     }
 
-    private function getProperties(stdClass $responseData): array
+    private function getProperties(stdClass $object): array
     {
-        if (isset($responseData->allOf)) {
-            $properties = [];
+        $properties = [];
 
-            /** @var stdClass $partResponseData */
-            foreach ($responseData->allOf as $partResponseData) {
-                if (!isset($partResponseData->properties)) {
-                    continue;
-                }
-                $properties = array_merge($properties, $this->getProperties($partResponseData));
+        do_with_all_of($object, function (stdClass $p) use (&$properties) {
+            if (std_object_has($p, 'properties')) {
+                $properties = array_merge($properties, array_keys(get_object_vars($p->properties)));
             }
 
-            return $properties;
-        }
+            if (std_object_has($p, 'items')) {
+                $properties = array_merge($properties, $this->getProperties($p->items));
+            }
+        });
 
-        if (!isset($responseData->properties)) {
-            return [];
-        }
-
-        return array_keys(get_object_vars($responseData->properties));
+        return $properties;
     }
 
     private function convertToString(array $properties): string

@@ -70,6 +70,15 @@ class BaseGenerator
         return null;
     }
 
+    protected function replace(string $base, string $from, string $to): ?string
+    {
+        if (!str_contains($base, $from)) {
+            return null;
+        }
+
+        return str_replace($from, $to, $base);
+    }
+
     protected function getNamespacedFilePath(string $fileName, ?string $namespace): string
     {
         $toDir = $this->psr4PathConverter->namespaceToPath($namespace);
@@ -95,14 +104,5 @@ class BaseGenerator
         }
 
         return $params;
-    }
-
-    protected function replace(string $base, string $from, string $to): ?string
-    {
-        if (!str_contains($base, $from)) {
-            return null;
-        }
-
-        return str_replace($from, $to, $base);
     }
 }

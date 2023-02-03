@@ -107,12 +107,13 @@ Generates Resource file for `x-lg-handler`
 Resource properties are generated relative to field in response, which can be set in the config
 ```php
 'resources' => [
-    'response_key' => ['data']
+    'response_key' => 'data'
 ],
 ```
-You can also specify `response_key` for endpoint using `x-lg-resource-response-key: data`  
+You can also specify `response_key` for resource: add `x-lg-resource-response-key: data` in object.  
 When specifying `response_key`, you can use the "dot" syntax to specify nesting, for example `data.field`  
-You can exclude resource generation using `x-lg-skip-resource-generation: true`.  
+You can exclude resource generation using `x-lg-skip-resource-generation: true` in route.  
+You can rename resource Class using `x-lg-resource-class-name: FooResource` in object.  
 If a resource file already exists it is NOT overriden.  
 Resource file contains a set of fields according to the specification. 
 You also need to specify mixin DocBlock to autocomplete resource.

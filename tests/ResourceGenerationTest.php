@@ -22,20 +22,26 @@ test('Test allOff and ref keywords', function () {
         return file_get_contents($path);
     });
     $filesystem->shouldReceive('cleanDirectory', 'ensureDirectoryExists');
-    $resource = null;
-    $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$resource) {
-        if (str_contains($path, 'ResourcesResource.php')) {
-            $resource = $content;
+    $resources = [];
+    $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$resources) {
+        if (str_contains($path, 'Resource.php')) {
+            $resources[pathinfo($path, PATHINFO_BASENAME)] = $content;
         }
 
         return true;
     });
-    $propertiesInResource = ['foo', 'bar'];
+
 
     artisan(GenerateServer::class);
 
     // С помощью регулярки достаем все выражения в кавычках
-    preg_match_all('~[\'](.*)[\']~', $resource, $matches);
+    foreach ($resources as $key => $content) {
+        $matches = [];
+        preg_match_all('~[\'](.*)[\']~', $content, $matches);
+        $resources[$key] = $matches[1];
+    }
 
-    assertEqualsCanonicalizing($propertiesInResource, $matches[1]);
+    assertEqualsCanonicalizing(['foo', 'bar'], $resources['ResourcesResource.php']);
+    assertEqualsCanonicalizing(['foo', 'bar'], $resources['ResourcesDataDataResource.php']);
+    assertEqualsCanonicalizing(['data'], $resources['ResourceRootResource.php']);
 });

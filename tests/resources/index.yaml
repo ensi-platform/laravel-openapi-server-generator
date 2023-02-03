@@ -19,7 +19,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas/resources.yaml#/ResourceForTestResourceGenerationResponse'
+                $ref: './schemas/test_resource_generation.yaml#/ResourceForTestResourceGenerationResponse'
         "500":
           $ref: '#/components/responses/ServerError'
   /resources:test-empty-rename-request:
@@ -29,7 +29,11 @@ paths:
       x-lg-request-class-name: ''
       responses:
         "200":
-          description: Успешный ответ
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/ResourceDataDataResponse'
   /resources:test-rename-request:
     post:
       operationId: testRenameRequest
@@ -37,7 +41,11 @@ paths:
       x-lg-request-class-name: 'TestFooRenameRequest'
       responses:
         "200":
-          description: Успешный ответ
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/ResourceRootResponse'
   /resources:test-without-handler:
     post:
       operationId: testWithoutHandler
@@ -48,6 +56,7 @@ paths:
     post:
       operationId: testWithSkip
       x-lg-handler: '\App\Http\Controllers\SkipController@testWithSkip'
+      x-lg-skip-resource-generation: true
       x-lg-skip-controller-generation: true
       x-lg-skip-request-generation: true
       x-lg-skip-tests-generation: true
@@ -82,7 +91,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas/resources.yaml#/ResourceForTestValidationRules'
+              $ref: './schemas/test_generation_request_validation.yaml#/ResourceForTestValidationRules'
       responses:
         "200":
           description: Успешный ответ
@@ -113,6 +122,30 @@ paths:
       responses:
         "200":
           description: Успешный ответ
+  /resources:test-generate-resource-bad-response-key:
+    post:
+      operationId: generateResourceBadResponseKey
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testGenerateResourceBadResponseKey'
+      x-lg-skip-request-generation: true
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/GenerateResourceBadResponseKeyResponse'
+  /resources:test-generate-without-properties:
+    post:
+      operationId: generateResourceWithoutProperties
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testGenerateResourceWithoutProperties'
+      x-lg-skip-request-generation: true
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/GenerateResourceWithoutPropertiesResponse'
 
 components:
   responses:
