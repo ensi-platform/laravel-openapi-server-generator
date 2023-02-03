@@ -15,7 +15,7 @@ if (!function_exists('do_with_all_of')) {
         $fn($object);
         if (std_object_has($object, 'allOf')) {
             foreach ($object->allOf as $allOfItem) {
-                $fn($allOfItem);
+                do_with_all_of($allOfItem, $fn);
             }
         }
     }

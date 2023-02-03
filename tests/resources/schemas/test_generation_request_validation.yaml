@@ -211,7 +211,7 @@ ResourceRequiredForTestValidationRules:
 
 #Requests
 ResourceForTestValidationRules:
-      allOf:
-        - $ref: '#/ResourceReadonlyForTestValidationRules'
-        - $ref: '#/ResourceFillableForTestValidationRules'
-        - $ref: '#/ResourceRequiredForTestValidationRules'
+  allOf:
+    - $ref: '#/ResourceReadonlyForTestValidationRules'
+    - $ref: '#/ResourceFillableForTestValidationRules'
+    - $ref: '#/ResourceRequiredForTestValidationRules'

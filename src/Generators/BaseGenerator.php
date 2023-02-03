@@ -53,14 +53,30 @@ class BaseGenerator
     protected function getReplacedNamespace(?string $baseNamespace, string $replaceFromNamespace, string $replaceToNamespace): ?string
     {
         if ($baseNamespace) {
-            if (!str_contains($baseNamespace, $replaceFromNamespace)) {
-                throw new RuntimeException("Can't replace namespace");
-            }
-
-            return str_replace($replaceFromNamespace, $replaceToNamespace, $baseNamespace);
+            return $this->replace($baseNamespace, $replaceFromNamespace, $replaceToNamespace)
+                ?? throw new RuntimeException("Can't replace namespace");
         }
 
         return null;
+    }
+
+    protected function getReplacedClassName(?string $baseClassName, string $replaceFromClassName, string $replaceToClassName): ?string
+    {
+        if ($baseClassName) {
+            return $this->replace($baseClassName, $replaceFromClassName, $replaceToClassName)
+                ?? throw new RuntimeException("Can't replace class name");
+        }
+
+        return null;
+    }
+
+    protected function replace(string $base, string $from, string $to): ?string
+    {
+        if (!str_contains($base, $from)) {
+            return null;
+        }
+
+        return str_replace($from, $to, $base);
     }
 
     protected function getNamespacedFilePath(string $fileName, ?string $namespace): string

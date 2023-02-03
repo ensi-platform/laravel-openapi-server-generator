@@ -41,6 +41,7 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Requests/TestFullGenerateRequest.php'),
         $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php'),
         $this->makeFilePath('/app/Http/Requests/TestFooRenameRequest.php'),
+
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsApplicationJsonRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsMultipartFormDataRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsNonAvailableContentTypeRequest.php'),
@@ -53,6 +54,10 @@ test("Command GenerateServer success", function () {
 
         $this->makeFilePath('/app/Http/ApiV1/OpenApiGenerated/Enums/TestIntegerEnum.php'),
         $this->makeFilePath('/app/Http/ApiV1/OpenApiGenerated/Enums/TestStringEnum.php'),
+
+        $this->makeFilePath('/app/Http/Resources/ResourcesResource.php'),
+        $this->makeFilePath('/app/Http/Resources/ResourcesDataDataResource.php'),
+        $this->makeFilePath('/app/Http/Resources/ResourceRootResource.php'),
     ], $putFiles);
 });
 

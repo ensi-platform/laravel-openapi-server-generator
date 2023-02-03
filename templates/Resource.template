@@ -1,0 +1,29 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Request;
+
+/**
+ * Class {{ className }}
+ * @package {{ namespace }}
+ *
+ * @mixin todo
+ */
+class {{ className }} extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  Request  $request
+     * @return array
+     */
+    public function toArray($request): array
+    {
+        // todo
+        return [
+            {{ properties }}
+        ];
+    }
+}

@@ -99,7 +99,24 @@ Enums generator does NOT support `allOf`, `anyOf` and `oneOf` at the moment.
 Generates Pest test file for each `x-lg-handler`  
 You can exclude oas3 path from test generation using `x-lg-skip-tests-generation: true`.  
 If a test file already exists it is NOT overriden.  
-Test file class IS meant to be modified after generation.  
+Test file class IS meant to be modified after generation.
+
+### 'resources' => ResourcesGenerator::class
+
+Generates Resource file for `x-lg-handler`  
+Resource properties are generated relative to field in response, which can be set in the config
+```php
+'resources' => [
+    'response_key' => 'data'
+],
+```
+You can also specify `response_key` for resource: add `x-lg-resource-response-key: data` in object.  
+When specifying `response_key`, you can use the "dot" syntax to specify nesting, for example `data.field`  
+You can exclude resource generation using `x-lg-skip-resource-generation: true` in route.  
+You can rename resource Class using `x-lg-resource-class-name: FooResource` in object.  
+If a resource file already exists it is NOT overriden.  
+Resource file contains a set of fields according to the specification. 
+You also need to specify mixin DocBlock to autocomplete resource.
 
 ## Contributing
 
