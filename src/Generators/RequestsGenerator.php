@@ -7,6 +7,7 @@ use Ensi\LaravelOpenApiServerGenerator\Data\OpenApi3\OpenApi3Schema;
 use Ensi\LaravelOpenApiServerGenerator\Enums\OpenApi3ContentTypeEnum;
 use InvalidArgumentException;
 use RuntimeException;
+use Throwable;
 
 class RequestsGenerator extends BaseGenerator implements GeneratorInterface
 {
@@ -60,7 +61,11 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                 if (std_object_has($route, 'requestBody')) {
                     $contentType = OpenApi3ContentTypeEnum::tryFrom(array_keys(get_object_vars($route->requestBody->content))[0]);
                     if ($contentType) {
-                        [$validationRules, $usesEnums] = $this->getPropertyRules($contentType, $route->requestBody);
+                        try {
+                            [$validationRules, $usesEnums] = $this->getPropertyRules($contentType, $route->requestBody);
+                        } catch (Throwable $e) {
+                            console_warning("$className didn't generate", $e);
+                        }
                     }
                 }
 
