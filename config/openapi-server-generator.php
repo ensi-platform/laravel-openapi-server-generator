@@ -12,9 +12,15 @@ return [
      * You can use as many yaml/json openapi entrypoints as you want.
      * Key = openapi entrypoint file with path.
      * Value = list of entities and their generator params.
+     *
+     * All values from 'params' will be available inside any template.
+     * apiVersion = {{ apiVersion}} in template.
      */
     'api_docs_mappings' => [
         public_path('api-docs/v1/index.yaml') => [
+            'params' => [
+                'apiVersion' => 1,
+            ],
             'controllers' => [],
             'enums' => [
                 'namespace' => "App\\Http\\ApiV1\\OpenApiGenerated\\Enums\\",
@@ -29,7 +35,7 @@ return [
                 'namespace' => ["Controllers" => "Tests"],
             ],
             'resources' => [
-                'response_key' => 'data'
+                'response_key' => 'data',
             ],
         ],
     ],

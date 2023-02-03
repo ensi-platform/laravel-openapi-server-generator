@@ -41,6 +41,9 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Requests/TestFullGenerateRequest.php'),
         $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php'),
         $this->makeFilePath('/app/Http/Requests/TestFooRenameRequest.php'),
+        $this->makeFilePath('/app/Http/Requests/LaravelValidationsApplicationJsonRequest.php'),
+        $this->makeFilePath('/app/Http/Requests/LaravelValidationsMultipartFormDataRequest.php'),
+        $this->makeFilePath('/app/Http/Requests/LaravelValidationsNonAvailableContentTypeRequest.php'),
         $this->makeFilePath('/app/Http/Resources/ResourcesResource.php'),
 
         $this->makeFilePath('/app/Http/Controllers/WithoutResponsesController.php'),

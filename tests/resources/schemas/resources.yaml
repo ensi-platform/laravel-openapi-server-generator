@@ -1,3 +1,220 @@
+#Objects
+ResourceReadonlyForTestValidationRules:
+  type: object
+  properties:
+    field_integer_readonly:
+      type: integer
+      description: Поле типа integer
+    field_boolean_readonly:
+      type: boolean
+      description: Поле типа boolean
+    field_number_readonly:
+      type: number
+      description: Поле типа number
+    field_enum_readonly:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+    field_array_readonly:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+    field_array_allOf_readonly:
+      type: array
+      description: Поле типа array с allOf
+      items:
+        allOf:
+          - type: string
+          - type: string
+            x-lg-enum-class: 'TestStringEnum'
+    field_allOf_readonly:
+      allOf:
+        - type: string
+        - type: string
+          x-lg-enum-class: 'TestStringEnum'
+    field_object_readonly:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+
+ResourceFillableForTestValidationRules:
+  type: object
+  properties:
+    field_integer_fillable:
+      type: integer
+      description: Поле типа integer
+    field_integer_double_fillable:
+      type: integer
+      format: double
+      description: Поле типа integer формат double (не поддерживается)
+    field_string_fillable:
+      type: string
+      description: Поле типа string
+    field_string_date_fillable:
+      type: string
+      format: date
+      description: Поле типа string с форматом date
+    field_string_password_fillable:
+      type: string
+      format: password
+      description: Поле типа string с форматом password
+    field_string_byte_fillable:
+      type: string
+      format: byte
+      description: Поле типа string с форматом byte
+    field_string_binary_fillable:
+      type: string
+      format: binary
+      description: Поле типа string с форматом binary
+    field_string_email_fillable:
+      type: string
+      format: email
+      description: Поле типа string с форматом email
+    field_string_ipv4_fillable:
+      type: string
+      format: ipv4
+      description: Поле типа string с форматом ipv4
+    field_string_ipv6_fillable:
+      type: string
+      format: ipv6
+      description: Поле типа string с форматом ipv6
+    field_string_timezone_fillable:
+      type: string
+      format: timezone
+      description: Поле типа string с форматом timezone
+    field_string_phone_fillable:
+      type: string
+      format: phone
+      description: Поле типа string с форматом phone
+    field_string_url_fillable:
+      type: string
+      format: url
+      description: Поле типа string с форматом url
+    field_string_uuid_fillable:
+      type: string
+      format: uuid
+      description: Поле типа string с форматом uuid
+    field_boolean_fillable:
+      type: boolean
+      description: Поле типа boolean
+    field_number_fillable:
+      type: number
+      description: Поле типа number
+    field_enum_fillable:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+    field_array_fillable:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+    field_object_fillable:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+
+    field_integer_required_fillable:
+      type: integer
+      description: Поле типа integer
+    field_string_required_fillable:
+      type: string
+      description: Поле типа string
+    field_boolean_required_fillable:
+      type: boolean
+      description: Поле типа boolean
+    field_number_required_fillable:
+      type: number
+      description: Поле типа number
+    field_enum_required_fillable:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+    field_array_required_fillable:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+    field_object_required_fillable:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+
+    field_integer_nullable_fillable:
+      type: integer
+      description: Поле типа integer
+      nullable: true
+    field_string_nullable_fillable:
+      type: string
+      description: Поле типа string
+      nullable: true
+    field_boolean_nullable_fillable:
+      type: boolean
+      description: Поле типа boolean
+      nullable: true
+    field_number_nullable_fillable:
+      type: number
+      description: Поле типа number
+      nullable: true
+    field_enum_nullable_fillable:
+      type: integer
+      description: Поле, значение которого задается TestIntegerEnum
+      x-lg-enum-class: 'TestIntegerEnum'
+      example: 1
+      nullable: true
+    field_array_nullable_fillable:
+      type: array
+      description: Поле типа array
+      items:
+        type: object
+        properties:
+          field:
+            type: integer
+      nullable: true
+    field_object_nullable_fillable:
+      type: object
+      description: Поле типа object
+      properties:
+        field:
+          type: integer
+      nullable: true
+
+ResourceRequiredForTestValidationRules:
+  type: object
+  required:
+    - field_integer_required_fillable
+    - field_string_required_fillable
+    - field_boolean_required_fillable
+    - field_number_required_fillable
+    - field_enum_required_fillable
+    - field_array_required_fillable
+    - field_object_required_fillable
+
+#Requests
+ResourceForTestValidationRules:
+      allOf:
+        - $ref: '#/ResourceReadonlyForTestValidationRules'
+        - $ref: '#/ResourceFillableForTestValidationRules'
+        - $ref: '#/ResourceRequiredForTestValidationRules'
 ResourceForTestResourceGeneration:
   allOf:
     - $ref: '#/ResourceReadOnlyProperties'
