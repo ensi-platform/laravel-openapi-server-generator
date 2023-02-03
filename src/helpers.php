@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Console\Output\ConsoleOutput;
+
 if (!function_exists('std_object_has')) {
     function std_object_has(stdClass $object, string $propertyName): bool
     {
@@ -16,5 +18,18 @@ if (!function_exists('do_with_all_of')) {
                 $fn($allOfItem);
             }
         }
+    }
+}
+
+if (!function_exists('console_warning')) {
+    function console_warning(string $text, Throwable $e = null): void
+    {
+        $output = resolve(ConsoleOutput::class);
+
+        if ($e) {
+            $text .= "\r\n{$e->getCode()}: {$e->getMessage()}";
+        }
+
+        $output->writeln("<comment>$text</comment>");
     }
 }
