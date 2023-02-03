@@ -20,13 +20,9 @@ class OpenApi3Schema
         switch ($contentType) {
             case OpenApi3ContentTypeEnum::APPLICATION_JSON:
                 $schema = $requestBody->content->{OpenApi3ContentTypeEnum::APPLICATION_JSON->value}->schema;
-                if (std_object_has($schema, 'allOf')) {
-                    foreach ($schema->allOf as $object) {
-                        $this->object->fillFromStdObject($object);
-                    }
-                } else {
-                    $this->object->fillFromStdObject($schema);
-                }
+                do_with_all_of($schema, function (stdClass $p) {
+                    $this->object->fillFromStdObject($p);
+                });
 
                 break;
             case OpenApi3ContentTypeEnum::MULTIPART_FROM_DATA:

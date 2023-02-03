@@ -34,6 +34,7 @@ class BaseGenerator
 
     protected function replacePlaceholders(string $content, array $placeholders, bool $removeExcessLineBreaks = false): string
     {
+        $placeholders = array_merge($placeholders, $this->formattedGlobalParams());
         $content = str_replace(array_keys($placeholders), array_values($placeholders), $content);
 
         // Убираем двойные переносы строк
@@ -77,5 +78,15 @@ class BaseGenerator
 
         $this->filesystem->ensureDirectoryExists($toDir);
         $this->filesystem->cleanDirectory($toDir);
+    }
+
+    private function formattedGlobalParams(): array
+    {
+        $params = [];
+        foreach ($this->options['params'] ?? [] as $key => $value) {
+            $params["{{ $key }}"] = $value;
+        }
+
+        return $params;
     }
 }

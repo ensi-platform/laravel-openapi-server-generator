@@ -24,10 +24,19 @@ class OpenApi3Object
                 /** @var OpenApi3ObjectProperty $objectProperty */
                 $objectProperty = $this->properties->get($propertyName);
                 if (!$objectProperty) {
-                    $objectProperty = new OpenApi3ObjectProperty(type: $property->type, name: $propertyName);
+                    do_with_all_of($property, function (stdClass $p) use (&$objectProperty, $propertyName) {
+                        if (!$objectProperty && std_object_has($p, 'type')) {
+                            $objectProperty = new OpenApi3ObjectProperty(type: $p->type, name: $propertyName);
+                        }
+                    });
+                    if (!$objectProperty) {
+                        continue;
+                    }
                     $this->properties->put($propertyName, $objectProperty);
                 }
-                $objectProperty->fillFromStdProperty($propertyName, $property);
+                do_with_all_of($property, function (stdClass $p) use ($objectProperty, $propertyName) {
+                    $objectProperty->fillFromStdProperty($propertyName, $p);
+                });
             }
         }
         if (std_object_has($object, 'required') && is_array($object->required)) {
