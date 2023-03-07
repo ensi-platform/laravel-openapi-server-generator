@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Domain\Auth\Models\User;
+use Ensi\AdminAuthClient\Dto\RightsAccessEnum;
+use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
+
+class {{ className }}
+{
+    use HandlesAuthorization;
+
+    {{ methods }}
+}

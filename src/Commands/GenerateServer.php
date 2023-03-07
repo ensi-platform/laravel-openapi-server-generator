@@ -14,7 +14,7 @@ class GenerateServer extends Command
     protected $signature = 'openapi:generate-server {--e|entities=}';
 
     /** var @string */
-    protected $description = 'Generate application files from openapi specification files';
+    protected $description = 'Generate application files from openapi specification files [with policies]';
 
     private array $config = [];
 

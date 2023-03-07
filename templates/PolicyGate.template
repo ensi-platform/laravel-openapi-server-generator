@@ -1,0 +1,6 @@
+public function {{ method }}(User $user): Response
+    {
+        return $user->allowOneOf([
+            // add rights access from RightsAccessEnum
+        ]);
+    }
