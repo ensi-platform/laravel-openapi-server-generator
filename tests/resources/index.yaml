@@ -60,6 +60,7 @@ paths:
       x-lg-skip-controller-generation: true
       x-lg-skip-request-generation: true
       x-lg-skip-tests-generation: true
+      x-lg-skip-policy-generation: true
       responses:
         "200":
           description: Успешный ответ
@@ -146,7 +147,30 @@ paths:
             application/json:
               schema:
                 $ref: './schemas/test_resource_generation.yaml#/GenerateResourceWithoutPropertiesResponse'
-
+  /policies:test-generate-policy-method-foo:
+    post:
+      operationId: generatePolicyMethodFoo
+      x-lg-handler: '\App\Http\Controllers\PoliciesController@methodFoo'
+      x-lg-skip-request-generation: true
+      responses:
+        "403":
+          description: Ошибка прав доступа
+  /policies:test-generate-policy-method-bar:
+    post:
+      operationId: generatePolicyMethodBar
+      x-lg-handler: '\App\Http\Controllers\PoliciesController@methodBar'
+      x-lg-skip-request-generation: true
+      responses:
+        "403":
+          description: Ошибка прав доступа
+  /policies:test-generate-policy-method-without-forbidden-response:
+    post:
+      operationId: generatePolicyMethodWithoutForbiddenResponse
+      x-lg-handler: '\App\Http\Controllers\PoliciesController@methodWithoutForbiddenResponse'
+      x-lg-skip-request-generation: true
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
 components:
   responses:
     ServerError:

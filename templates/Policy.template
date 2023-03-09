@@ -2,8 +2,7 @@
 
 namespace {{ namespace }};
 
-use App\Domain\Auth\Models\User;
-use Ensi\AdminAuthClient\Dto\RightsAccessEnum;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 

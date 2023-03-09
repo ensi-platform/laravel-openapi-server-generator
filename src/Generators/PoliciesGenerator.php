@@ -3,7 +3,9 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
+use Ensi\LaravelOpenApiServerGenerator\DTO\ParsedRouteHandler;
 use RuntimeException;
+use stdClass;
 
 class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
 {
@@ -13,7 +15,6 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
         $this->createPoliciesFiles($policies, $this->templatesManager->getTemplate('Policy.template'));
     }
 
-    // TODO: предварительная версия, необходим рефакторинг и доп. проверки
     protected function extractPolicies(SpecObjectInterface $specObject): array
     {
         $openApiData = $specObject->getSerializableData();
@@ -22,36 +23,31 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
         $paths = $openApiData->paths ?: [];
         foreach ($paths as $routes) {
             foreach ($routes as $route) {
-                if (!empty($route->{'x-lg-skip-policy-generation'})) {
-                    continue;
-                }
-
-                if (empty($route->{'x-lg-handler'})) {
-                    continue;
-                }
-
-                $response = $route->responses->{403} ?? null;
-                if (!$response) {
+                if (!$this->routeValidation($route)) {
                     continue;
                 }
 
                 $handler = $this->routeHandlerParser->parse($route->{'x-lg-handler'});
+                if (!$this->handlerValidation($handler)) {
+                    continue;
+                }
 
                 try {
-                    $namespace = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Policies');
-                    $className = $handler->class . 'Policy';
+                    $namespace = $this->getReplacedNamespace(
+                        $handler->namespace,
+                        'Controllers',
+                        'Policies'
+                    );
                 } catch (RuntimeException) {
                     continue;
                 }
 
-                if (empty($handler->method)) {
-                    continue;
-                }
+                $className = $handler->class . 'Policy';
+                $methods = [$handler->method];
 
                 if (isset($policies["$namespace\\$className"])) {
-                    $policies["$namespace\\$className"]['methods'][] = $handler->method;
+                    $policies["$namespace\\$className"]['methods'][] = $methods[0];
                 } else {
-                    $methods = [$handler->method];
                     $policies["$namespace\\$className"] = compact('className', 'namespace', 'methods');
                 }
             }
@@ -60,7 +56,6 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
         return $policies;
     }
 
-    // TODO: протестировать
     protected function createPoliciesFiles(array $policies, string $template): void
     {
         foreach ($policies as ['className' => $className, 'namespace' => $namespace, 'methods' => $methods]) {
@@ -74,24 +69,40 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $namespace,
                     '{{ className }}' => $className,
-                    '{{ methods }}' => $this->convertToString($methods),
+                    '{{ methods }}' => $this->convertMethodsToString($methods),
                 ])
             );
-
-            die();
         }
     }
 
-    private function convertToString(array $methods): string
+    private function routeValidation(stdClass $route): bool
+    {
+        return match (true) {
+            !empty($route->{'x-lg-skip-policy-generation'}),
+            empty($route->{'x-lg-handler'}),
+            empty($route->responses->{403}) => false,
+            default => true
+        };
+    }
+
+    private function handlerValidation(ParsedRouteHandler $handler): bool
+    {
+        return match (true) {
+            empty($handler->namespace),
+            empty($handler->class),
+            empty($handler->method) => false,
+            default => true
+        };
+    }
+
+    private function convertMethodsToString(array $methods): string
     {
         $methodsStrings = [];
 
         foreach ($methods as $method) {
             $methodsStrings[] = $this->replacePlaceholders(
                 $this->templatesManager->getTemplate('PolicyGate.template'),
-                [
-                    '{{ method }}' => $method,
-                ]
+                ['{{ method }}' => $method]
             );
         }
 
