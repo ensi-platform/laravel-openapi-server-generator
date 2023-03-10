@@ -114,9 +114,22 @@ You can also specify `response_key` for resource: add `x-lg-resource-response-ke
 When specifying `response_key`, you can use the "dot" syntax to specify nesting, for example `data.field`  
 You can exclude resource generation using `x-lg-skip-resource-generation: true` in route.  
 You can rename resource Class using `x-lg-resource-class-name: FooResource` in object.  
-If a resource file already exists it is NOT overriden.  
+If a resource file already exists it is NOT overridden.  
 Resource file contains a set of fields according to the specification. 
 You also need to specify mixin DocBlock to autocomplete resource.
+
+### 'policies' => PoliciesGenerator::class
+
+Generates Laravel Policies for routes.
+Destination must be configured with array as namespace instead of string. E.g:
+```php
+'policies' => [
+    'namespace' => ["Controllers" => "Policies"]
+],
+```
+* The path must contain a 403 response or the policy will not be generated.
+* You can exclude policy generation using `x-lg-skip-policy-generation: true` in route.
+* If a policy file already exists it is NOT overridden.
 
 ## Contributing
 

@@ -4,6 +4,7 @@ namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
 use Ensi\LaravelOpenApiServerGenerator\DTO\ParsedRouteHandler;
+use InvalidArgumentException;
 use RuntimeException;
 use stdClass;
 
@@ -11,12 +12,20 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
 {
     public function generate(SpecObjectInterface $specObject): void
     {
-        $policies = $this->extractPolicies($specObject);
+        $namespaceData = $this->options['policies']['namespace'] ?? null;
+        if (!is_array($namespaceData)) {
+            throw new InvalidArgumentException("PoliciesGenerator must be configured with array as 'namespace'");
+        }
+
+        $policies = $this->extractPolicies($specObject, $namespaceData);
         $this->createPoliciesFiles($policies, $this->templatesManager->getTemplate('Policy.template'));
     }
 
-    protected function extractPolicies(SpecObjectInterface $specObject): array
+    protected function extractPolicies(SpecObjectInterface $specObject, array $namespaceData): array
     {
+        $replaceFromNamespace = array_keys($namespaceData)[0];
+        $replaceToNamespace = array_values($namespaceData)[0];
+
         $openApiData = $specObject->getSerializableData();
 
         $policies = [];
@@ -35,8 +44,8 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
                 try {
                     $namespace = $this->getReplacedNamespace(
                         $handler->namespace,
-                        'Controllers',
-                        'Policies'
+                        $replaceFromNamespace,
+                        $replaceToNamespace
                     );
                 } catch (RuntimeException) {
                     continue;
