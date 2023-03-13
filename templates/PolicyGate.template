@@ -1,0 +1,4 @@
+public function {{ method }}(User $user): Response
+    {
+        return Response::allow();
+    }

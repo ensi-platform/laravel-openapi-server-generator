@@ -3,6 +3,7 @@
 use Ensi\LaravelOpenApiServerGenerator\Generators\ControllersGenerator;
 use Ensi\LaravelOpenApiServerGenerator\Generators\EnumsGenerator;
 use Ensi\LaravelOpenApiServerGenerator\Generators\PestTestsGenerator;
+use Ensi\LaravelOpenApiServerGenerator\Generators\PoliciesGenerator;
 use Ensi\LaravelOpenApiServerGenerator\Generators\RequestsGenerator;
 use Ensi\LaravelOpenApiServerGenerator\Generators\ResourcesGenerator;
 use Ensi\LaravelOpenApiServerGenerator\Generators\RoutesGenerator;
@@ -37,6 +38,9 @@ return [
             'resources' => [
                 'response_key' => 'data',
             ],
+            'policies' => [
+                'namespace' => ["Controllers" => "Policies"],
+            ],
         ],
     ],
 
@@ -57,6 +61,7 @@ return [
         'routes' => RoutesGenerator::class,
         'pest_tests' => PestTestsGenerator::class,
         'resources' => ResourcesGenerator::class,
+        'policies' => PoliciesGenerator::class,
     ],
 
     /**
@@ -69,6 +74,7 @@ return [
         'routes',
         'pest_tests',
         'resources',
+        'policies',
     ],
 
     'extra_templates_path' => resource_path('openapi-server-generator/templates'),
