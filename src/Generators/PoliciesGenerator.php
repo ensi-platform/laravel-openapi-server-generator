@@ -73,7 +73,7 @@ class PoliciesGenerator extends BaseGenerator implements GeneratorInterface
                 continue;
             }
 
-            $this->filesystem->put(
+            $this->putWithDirectoryCheck(
                 $filePath,
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $namespace,

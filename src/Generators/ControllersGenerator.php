@@ -116,7 +116,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
             }
             $methodsString = trim($methodsString, "\n");
 
-            $this->filesystem->put(
+            $this->putWithDirectoryCheck(
                 $filePath,
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $namespace,

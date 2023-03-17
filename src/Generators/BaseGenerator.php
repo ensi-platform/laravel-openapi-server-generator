@@ -96,6 +96,12 @@ class BaseGenerator
         $this->filesystem->cleanDirectory($toDir);
     }
 
+    protected function putWithDirectoryCheck(string $path, string $contents): void
+    {
+        $this->filesystem->ensureDirectoryExists(dirname($path));
+        $this->filesystem->put($path, $contents);
+    }
+
     private function formattedGlobalParams(): array
     {
         $params = [];

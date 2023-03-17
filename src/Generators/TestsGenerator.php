@@ -98,7 +98,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                 continue;
             }
 
-            $this->filesystem->put(
+            $this->putWithDirectoryCheck(
                 $filePath,
                 $this->replacePlaceholders($template, [
                     '{{ namespace }}' => $namespace,
