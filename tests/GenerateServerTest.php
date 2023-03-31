@@ -103,7 +103,7 @@ test("Correct requests in controller methods", function () {
         'ResourceController import'
     );
     assertStringContainsString(
-        'TestFullGenerateRequest $testFullGenerateRequest',
+        'TestFullGenerateRequest $request',
         $resourceController,
         'ResourceController function parameter'
     );
