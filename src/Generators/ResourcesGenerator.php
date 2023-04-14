@@ -47,7 +47,7 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
 
                 try {
                     $namespace = $this->getReplacedNamespace($handler->namespace, $replaceFrom, $replaceTo);
-                    $className = $responseSchema->{'x-lg-resource-class-name'} ?? $this->getReplacedClassName($handler->class, $replaceFrom, $replaceTo);
+                    $className = $route->{'x-lg-resource-class-name'} ?? $this->getReplacedClassName($handler->class, $replaceFrom, $replaceTo);
                 } catch (RuntimeException) {
                     continue;
                 }
