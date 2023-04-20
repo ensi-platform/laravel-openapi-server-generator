@@ -3,6 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
+use Ensi\LaravelOpenApiServerGenerator\Data\ReflectionClassData;
 use stdClass;
 
 class ControllersGenerator extends BaseGenerator implements GeneratorInterface
@@ -12,7 +13,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     public function generate(SpecObjectInterface $specObject): void
     {
         $controllers = $this->extractControllers($specObject);
-        $this->createControllersFiles($controllers, $this->templatesManager->getTemplate('Controller.template'));
+        $this->createControllersFiles($controllers);
     }
 
     private function extractControllers(SpecObjectInterface $specObject): array
@@ -49,10 +50,10 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     ];
                 }
 
+                $requestClassName = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
                 if ($methodWithRequest && empty($route->{'x-lg-skip-request-generation'})) {
-                    $requestClassName = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
                     $controllers[$fqcn]['requestsNamespaces'][] = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Requests') . '\\' .  ucfirst($requestClassName);
-                } elseif ($methodWithRequest) {
+                } elseif ($methodWithRequest && !$requestClassName) {
                     $controllers[$fqcn]['requestsNamespaces'][] = 'Illuminate\Http\Request';
                 }
 
@@ -88,27 +89,99 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
         return [];
     }
 
-    private function createControllersFiles(array $controllers, string $template): void
+    private function createControllersFiles(array $controllers): void
     {
         foreach ($controllers as $controller) {
             $namespace = $controller['namespace'];
             $className = $controller['className'];
 
             $filePath = $this->getNamespacedFilePath($className, $namespace);
-            if ($this->filesystem->exists($filePath)) {
-                continue;
+            if (!$this->filesystem->exists($filePath)) {
+                $this->createEmptyControllerFile($filePath, $controller);
             }
 
-            $this->putWithDirectoryCheck(
-                $filePath,
-                $this->replacePlaceholders($template, [
-                    '{{ namespace }}' => $namespace,
-                    '{{ className }}' => $className,
-                    '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
-                    '{{ methods }}' => $this->convertMethodsToString($controller['actions']),
-                ])
-            );
+            $ref = new ReflectionClassData($className, $namespace);
+
+            $methodsString = '';
+            foreach ($controller['actions'] as $action) {
+                $methodName = $action['name'];
+
+                if ($ref->hasMethod($methodName)) {
+                    continue;
+                }
+
+                $paramsString = $this->formatActionParamsAsString($action['parameters']);
+                $methodsString .= <<<METHOD
+
+                    public function {$methodName}({$paramsString}) 
+                    {
+                        //
+                    }
+
+                METHOD;
+            }
+
+            $currentLine = 0;
+            $classContent = '';
+            $classEndLine = $ref->getEndLine();
+            $classStartLine = $ref->getStartLine();
+            foreach ($this->filesystem->lines($filePath) as $line) {
+                $currentLine++;
+                $isEndLine = $currentLine === $classEndLine;
+                $isClassContentLines = $currentLine >= $classStartLine;
+                $isNamespaceLines = $currentLine < $classStartLine;
+
+                if ($isNamespaceLines) {
+                    preg_match('/^use (.*);$/', $line, $matches);
+                    if (isset($matches[1])) {
+                        $controller['requestsNamespaces'][$matches[1]] = $matches[1];
+                    }
+                }
+
+                if (!$isClassContentLines) {
+                    continue;
+                }
+
+                if ($isEndLine) {
+                    $methodsString = $ref->isEmpty() ? ltrim($methodsString, "\n") : $methodsString;
+                    $classContent .= $methodsString . $line;
+
+                    break;
+                }
+
+                $classContent .= "$line\n";
+            }
+
+            $this->writeControllerFile($filePath, $controller, $classContent);
         }
+    }
+
+    protected function writeControllerFile(string $filePath, array $controller, string $classContent): void
+    {
+        $template = $this->templatesManager->getTemplate('ControllerExists.template');
+
+        $this->filesystem->put(
+            $filePath,
+            $this->replacePlaceholders($template, [
+                '{{ namespace }}' => $controller['namespace'],
+                '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
+                '{{ classContent }}' => $classContent,
+            ])
+        );
+    }
+
+    protected function createEmptyControllerFile(string $filePath, array $controller): void
+    {
+        $template = $this->templatesManager->getTemplate('ControllerEmpty.template');
+
+        $this->filesystem->put(
+            $filePath,
+            $this->replacePlaceholders($template, [
+                '{{ namespace }}' => $controller['namespace'],
+                '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
+                '{{ className }}' => $controller['className'],
+            ])
+        );
     }
 
     private function formatActionParamsAsString(array $params): string
@@ -116,27 +189,10 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
         return implode(', ', array_map(fn (array $param) => $param['type'] . " $" . $param['name'], $params));
     }
 
-    private function convertMethodsToString(array $methods): string
-    {
-        $methodsStrings = [];
-
-        foreach ($methods as $method) {
-            $methodsStrings[] = $this->replacePlaceholders(
-                $this->templatesManager->getTemplate('ControllerMethod.template'),
-                [
-                    '{{ method }}' => $method['name'],
-                    '{{ params }}' => $this->formatActionParamsAsString($method['parameters']),
-                ]
-            );
-        }
-
-        return implode("\n\n    ", $methodsStrings);
-    }
-
     protected function formatRequestNamespaces(array $namespaces): string
     {
-        $namespaces = array_unique($namespaces);
-        sort($namespaces);
+        $namespaces = array_values($namespaces);
+        sort($namespaces, SORT_STRING | SORT_FLAG_CASE);
 
         return implode("\n", array_map(fn (string $namespaces) => "use {$namespaces};", $namespaces));
     }
