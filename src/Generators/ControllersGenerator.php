@@ -3,11 +3,15 @@
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
 use cebe\openapi\SpecObjectInterface;
-use Ensi\LaravelOpenApiServerGenerator\Data\ReflectionClassData;
+use Ensi\LaravelOpenApiServerGenerator\Utils\ClassParser;
 use stdClass;
 
 class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 {
+    public const REQUEST_NAMESPACE = 'Illuminate\Http\Request';
+    public const RESPONSABLE_NAMESPACE = 'Illuminate\Contracts\Support\Responsable';
+    public const DELIMITER = "\n    ";
+
     private array $methodsWithRequests = ['PATCH', 'POST', 'PUT', 'DELETE'];
 
     public function generate(SpecObjectInterface $specObject): void
@@ -50,15 +54,15 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     ];
                 }
 
-                $requestClassName = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
                 if ($methodWithRequest && empty($route->{'x-lg-skip-request-generation'})) {
-                    $controllers[$fqcn]['requestsNamespaces'][] = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Requests') . '\\' .  ucfirst($requestClassName);
-                } elseif ($methodWithRequest && !$requestClassName) {
-                    $controllers[$fqcn]['requestsNamespaces'][] = 'Illuminate\Http\Request';
+                    $requestClassName = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
+                    $namespace = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Requests') . '\\' .  ucfirst($requestClassName);
+                    $controllers[$fqcn]['requestsNamespaces'][$namespace] = $namespace;
                 }
 
                 $controllers[$fqcn]['actions'][] = [
                     'name' => $handler->method ?: '__invoke',
+                    'with_request_namespace' => $methodWithRequest && !empty($route->{'x-lg-skip-request-generation'}),
                     'parameters' => array_merge($this->extractPathParameters($route), $this->getActionExtraParameters($methodWithRequest, $requestClassName)),
                 ];
             }
@@ -100,42 +104,19 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                 $this->createEmptyControllerFile($filePath, $controller);
             }
 
-            $ref = new ReflectionClassData($className, $namespace);
-            $methodsString = $this->convertMethodsToString($ref, $controller['actions']);
+            $class = new ClassParser(
+                filesystem: $this->filesystem,
+                className: "$namespace\\$className"
+            );
 
-            $currentLine = 0;
-            $classContent = '';
-            $classEndLine = $ref->getEndLine();
-            $classStartLine = $ref->getStartLine();
-            foreach ($this->filesystem->lines($filePath) as $line) {
-                $currentLine++;
-                $isEndLine = $currentLine === $classEndLine;
-                $isClassContentLines = $currentLine >= $classStartLine;
-                $isNamespaceLines = $currentLine < $classStartLine;
-
-                if ($isNamespaceLines) {
-                    preg_match('/^use (.*);$/', $line, $matches);
-                    $namespace = $matches[1] ?? null;
-                    if ($namespace && !in_array($namespace, $controller['requestsNamespaces'])) {
-                        $controller['requestsNamespaces'][] = $namespace;
-                    }
-                }
-
-                if (!$isClassContentLines) {
-                    continue;
-                }
-
-                if ($isEndLine) {
-                    $methodsString = $ref->isEmpty() ? ltrim($methodsString, "\n") : $methodsString;
-                    $classContent .= $methodsString . $line;
-
-                    break;
-                }
-
-                $classContent .= "$line\n";
+            $newMethods = $this->convertMethodsToString($class, $controller['actions'], $controller['requestsNamespaces']);
+            if (!empty($newMethods)) {
+                $controller['requestsNamespaces'][static::RESPONSABLE_NAMESPACE] = static::RESPONSABLE_NAMESPACE;
             }
 
-            $this->writeControllerFile($filePath, $controller, $classContent);
+            $content = $class->getContentWithAdditionalMethods($newMethods, $controller['requestsNamespaces']);
+
+            $this->writeControllerFile($filePath, $controller, $content);
         }
     }
 
@@ -145,25 +126,29 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
         $this->putWithDirectoryCheck(
             $filePath,
-            $this->replacePlaceholders($template, [
-                '{{ namespace }}' => $controller['namespace'],
-                '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
-                '{{ classContent }}' => $classContent,
-            ])
+            $this->replacePlaceholders(
+                $template,
+                [
+                    '{{ namespace }}' => $controller['namespace'],
+                    '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
+                    '{{ classContent }}' => $classContent,
+                ]
+            )
         );
     }
 
     protected function createEmptyControllerFile(string $filePath, array $controller): void
     {
-        $template = $this->templatesManager->getTemplate('ControllerEmpty.template');
-
         $this->putWithDirectoryCheck(
             $filePath,
-            $this->replacePlaceholders($template, [
-                '{{ namespace }}' => $controller['namespace'],
-                '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
-                '{{ className }}' => $controller['className'],
-            ])
+            $this->replacePlaceholders(
+                $this->templatesManager->getTemplate('ControllerEmpty.template'),
+                [
+                    '{{ namespace }}' => $controller['namespace'],
+                    '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),
+                    '{{ className }}' => $controller['className'],
+                ]
+            )
         );
     }
 
@@ -172,13 +157,17 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
         return implode(', ', array_map(fn (array $param) => $param['type'] . " $" . $param['name'], $params));
     }
 
-    private function convertMethodsToString(ReflectionClassData $ref, array $methods): string
+    private function convertMethodsToString(ClassParser $class, array $methods, array &$namespaces): string
     {
         $methodsStrings = [];
 
         foreach ($methods as $method) {
-            if ($ref->hasMethod($method['name'])) {
+            if ($class->hasMethod($method['name'])) {
                 continue;
+            }
+
+            if ($method['with_request_namespace']) {
+                $namespaces[static::REQUEST_NAMESPACE] = static::REQUEST_NAMESPACE;
             }
 
             $methodsStrings[] = $this->replacePlaceholders(
@@ -190,7 +179,9 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
             );
         }
 
-        return implode("\n\n    ", $methodsStrings);
+        $prefix = !empty($methodsStrings) ? static::DELIMITER : '';
+
+        return $prefix . implode(static::DELIMITER, $methodsStrings);
     }
 
     protected function formatRequestNamespaces(array $namespaces): string
