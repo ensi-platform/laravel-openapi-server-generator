@@ -122,7 +122,7 @@ class BaseGenerator
 
         return [
             $className,
-            $namespace
+            $namespace,
         ];
     }
 }
