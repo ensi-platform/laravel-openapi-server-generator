@@ -65,14 +65,19 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                     $responseKeyParts = explode('.', $responseKey);
                     foreach ($responseKeyParts as $responseKeyPart) {
                         $flag = false;
-                        do_with_all_of($responseData, function (stdClass $p) use (&$responseData, &$flag, $responseKeyPart) {
+                        do_with_all_of($responseData, function (stdClass $p) use (&$responseData, &$flag, $responseKeyPart, &$className) {
                             if (std_object_has($p, 'properties')) {
                                 if (std_object_has($p->properties, $responseKeyPart)) {
                                     $responseData = $p->properties->$responseKeyPart;
                                     $flag = true;
+
+                                    if (std_object_has($p->properties->$responseKeyPart, 'x-lg-resource-class-name')) {
+                                        $className = $p->properties->$responseKeyPart->{'x-lg-resource-class-name'};
+                                    }
                                 }
                             }
                         });
+
                         if (!$flag) {
                             $responseData = null;
 

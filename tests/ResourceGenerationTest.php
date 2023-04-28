@@ -43,5 +43,6 @@ test('Test allOff and ref keywords', function () {
 
     assertEqualsCanonicalizing(['foo', 'bar'], $resources['ResourcesResource.php']);
     assertEqualsCanonicalizing(['foo', 'bar'], $resources['ResourcesDataDataResource.php']);
+    assertEqualsCanonicalizing(['foo', 'bar'], $resources['ResourcesDataWithNameResource.php']);
     assertEqualsCanonicalizing(['data'], $resources['ResourceRootResource.php']);
 });

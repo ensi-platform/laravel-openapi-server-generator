@@ -57,6 +57,7 @@ test("Command GenerateServer success", function () {
 
         $this->makeFilePath('/app/Http/Resources/ResourcesResource.php'),
         $this->makeFilePath('/app/Http/Resources/ResourcesDataDataResource.php'),
+        $this->makeFilePath('/app/Http/Resources/ResourcesDataWithNameResource.php'),
         $this->makeFilePath('/app/Http/Resources/ResourceRootResource.php'),
 
         $this->makeFilePath('/app/Http/Controllers/PoliciesController.php'),

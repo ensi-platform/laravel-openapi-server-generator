@@ -4,6 +4,13 @@ ResourceForTestResourceGeneration:
     - $ref: '#/ResourceFillableProperties'
     - $ref: '#/ResourceRequired'
 
+ResourceForTestResourceWithNameGeneration:
+  x-lg-resource-class-name: ResourcesDataWithNameResource
+  allOf:
+    - $ref: '#/ResourceReadOnlyProperties'
+    - $ref: '#/ResourceFillableProperties'
+    - $ref: '#/ResourceRequired'
+
 ResourceReadOnlyProperties:
   type: object
   properties:
@@ -36,6 +43,15 @@ ResourceDataDataResponse:
       properties:
         data:
           $ref: '#/ResourceForTestResourceGeneration'
+
+ResourceDataWithNameResponse:
+  type: object
+  x-lg-resource-response-key: data.test
+  properties:
+    data:
+      properties:
+        test:
+          $ref: '#/ResourceForTestResourceWithNameGeneration'
 
 ResourceRootResponse:
   type: object
