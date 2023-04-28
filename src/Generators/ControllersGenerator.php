@@ -115,8 +115,9 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
                 if ($isNamespaceLines) {
                     preg_match('/^use (.*);$/', $line, $matches);
-                    if (isset($matches[1])) {
-                        $controller['requestsNamespaces'][$matches[1]] = $matches[1];
+                    $namespace = $matches[1] ?? null;
+                    if ($namespace && !in_array($namespace, $controller['requestsNamespaces'])) {
+                        $controller['requestsNamespaces'][] = $namespace;
                     }
                 }
 
