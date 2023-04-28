@@ -53,11 +53,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     $requestClassName = $route->{'x-lg-request-class-name'} ?? ucfirst($route->operationId) . 'Request';
                     $requestNamespace = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Requests');
 
-                    $parseClassName = explode('/', $requestClassName);
-                    if (count($parseClassName) > 1) {
-                        $requestClassName = array_pop($parseClassName);
-                        $requestNamespace .= '\\' . implode('\\', $parseClassName);
-                    }
+                    list($requestClassName, $requestNamespace) = $this->getActualClassNameAndNamespace($requestClassName, $requestNamespace);
                     $requestNamespace .= '\\' .  ucfirst($requestClassName);
 
                     $controllers[$fqcn]['requestsNamespaces'][] = $requestNamespace;
