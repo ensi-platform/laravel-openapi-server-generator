@@ -101,25 +101,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
             }
 
             $ref = new ReflectionClassData($className, $namespace);
-
-            $methodsString = '';
-            foreach ($controller['actions'] as $action) {
-                $methodName = $action['name'];
-
-                if ($ref->hasMethod($methodName)) {
-                    continue;
-                }
-
-                $paramsString = $this->formatActionParamsAsString($action['parameters']);
-                $methodsString .= <<<METHOD
-
-                    public function {$methodName}({$paramsString}) 
-                    {
-                        //
-                    }
-
-                METHOD;
-            }
+            $methodsString = $this->convertMethodsToString($ref, $controller['actions']);
 
             $currentLine = 0;
             $classContent = '';
@@ -160,7 +142,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     {
         $template = $this->templatesManager->getTemplate('ControllerExists.template');
 
-        $this->filesystem->put(
+        $this->putWithDirectoryCheck(
             $filePath,
             $this->replacePlaceholders($template, [
                 '{{ namespace }}' => $controller['namespace'],
@@ -174,7 +156,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     {
         $template = $this->templatesManager->getTemplate('ControllerEmpty.template');
 
-        $this->filesystem->put(
+        $this->putWithDirectoryCheck(
             $filePath,
             $this->replacePlaceholders($template, [
                 '{{ namespace }}' => $controller['namespace'],
@@ -187,6 +169,27 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     private function formatActionParamsAsString(array $params): string
     {
         return implode(', ', array_map(fn (array $param) => $param['type'] . " $" . $param['name'], $params));
+    }
+
+    private function convertMethodsToString(ReflectionClassData $ref, array $methods): string
+    {
+        $methodsStrings = [];
+
+        foreach ($methods as $method) {
+            if ($ref->hasMethod($method['name'])) {
+                continue;
+            }
+
+            $methodsStrings[] = $this->replacePlaceholders(
+                $this->templatesManager->getTemplate('ControllerMethod.template'),
+                [
+                    '{{ method }}' => $method['name'],
+                    '{{ params }}' => $this->formatActionParamsAsString($method['parameters']),
+                ]
+            );
+        }
+
+        return implode("\n\n    ", $methodsStrings);
     }
 
     protected function formatRequestNamespaces(array $namespaces): string
