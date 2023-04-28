@@ -27,7 +27,8 @@ test("Command GenerateServer success", function () {
     $appRoot = realpath($this->makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
     $putFiles = [];
     $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$putFiles, $appRoot) {
-        $putFiles[] = $this->makeFilePath(str_replace($appRoot, '', $path));
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
+        $putFiles[$filePath] = $filePath;
 
         return true;
     });
@@ -62,7 +63,7 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Controllers/PoliciesController.php'),
         $this->makeFilePath('/app/Http/Tests/PoliciesComponentTest.php'),
         $this->makeFilePath('/app/Http/Policies/PoliciesControllerPolicy.php'),
-    ], $putFiles);
+    ], array_values($putFiles));
 });
 
 test("Correct requests in controller methods", function () {

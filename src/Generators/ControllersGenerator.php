@@ -104,10 +104,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                 $this->createEmptyControllerFile($filePath, $controller);
             }
 
-            $class = new ClassParser(
-                filesystem: $this->filesystem,
-                className: "$namespace\\$className"
-            );
+            $class = $this->classParser->parse("$namespace\\$className");
 
             $newMethods = $this->convertMethodsToString($class, $controller['actions'], $controller['requestsNamespaces']);
             if (!empty($newMethods)) {
@@ -122,12 +119,10 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
     protected function writeControllerFile(string $filePath, array $controller, string $classContent): void
     {
-        $template = $this->templatesManager->getTemplate('ControllerExists.template');
-
         $this->putWithDirectoryCheck(
             $filePath,
             $this->replacePlaceholders(
-                $template,
+                $this->templatesManager->getTemplate('ControllerExists.template'),
                 [
                     '{{ namespace }}' => $controller['namespace'],
                     '{{ requestsNamespaces }}' => $this->formatRequestNamespaces($controller['requestsNamespaces']),

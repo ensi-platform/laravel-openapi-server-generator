@@ -16,9 +16,15 @@ class ClassParser
 
     public function __construct(
         protected Filesystem $filesystem,
-        protected string $className
     ) {
-        $this->ref = new ReflectionClass($this->className);
+    }
+
+    public function parse(string $className): self
+    {
+        $this->ref = new ReflectionClass($className);
+        $this->methods = null;
+
+        return $this;
     }
 
     public function isEmpty(): bool

@@ -2,6 +2,7 @@
 
 namespace Ensi\LaravelOpenApiServerGenerator\Generators;
 
+use Ensi\LaravelOpenApiServerGenerator\Utils\ClassParser;
 use Ensi\LaravelOpenApiServerGenerator\Utils\PhpDocGenerator;
 use Ensi\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
 use Ensi\LaravelOpenApiServerGenerator\Utils\RouteHandlerParser;
@@ -22,6 +23,7 @@ class BaseGenerator
         protected RouteHandlerParser $routeHandlerParser,
         protected TypesMapper $typesMapper,
         protected PhpDocGenerator $phpDocGenerator,
+        protected ClassParser $classParser,
     ) {
     }
 
