@@ -1,0 +1,7 @@
+class LaravelExistsController
+{
+    public function delete(int $id, Request $request): Responsable
+    {
+        //
+    }
+}
