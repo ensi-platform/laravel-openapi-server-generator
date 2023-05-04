@@ -66,7 +66,7 @@ test('Controller check getFileName success', function (string $namespace) {
 
     $class = last(explode("\\", $namespace));
 
-    expect($parser->getFileName())->toBe(__DIR__ . "/expects/Controllers/{$class}.php");
+    expect($parser->getFileName())->toBe(realpath(__DIR__ . "/expects/Controllers/{$class}.php"));
 })->with([
     [LaravelExistsController::class],
     [LaravelEmptyController::class],
