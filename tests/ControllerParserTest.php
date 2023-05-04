@@ -91,9 +91,11 @@ test('Controller check getContentWithAdditionalMethods success', function (
     $parser->parse($namespace);
 
     $content = $parser->getContentWithAdditionalMethods($additional, $namespaces);
-    $result = trim(file_get_contents(__DIR__ . "/expects/Controllers/{$expect}.expect"));
 
-    expect($content)->toBe($result);
+    $expectPathFile = __DIR__ . "/expects/Controllers/{$expect}.expect";
+    $expectResult = implode("\n", file($expectPathFile, FILE_IGNORE_NEW_LINES));
+
+    expect($content)->toBe($expectResult);
 
     expect($namespaces)->toBe($expectNamespaces);
 })->with([
