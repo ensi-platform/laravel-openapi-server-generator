@@ -4,23 +4,10 @@ info:
   version: 1.0.0
   description: Тестовый конфиг
 paths:
-  /resources:test-empty-rename-request:
-    post:
-      operationId: testEmptyRenameRequest
-      x-lg-handler: '\App\Http\Controllers\ResourcesController@testEmptyRenameRequest'
-      x-lg-request-class-name: ''
-      responses:
-        "200":
-          description: Успешный ответ c контекстом
-          content:
-            application/json:
-              schema:
-                $ref: './schemas/test_resource_generation.yaml#/ResourceDataDataResponse'
   /resources:test-rename-from-key-request:
     post:
       operationId: testRenameFromKeyRequest
       x-lg-handler: '\App\Http\Controllers\ResourcesController@testRenameFromKeyRequest'
-      x-lg-request-class-name: ''
       responses:
         "200":
           description: Успешный ответ c контекстом
@@ -46,6 +33,18 @@ paths:
                 $ref: './schemas/test_resource_generation.yaml#/ResourceForTestResourceGenerationResponse'
         "500":
           $ref: '#/components/responses/ServerError'
+  /resources:test-empty-rename-request:
+    post:
+      operationId: testEmptyRenameRequest
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testEmptyRenameRequest'
+      x-lg-request-class-name: ''
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/ResourceDataDataResponse'
   /resources:test-rename-request:
     post:
       operationId: testRenameRequest
