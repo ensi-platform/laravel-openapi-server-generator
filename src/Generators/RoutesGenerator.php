@@ -112,7 +112,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
             }
         }
 
-        sort($namespaces);
+        natcasesort($namespaces);
 
         return implode("\n", array_map(fn (string $namespace) => "use {$namespace};", $namespaces));
     }
