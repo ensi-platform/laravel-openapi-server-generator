@@ -153,10 +153,10 @@ test('namespace sorting', function () {
     artisan(GenerateServer::class, ['-e' => 'routes']);
 
     assertStringContainsString(
-        "use App\Http\Controllers\Controller11;" . PHP_EOL .
-        "use App\Http\Controllers\Controller2;" . PHP_EOL .
-        "use App\Http\Controllers\FooItemsController;" . PHP_EOL .
-        "use App\Http\Controllers\FoosController;" . PHP_EOL,
+        "use App\Http\Controllers\Controller11;\n".
+        "use App\Http\Controllers\Controller2;\n".
+        "use App\Http\Controllers\FooItemsController;\n".
+        "use App\Http\Controllers\FoosController;\n",
         $routes
     );
 });
