@@ -60,6 +60,10 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Resources/ResourcesDataDataResource.php'),
         $this->makeFilePath('/app/Http/Resources/ResourceRootResource.php'),
 
+        $this->makeFilePath('/app/Http/Controllers/Controller11.php'),
+        $this->makeFilePath('/app/Http/Controllers/Controller2.php'),
+        $this->makeFilePath('/app/Http/Controllers/FooItemsController.php'),
+        $this->makeFilePath('/app/Http/Controllers/FoosController.php'),
         $this->makeFilePath('/app/Http/Controllers/PoliciesController.php'),
         $this->makeFilePath('/app/Http/Tests/PoliciesComponentTest.php'),
         $this->makeFilePath('/app/Http/Policies/PoliciesControllerPolicy.php'),
@@ -119,5 +123,41 @@ test("Correct requests in controller methods", function () {
         'Request $request',
         $withoutResponsesController,
         'WithoutResponsesController function parameter'
+    );
+});
+
+
+test('namespace sorting', function () {
+    /** @var TestCase $this */
+    $mapping = Config::get('openapi-server-generator.api_docs_mappings');
+    $mappingValue = current($mapping);
+    $mapping = [$this->makeFilePath(__DIR__ . '/resources/index.yaml') => $mappingValue];
+    Config::set('openapi-server-generator.api_docs_mappings', $mapping);
+
+    $filesystem = $this->mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturn(false);
+    $filesystem->shouldReceive('get')->withArgs(function ($path) {
+        return (bool)strstr($path, '.template');
+    })->andReturnUsing(function ($path) {
+        return file_get_contents($path);
+    });
+    $filesystem->shouldReceive('cleanDirectory', 'ensureDirectoryExists');
+    $routes = '';
+    $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$routes, &$rr) {
+        if (str_contains($path, 'routes.php')) {
+            $routes = $content;
+        }
+
+        return true;
+    });
+
+    artisan(GenerateServer::class, ['-e' => 'routes']);
+
+    assertStringContainsString(
+        "use App\Http\Controllers\Controller11;\n".
+        "use App\Http\Controllers\Controller2;\n".
+        "use App\Http\Controllers\FooItemsController;\n".
+        "use App\Http\Controllers\FoosController;\n",
+        $routes
     );
 });

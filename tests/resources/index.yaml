@@ -171,6 +171,42 @@ paths:
       responses:
         "200":
           description: Успешный ответ c контекстом
+  /namespace-sort-1:
+    post:
+      operationId: namespaceSort1
+      x-lg-handler: '\App\Http\Controllers\FooItemsController@test'
+      x-lg-skip-request-generation: true
+      x-lg-skip-tests-generation: true
+      responses:
+        "200":
+          description: Успешный ответ
+  /namespace-sort-2:
+    post:
+      operationId: namespaceSort2
+      x-lg-handler: '\App\Http\Controllers\FoosController@test'
+      x-lg-skip-request-generation: true
+      x-lg-skip-tests-generation: true
+      responses:
+        "200":
+          description: Успешный ответ
+  /namespace-sort-3:
+    post:
+      operationId: namespaceSort3
+      x-lg-handler: '\App\Http\Controllers\Controller11@test'
+      x-lg-skip-request-generation: true
+      x-lg-skip-tests-generation: true
+      responses:
+        "200":
+          description: Успешный ответ
+  /namespace-sort-4:
+    post:
+      operationId: namespaceSort4
+      x-lg-handler: '\App\Http\Controllers\Controller2@test'
+      x-lg-skip-request-generation: true
+      x-lg-skip-tests-generation: true
+      responses:
+        "200":
+          description: Успешный ответ
 components:
   responses:
     ServerError:
