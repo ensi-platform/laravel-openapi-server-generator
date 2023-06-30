@@ -34,15 +34,24 @@ class PestTestsGenerator extends TestsGenerator
         return $httpMethod;
     }
 
-    protected function convertRoutesToTestsString(array $routes, string $serversUrl): string
+    protected function convertRoutesToTestsString(array $routes, string $serversUrl, bool $onlyNewMethods = false): string
     {
-        $testsFunctions = [
-            "uses()->group('component');",
-        ];
+        $testsFunctions = $onlyNewMethods ? [] : ["uses()->group('component');"];
 
         foreach ($routes as $route) {
             foreach ($route['responseCodes'] as $responseCode) {
                 if ($responseCode < 200 || $responseCode >= 500) {
+                    continue;
+                }
+
+                $methodExists = static::isExistControllerMethod(
+                    serversUrl: $serversUrl,
+                    path: $route['path'],
+                    method: $route['method'],
+                    responseCode: $responseCode,
+                );
+
+                if ($onlyNewMethods && ($methodExists || $responseCode >= 300)) {
                     continue;
                 }
 

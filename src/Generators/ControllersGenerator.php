@@ -14,8 +14,13 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
     private array $methodsWithRequests = ['PATCH', 'POST', 'PUT', 'DELETE'];
 
+    private string $serversUrl;
+
     public function generate(SpecObjectInterface $specObject): void
     {
+        $openApiData = $specObject->getSerializableData();
+        $this->serversUrl = $openApiData?->servers[0]?->url ?? '';
+
         $controllers = $this->extractControllers($specObject);
         $this->createControllersFiles($controllers);
     }
@@ -26,7 +31,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
         $controllers = [];
         $paths = $openApiData->paths ?: [];
-        foreach ($paths as $routes) {
+        foreach ($paths as $path => $routes) {
             foreach ($routes as $method => $route) {
                 $requestClassName = null;
                 $methodWithRequest = in_array(strtoupper($method), $this->methodsWithRequests);
@@ -60,10 +65,17 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     $controllers[$fqcn]['requestsNamespaces'][$namespace] = $namespace;
                 }
 
+                $responses = $route->responses ?? null;
                 $controllers[$fqcn]['actions'][] = [
                     'name' => $handler->method ?: '__invoke',
                     'with_request_namespace' => $methodWithRequest && !empty($route->{'x-lg-skip-request-generation'}),
                     'parameters' => array_merge($this->extractPathParameters($route), $this->getActionExtraParameters($methodWithRequest, $requestClassName)),
+
+                    'route' => [
+                        'method' => $method,
+                        'path' => $path,
+                        'responseCodes' => $responses ? array_keys(get_object_vars($responses)) : [],
+                    ],
                 ];
             }
         }
@@ -73,7 +85,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
     private function extractPathParameters(stdClass $route): array
     {
-        $oasRoutePath =  array_filter($route->parameters ?? [], fn (stdClass $param) => $param?->in === "path");
+        $oasRoutePath = array_filter($route->parameters ?? [], fn (stdClass $param) => $param?->in === "path");
 
         return array_map(fn (stdClass $param) => [
             'name' => $param->name,
@@ -100,7 +112,8 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
             $className = $controller['className'];
 
             $filePath = $this->getNamespacedFilePath($className, $namespace);
-            if (!$this->filesystem->exists($filePath)) {
+            $controllerExists = $this->filesystem->exists($filePath);
+            if (!$controllerExists) {
                 $this->createEmptyControllerFile($filePath, $controller);
             }
 
@@ -109,6 +122,8 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
             $newMethods = $this->convertMethodsToString($class, $controller['actions'], $controller['requestsNamespaces']);
             if (!empty($newMethods)) {
                 $controller['requestsNamespaces'][static::RESPONSABLE_NAMESPACE] = static::RESPONSABLE_NAMESPACE;
+            } elseif ($controllerExists) {
+                continue;
             }
 
             $content = $class->getContentWithAdditionalMethods($newMethods, $controller['requestsNamespaces']);
@@ -171,6 +186,13 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     '{{ method }}' => $method['name'],
                     '{{ params }}' => $this->formatActionParamsAsString($method['parameters']),
                 ]
+            );
+
+            static::markNewControllerMethod(
+                serversUrl: $this->serversUrl,
+                path: $method['route']['path'],
+                method: $method['route']['method'],
+                responseCodes: $method['route']['responseCodes'],
             );
         }
 

@@ -9,7 +9,7 @@ use stdClass;
 
 abstract class TestsGenerator extends BaseGenerator implements GeneratorInterface
 {
-    abstract protected function convertRoutesToTestsString(array $routes, string $serversUrl): string;
+    abstract protected function convertRoutesToTestsString(array $routes, string $serversUrl, bool $onlyNewMethods = false): string;
 
     abstract protected function convertRoutesToImportsString(array $routes): string;
 
@@ -95,6 +95,16 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
         foreach ($testsData as ['className' => $className, 'namespace' => $namespace, 'routes' => $routes]) {
             $filePath = $this->getNamespacedFilePath($className, $namespace);
             if ($this->filesystem->exists($filePath)) {
+                $newTests = $this->convertRoutesToTestsString($routes, $serversUrl, true);
+                if (!empty($newTests)) {
+                    $data = <<<TESTS
+                        {$newTests}
+
+                    TESTS;
+
+                    $this->filesystem->append($filePath, $data);
+                }
+
                 continue;
             }
 

@@ -161,3 +161,39 @@ test('namespace sorting', function () {
         $routes
     );
 });
+
+test("Update tests success", function () {
+    /** @var TestCase $this */
+    $mapping = Config::get('openapi-server-generator.api_docs_mappings');
+    $mappingValue = current($mapping);
+    $mapping = [$this->makeFilePath(__DIR__ . '/resources/index.yaml') => $mappingValue];
+    Config::set('openapi-server-generator.api_docs_mappings', $mapping);
+
+    $existTest = $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php');
+
+    $filesystem = $this->mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) {
+        // todo
+        return false;
+    });
+
+    $filesystem->shouldReceive('get')->withArgs(function ($path) {
+        return (bool)strstr($path, '.template');
+    })->andReturnUsing(function ($path) {
+        return file_get_contents($path);
+    });
+    $filesystem->shouldReceive('cleanDirectory', 'ensureDirectoryExists');
+    $appRoot = realpath($this->makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
+    $putFiles = [];
+    $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$putFiles, $appRoot) {
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
+        $putFiles[$filePath] = $filePath;
+
+        return true;
+    });
+
+    artisan(GenerateServer::class);
+
+    // todo: check exist test
+
+});

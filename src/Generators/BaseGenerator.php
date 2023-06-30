@@ -14,6 +14,9 @@ use RuntimeException;
 
 class BaseGenerator
 {
+    /** @var array Recently created controllers */
+    public static array $controllers = [];
+
     protected array $options = [];
 
     public function __construct(
@@ -25,6 +28,26 @@ class BaseGenerator
         protected PhpDocGenerator $phpDocGenerator,
         protected ClassParser $classParser,
     ) {
+    }
+
+    public static function markNewControllerMethod(
+        string $serversUrl,
+        string $path,
+        string $method,
+        array $responseCodes
+    ): void {
+        static::$controllers[$serversUrl][$path][$method] = $responseCodes;
+    }
+
+    public static function isExistControllerMethod(
+        string $serversUrl,
+        string $path,
+        string $method,
+        int $responseCode
+    ): bool {
+        $codes = static::$controllers[$serversUrl][$path][$method] ?? [];
+
+        return !in_array($responseCode, $codes);
     }
 
     public function setOptions(array $options): static
