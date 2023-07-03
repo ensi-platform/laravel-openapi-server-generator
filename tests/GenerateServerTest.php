@@ -5,6 +5,7 @@ use Ensi\LaravelOpenApiServerGenerator\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use function Pest\Laravel\artisan;
+use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertEqualsCanonicalizing;
 use function PHPUnit\Framework\assertNotTrue;
 use function PHPUnit\Framework\assertStringContainsString;
@@ -162,19 +163,22 @@ test('namespace sorting', function () {
     );
 });
 
-test("Update tests success", function () {
+test("Update tests success", function (array $parameters, bool $withControllerEntity) {
     /** @var TestCase $this */
     $mapping = Config::get('openapi-server-generator.api_docs_mappings');
     $mappingValue = current($mapping);
     $mapping = [$this->makeFilePath(__DIR__ . '/resources/index.yaml') => $mappingValue];
     Config::set('openapi-server-generator.api_docs_mappings', $mapping);
 
+    $appRoot = realpath($this->makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
+
     $existTest = $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php');
 
     $filesystem = $this->mock(Filesystem::class);
-    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) {
-        // todo
-        return false;
+    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) use ($appRoot, $existTest) {
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
+
+        return $filePath === $existTest;
     });
 
     $filesystem->shouldReceive('get')->withArgs(function ($path) {
@@ -183,7 +187,7 @@ test("Update tests success", function () {
         return file_get_contents($path);
     });
     $filesystem->shouldReceive('cleanDirectory', 'ensureDirectoryExists');
-    $appRoot = realpath($this->makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
+
     $putFiles = [];
     $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$putFiles, $appRoot) {
         $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
@@ -192,8 +196,38 @@ test("Update tests success", function () {
         return true;
     });
 
-    artisan(GenerateServer::class);
+    $appendFiles = [];
+    $filesystem->shouldReceive('append')->withArgs(function ($filePath, $data) use (&$appendFiles, $appRoot, $existTest) {
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $filePath));
+        $appendFiles[$filePath] = $data;
 
-    // todo: check exist test
+        return true;
+    });
 
-});
+    artisan(GenerateServer::class, $parameters);
+
+    $appendData = [
+        'POST /resources:test-generate-without-properties 200',
+        'POST /resources:test-empty-rename-request 200',
+        'POST /resources:test-rename-request 200',
+        'POST /resources:test-laravel-validations-application-json-request 200',
+        'POST /resources:test-laravel-validations-multipart-form-data-request 200',
+        'POST /resources:test-laravel-validations-non-available-content-type 200',
+        'POST /resources:test-generate-resource-bad-response-key 200',
+        'POST /resources:test-generate-without-properties 200',
+    ];
+
+    assertEquals(isset($appendFiles[$existTest]), $withControllerEntity);
+
+    if ($withControllerEntity) {
+        $appendTestData = $appendFiles[$existTest];
+        foreach ($appendData as $data) {
+            assertStringContainsString($data, $appendTestData);
+        }
+    }
+})->with([
+    [['-e' => 'pest_tests'], false],
+    [['-e' => 'controllers,pest_tests'], true],
+    [['-e' => 'pest_tests,controllers'], true],
+    [[], true],
+]);

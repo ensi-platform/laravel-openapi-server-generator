@@ -3,6 +3,7 @@
 namespace Ensi\LaravelOpenApiServerGenerator;
 
 use Ensi\LaravelOpenApiServerGenerator\Commands\GenerateServer;
+use Ensi\LaravelOpenApiServerGenerator\Data\Controllers\ControllersStorage;
 use Ensi\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
 use Ensi\LaravelOpenApiServerGenerator\Utils\TemplatesManager;
 use Illuminate\Support\ServiceProvider;
@@ -28,6 +29,10 @@ class LaravelOpenApiServerGeneratorServiceProvider extends ServiceProvider
         $this->app->when(PSR4PathConverter::class)
             ->needs('$mappings')
             ->give(config('openapi-server-generator.namespaces_to_directories_mapping', []));
+
+        $this->app->singleton(ControllersStorage::class, function () {
+            return new ControllersStorage();
+        });
     }
 
     /**

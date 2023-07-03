@@ -44,7 +44,7 @@ class PestTestsGenerator extends TestsGenerator
                     continue;
                 }
 
-                $methodExists = static::isExistControllerMethod(
+                $methodExists = $this->controllersStorage->isExistControllerMethod(
                     serversUrl: $serversUrl,
                     path: $route['path'],
                     method: $route['method'],
@@ -57,7 +57,7 @@ class PestTestsGenerator extends TestsGenerator
 
                 $url = $serversUrl . $route['path'];
                 $testName = strtoupper($route['method']) . ' ' . $url. ' ' .  $responseCode;
-                $phpHttpMethod =  $this->getPhpHttpTestMethod($route['method'], $route['responseContentType']);
+                $phpHttpMethod = $this->getPhpHttpTestMethod($route['method'], $route['responseContentType']);
                 $testsFunctions[] = <<<FUNC
 
                 test('{$testName}', function () {

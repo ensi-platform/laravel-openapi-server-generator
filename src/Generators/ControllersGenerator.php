@@ -188,7 +188,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                 ]
             );
 
-            static::markNewControllerMethod(
+            $this->controllersStorage->markNewControllerMethod(
                 serversUrl: $this->serversUrl,
                 path: $method['route']['path'],
                 method: $method['route']['method'],
