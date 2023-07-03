@@ -2,10 +2,12 @@
 
 use Ensi\LaravelOpenApiServerGenerator\Tests\expects\Controllers\LaravelEmptyController;
 use Ensi\LaravelOpenApiServerGenerator\Tests\expects\Controllers\LaravelExistsController;
+use Ensi\LaravelOpenApiServerGenerator\Tests\expects\Policies\LaravelPolicy;
+use Ensi\LaravelOpenApiServerGenerator\Tests\expects\Policies\LaravelWithoutTraitPolicy;
 use Ensi\LaravelOpenApiServerGenerator\Utils\ClassParser;
 use Illuminate\Filesystem\Filesystem;
 
-test('Controller check isEmpty success', function (string $namespace, bool $result) {
+test('ClassParser check isEmpty success', function (string $namespace, bool $result) {
     $filesystem = $this->mock(Filesystem::class);
 
     $parser = new ClassParser($filesystem);
@@ -17,7 +19,7 @@ test('Controller check isEmpty success', function (string $namespace, bool $resu
     [LaravelEmptyController::class, true],
 ]);
 
-test('Controller check getMethods success', function (string $namespace, array $result) {
+test('ClassParser check getMethods success', function (string $namespace, array $result) {
     $filesystem = $this->mock(Filesystem::class);
 
     $parser = new ClassParser($filesystem);
@@ -31,7 +33,7 @@ test('Controller check getMethods success', function (string $namespace, array $
     [LaravelEmptyController::class, []],
 ]);
 
-test('Controller check hasMethod success', function (string $namespace, string $method, bool $result) {
+test('ClassParser check hasMethod success', function (string $namespace, string $method, bool $result) {
     $filesystem = $this->mock(Filesystem::class);
 
     $parser = new ClassParser($filesystem);
@@ -45,7 +47,7 @@ test('Controller check hasMethod success', function (string $namespace, string $
     [LaravelEmptyController::class, 'search', false],
 ]);
 
-test('Controller check getLines success', function (string $namespace, int $start, int $end) {
+test('ClassParser check getLines success', function (string $namespace, int $start, int $end) {
     $filesystem = $this->mock(Filesystem::class);
 
     $parser = new ClassParser($filesystem);
@@ -58,7 +60,37 @@ test('Controller check getLines success', function (string $namespace, int $star
     [LaravelEmptyController::class, 5, 10],
 ]);
 
-test('Controller check getFileName success', function (string $namespace) {
+test('ClassParser check isTraitMethod success', function (string $namespace, string $method, bool $result) {
+    $filesystem = $this->mock(Filesystem::class);
+
+    $parser = new ClassParser($filesystem);
+    $parser->parse($namespace);
+
+    expect($parser->isTraitMethod($method))->toBe($result);
+})->with([
+    [LaravelPolicy::class, 'allow', true],
+    [LaravelPolicy::class, 'search', false],
+    [LaravelPolicy::class, 'get', false],
+
+    [LaravelWithoutTraitPolicy::class, 'allow', false],
+    [LaravelWithoutTraitPolicy::class, 'search', false],
+    [LaravelWithoutTraitPolicy::class, 'get', false],
+]);
+
+test('ClassParser check getClassName success', function (string $namespace) {
+    $filesystem = $this->mock(Filesystem::class);
+
+    $parser = new ClassParser($filesystem);
+    $parser->parse($namespace);
+
+    expect($parser->getClassName())->toBe($namespace);
+})->with([
+        [LaravelPolicy::class],
+        [LaravelExistsController::class],
+        [LaravelEmptyController::class],
+]);
+
+test('ClassParser check getFileName success', function (string $namespace) {
     $filesystem = $this->mock(Filesystem::class);
 
     $parser = new ClassParser($filesystem);
@@ -72,7 +104,7 @@ test('Controller check getFileName success', function (string $namespace) {
     [LaravelEmptyController::class],
 ]);
 
-test('Controller check getContentWithAdditionalMethods success', function (
+test('ClassParser check getContentWithAdditionalMethods success', function (
     string $namespace,
     string $expect,
     string $additional = "",

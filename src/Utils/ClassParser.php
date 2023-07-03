@@ -13,6 +13,7 @@ class ClassParser
     public ReflectionClass $ref;
 
     protected ?Collection $methods = null;
+    protected ?Collection $traits = null;
 
     public function __construct(
         protected Filesystem $filesystem,
@@ -27,6 +28,11 @@ class ClassParser
         return $this;
     }
 
+    public function getClassName(): string
+    {
+        return $this->ref->getName();
+    }
+
     public function isEmpty(): bool
     {
         return $this->getMethods()->isEmpty();
@@ -39,6 +45,53 @@ class ClassParser
         }
 
         return $this->methods;
+    }
+
+    public function getTraits(): Collection
+    {
+        if (!$this->traits) {
+            $this->traits = collect($this->ref->getTraits())->map(function (ReflectionClass $trait) {
+                return collect($trait->getMethods())->pluck('name');
+            });
+        }
+
+        return $this->traits;
+    }
+
+    public function isTraitMethod(string $methodName): bool
+    {
+        $traits = $this->getTraits();
+
+        return $traits->contains(fn (Collection $methods) => $methods->contains($methodName));
+    }
+
+    public function addMethods(string $methods): void
+    {
+        if (empty($methods)) {
+            return;
+        }
+
+        $lines = [];
+        $currentLine = 0;
+        $endLine = $this->getEndLine();
+        $filePath = $this->getFileName();
+
+        foreach ($this->filesystem->lines($filePath) as $line) {
+            $currentLine++;
+            if ($currentLine === $endLine) {
+                $lines[] = "";
+                $lines[] = "    $methods";
+                $lines[] = "}";
+
+                break;
+            }
+
+            $lines[] = $line;
+        }
+
+        $contents = implode(PHP_EOL, $lines);
+
+        $this->filesystem->put($filePath, $contents);
     }
 
     public function hasMethod(string $methodName): bool
