@@ -115,4 +115,25 @@ class BaseGenerator
 
         return $params;
     }
+
+    protected function getActualClassNameAndNamespace(?string $className, ?string $namespace): array
+    {
+        $parseClassName = explode('/', $className);
+
+        if (count($parseClassName) > 1) {
+            if (str_contains($namespace, '\Requests')) {
+                $namespace = substr($namespace, 0, strpos($namespace, '\Requests') + 9);
+            } elseif (str_contains($namespace, '\Resources')) {
+                $namespace = substr($namespace, 0, strpos($namespace, '\Resources') + 10);
+            }
+
+            $className = array_pop($parseClassName);
+            $namespace .= '\\' . implode('\\', $parseClassName);
+        }
+
+        return [
+            $className,
+            $namespace,
+        ];
+    }
 }

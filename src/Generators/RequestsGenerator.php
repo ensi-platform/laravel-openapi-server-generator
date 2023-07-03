@@ -56,6 +56,8 @@ class RequestsGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
+                list($className, $newNamespace) = $this->getActualClassNameAndNamespace($className, $newNamespace);
+
                 $validationRules = '//';
                 $usesEnums = '';
                 if (std_object_has($route, 'requestBody')) {

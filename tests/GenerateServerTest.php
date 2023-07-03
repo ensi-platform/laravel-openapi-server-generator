@@ -39,11 +39,14 @@ test("Command GenerateServer success", function () {
     assertEqualsCanonicalizing([
         $this->makeFilePath('/app/Http/ApiV1/OpenApiGenerated/routes.php'),
 
+        $this->makeFilePath('/app/Http/Controllers/Foo/TestController.php'),
         $this->makeFilePath('/app/Http/Controllers/ResourcesController.php'),
         $this->makeFilePath('/app/Http/Requests/TestFullGenerateRequest.php'),
         $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php'),
         $this->makeFilePath('/app/Http/Requests/TestFooRenameRequest.php'),
 
+        $this->makeFilePath('/app/Http/Requests/WithDirRequests/Request.php'),
+        $this->makeFilePath('/app/Http/Requests/Foo/TestNamespaceWithDirRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsApplicationJsonRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsMultipartFormDataRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsNonAvailableContentTypeRequest.php'),
@@ -59,7 +62,10 @@ test("Command GenerateServer success", function () {
 
         $this->makeFilePath('/app/Http/Resources/ResourcesResource.php'),
         $this->makeFilePath('/app/Http/Resources/ResourcesDataDataResource.php'),
+        $this->makeFilePath('/app/Http/Resources/Foo/ResourcesDataDataResource.php'),
         $this->makeFilePath('/app/Http/Resources/ResourceRootResource.php'),
+        $this->makeFilePath('/app/Http/Resources/Foo/WithDirResource.php'),
+        $this->makeFilePath('/app/Http/Tests/Foo/TestComponentTest.php'),
 
         $this->makeFilePath('/app/Http/Controllers/Controller11.php'),
         $this->makeFilePath('/app/Http/Controllers/Controller2.php'),
@@ -157,6 +163,7 @@ test('namespace sorting', function () {
     assertStringContainsString(
         "use App\Http\Controllers\Controller11;\n".
         "use App\Http\Controllers\Controller2;\n".
+        "use App\Http\Controllers\Foo\TestController;\n" .
         "use App\Http\Controllers\FooItemsController;\n".
         "use App\Http\Controllers\FoosController;\n",
         $routes
