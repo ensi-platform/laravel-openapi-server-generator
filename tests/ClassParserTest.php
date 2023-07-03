@@ -85,9 +85,9 @@ test('ClassParser check getClassName success', function (string $namespace) {
 
     expect($parser->getClassName())->toBe($namespace);
 })->with([
-        [LaravelPolicy::class],
-        [LaravelExistsController::class],
-        [LaravelEmptyController::class],
+    [LaravelPolicy::class],
+    [LaravelExistsController::class],
+    [LaravelEmptyController::class],
 ]);
 
 test('ClassParser check getFileName success', function (string $namespace) {
