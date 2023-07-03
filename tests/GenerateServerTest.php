@@ -43,7 +43,7 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php'),
         $this->makeFilePath('/app/Http/Requests/TestFooRenameRequest.php'),
 
-        $this->makeFilePath('/app/Http/Request/WithDirRequests/Request.php'),
+        $this->makeFilePath('/app/Http/Requests/WithDirRequests/Request.php'),
         $this->makeFilePath('/app/Http/Requests/Foo/TestNamespaceWithDirRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsApplicationJsonRequest.php'),
         $this->makeFilePath('/app/Http/Requests/LaravelValidationsMultipartFormDataRequest.php'),
@@ -161,6 +161,7 @@ test('namespace sorting', function () {
     assertStringContainsString(
         "use App\Http\Controllers\Controller11;\n".
         "use App\Http\Controllers\Controller2;\n".
+        "use App\Http\Controllers\Foo\TestController;\n" .
         "use App\Http\Controllers\FooItemsController;\n".
         "use App\Http\Controllers\FoosController;\n",
         $routes

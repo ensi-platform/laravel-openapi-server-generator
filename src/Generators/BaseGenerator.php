@@ -115,10 +115,10 @@ class BaseGenerator
     protected function getActualClassNameAndNamespace(?string $className, ?string $namespace): array
     {
         $parseClassName = explode('/', $className);
-        if (count($parseClassName) > 1) {
 
-            if (str_contains($namespace, '\Request')) {
-                $namespace = substr($namespace, 0, strpos($namespace, '\Request') + 8);
+        if (count($parseClassName) > 1) {
+            if (str_contains($namespace, '\Requests')) {
+                $namespace = substr($namespace, 0, strpos($namespace, '\Requests') + 9);
             } elseif (str_contains($namespace, '\Resources')) {
                 $namespace = substr($namespace, 0, strpos($namespace, '\Resources') + 10);
             }
