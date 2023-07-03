@@ -161,6 +161,7 @@ test('namespace sorting', function () {
     assertStringContainsString(
         "use App\Http\Controllers\Controller11;\n".
         "use App\Http\Controllers\Controller2;\n".
+        "use App\Http\Controllers\Foo\TestController;\n" .
         "use App\Http\Controllers\FooItemsController;\n".
         "use App\Http\Controllers\FoosController;\n",
         $routes
