@@ -52,6 +52,8 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
+                list($className, $namespace) = $this->getActualClassNameAndNamespace($className, $namespace);
+
                 if (isset($resources["$namespace\\$className"])) {
                     continue;
                 }

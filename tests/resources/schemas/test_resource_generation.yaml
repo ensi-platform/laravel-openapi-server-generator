@@ -44,6 +44,16 @@ ResourceDataDataResponse:
         data:
           $ref: '#/ResourceForTestResourceGeneration'
 
+ResourceWithDirResponse:
+  type: object
+  x-lg-resource-response-key: data.data
+  x-lg-resource-class-name: Foo/WithDirResource
+  properties:
+    data:
+      properties:
+        data:
+          $ref: '#/ResourceForTestResourceGeneration'
+
 ResourceDataWithNameResponse:
   type: object
   x-lg-resource-response-key: data.test

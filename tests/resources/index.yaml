@@ -158,6 +158,29 @@ paths:
             application/json:
               schema:
                 $ref: './schemas/test_resource_generation.yaml#/GenerateResourceWithoutPropertiesResponse'
+  /resources:test-class-name-with-dir:
+    post:
+      operationId: testNamespaceWithDir
+      x-lg-handler: '\App\Http\Controllers\Foo\TestController@testNamespaceWithDirRequest'
+      x-lg-request-class-name: 'WithDirRequests/Request'
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/ResourceDataDataResponse'
+  /resources:test-resource-class-name-with-dir:
+    post:
+      operationId: testNamespaceWithDir
+      x-lg-handler: '\App\Http\Controllers\Foo\TestController@testNamespaceWithDirResource'
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/ResourceWithDirResponse'
   /policies:test-generate-policy-method-foo:
     post:
       operationId: generatePolicyMethodFoo
