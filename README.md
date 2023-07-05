@@ -113,7 +113,7 @@ Resource properties are generated relative to field in response, which can be se
 You can also specify `response_key` for resource: add `x-lg-resource-response-key: data` in object.  
 When specifying `response_key`, you can use the "dot" syntax to specify nesting, for example `data.field`  
 You can exclude resource generation using `x-lg-skip-resource-generation: true` in route.  
-You can rename resource Class using `x-lg-resource-class-name: FooResource` in object.  
+You can rename resource Class using `x-lg-resource-class-name: FooResource` in resource object or properties object.  
 If a resource file already exists it is NOT overridden.  
 Resource file contains a set of fields according to the specification. 
 You also need to specify mixin DocBlock to autocomplete resource.

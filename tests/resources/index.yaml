@@ -4,6 +4,17 @@ info:
   version: 1.0.0
   description: Тестовый конфиг
 paths:
+  /resources:test-rename-from-key-request:
+    post:
+      operationId: testRenameFromKeyRequest
+      x-lg-handler: '\App\Http\Controllers\ResourcesController@testRenameFromKeyRequest'
+      responses:
+        "200":
+          description: Успешный ответ c контекстом
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/test_resource_generation.yaml#/ResourceDataWithNameResponse'
   /resources:test-full-generate/{id}:
     post:
       operationId: testFullGenerate

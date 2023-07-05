@@ -65,6 +65,9 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Resources/Foo/WithDirResource.php'),
         $this->makeFilePath('/app/Http/Tests/Foo/TestComponentTest.php'),
 
+        $this->makeFilePath('/app/Http/Requests/TestRenameFromKeyRequestRequest.php'),
+        $this->makeFilePath('/app/Http/Resources/ResourcesDataWithNameResource.php'),
+
         $this->makeFilePath('/app/Http/Controllers/Controller11.php'),
         $this->makeFilePath('/app/Http/Controllers/Controller2.php'),
         $this->makeFilePath('/app/Http/Controllers/FooItemsController.php'),
