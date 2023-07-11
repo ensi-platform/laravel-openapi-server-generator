@@ -34,11 +34,9 @@ class PestTestsGenerator extends TestsGenerator
         return $httpMethod;
     }
 
-    protected function convertRoutesToTestsString(array $routes, string $serversUrl): string
+    protected function convertRoutesToTestsString(array $routes, string $serversUrl, bool $onlyNewMethods = false): string
     {
-        $testsFunctions = [
-            "uses()->group('component');",
-        ];
+        $testsFunctions = $onlyNewMethods ? [] : ["uses()->group('component');"];
 
         foreach ($routes as $route) {
             foreach ($route['responseCodes'] as $responseCode) {
@@ -46,9 +44,20 @@ class PestTestsGenerator extends TestsGenerator
                     continue;
                 }
 
+                $methodExists = $this->controllersStorage->isExistControllerMethod(
+                    serversUrl: $serversUrl,
+                    path: $route['path'],
+                    method: $route['method'],
+                    responseCode: $responseCode,
+                );
+
+                if ($onlyNewMethods && $methodExists) {
+                    continue;
+                }
+
                 $url = $serversUrl . $route['path'];
                 $testName = strtoupper($route['method']) . ' ' . $url. ' ' .  $responseCode;
-                $phpHttpMethod =  $this->getPhpHttpTestMethod($route['method'], $route['responseContentType']);
+                $phpHttpMethod = $this->getPhpHttpTestMethod($route['method'], $route['responseContentType']);
                 $testsFunctions[] = <<<FUNC
 
                 test('{$testName}', function () {

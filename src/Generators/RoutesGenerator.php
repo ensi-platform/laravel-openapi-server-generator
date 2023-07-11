@@ -112,12 +112,7 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
             }
         }
 
-        uasort($namespaces, function (string $first, string $second) {
-            $firstNamespace = str_replace('\\', ' ', trim(preg_replace('%/\*(.*)\*/%s', '', $first)));
-            $secondNamespace = str_replace('\\', ' ',  trim(preg_replace('%/\*(.*)\*/%s', '', $second)));
-
-            return strcasecmp($firstNamespace, $secondNamespace);
-        });
+        sort($namespaces, SORT_STRING | SORT_FLAG_CASE);
 
         return implode("\n", array_map(fn (string $namespace) => "use {$namespace};", $namespaces));
     }

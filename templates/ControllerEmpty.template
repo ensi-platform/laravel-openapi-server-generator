@@ -2,10 +2,8 @@
 
 namespace {{ namespace }};
 
-use Illuminate\Contracts\Support\Responsable;
 {{ requestsNamespaces }}
 
 class {{ className }}
 {
-    {{ methods }}
 }

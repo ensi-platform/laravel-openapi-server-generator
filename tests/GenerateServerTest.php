@@ -5,6 +5,7 @@ use Ensi\LaravelOpenApiServerGenerator\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use function Pest\Laravel\artisan;
+use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertEqualsCanonicalizing;
 use function PHPUnit\Framework\assertNotTrue;
 use function PHPUnit\Framework\assertStringContainsString;
@@ -27,7 +28,8 @@ test("Command GenerateServer success", function () {
     $appRoot = realpath($this->makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
     $putFiles = [];
     $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$putFiles, $appRoot) {
-        $putFiles[] = $this->makeFilePath(str_replace($appRoot, '', $path));
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
+        $putFiles[$filePath] = $filePath;
 
         return true;
     });
@@ -75,7 +77,7 @@ test("Command GenerateServer success", function () {
         $this->makeFilePath('/app/Http/Controllers/PoliciesController.php'),
         $this->makeFilePath('/app/Http/Tests/PoliciesComponentTest.php'),
         $this->makeFilePath('/app/Http/Policies/PoliciesControllerPolicy.php'),
-    ], $putFiles);
+    ], array_values($putFiles));
 });
 
 test("Correct requests in controller methods", function () {
@@ -170,3 +172,72 @@ test('namespace sorting', function () {
         $routes
     );
 });
+
+test("Update tests success", function (array $parameters, bool $withControllerEntity) {
+    /** @var TestCase $this */
+    $mapping = Config::get('openapi-server-generator.api_docs_mappings');
+    $mappingValue = current($mapping);
+    $mapping = [$this->makeFilePath(__DIR__ . '/resources/index.yaml') => $mappingValue];
+    Config::set('openapi-server-generator.api_docs_mappings', $mapping);
+
+    $appRoot = realpath($this->makeFilePath(__DIR__ . '/../vendor/orchestra/testbench-core/laravel/'));
+
+    $existTest = $this->makeFilePath('/app/Http/Tests/ResourcesComponentTest.php');
+
+    $filesystem = $this->mock(Filesystem::class);
+    $filesystem->shouldReceive('exists')->andReturnUsing(function ($path) use ($appRoot, $existTest) {
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
+
+        return $filePath === $existTest;
+    });
+
+    $filesystem->shouldReceive('get')->withArgs(function ($path) {
+        return (bool)strstr($path, '.template');
+    })->andReturnUsing(function ($path) {
+        return file_get_contents($path);
+    });
+    $filesystem->shouldReceive('cleanDirectory', 'ensureDirectoryExists');
+
+    $putFiles = [];
+    $filesystem->shouldReceive('put')->withArgs(function ($path, $content) use (&$putFiles, $appRoot) {
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $path));
+        $putFiles[$filePath] = $filePath;
+
+        return true;
+    });
+
+    $appendFiles = [];
+    $filesystem->shouldReceive('append')->withArgs(function ($filePath, $data) use (&$appendFiles, $appRoot, $existTest) {
+        $filePath = $this->makeFilePath(str_replace($appRoot, '', $filePath));
+        $appendFiles[$filePath] = $data;
+
+        return true;
+    });
+
+    artisan(GenerateServer::class, $parameters);
+
+    $appendData = [
+        'POST /resources:test-generate-without-properties 200',
+        'POST /resources:test-empty-rename-request 200',
+        'POST /resources:test-rename-request 200',
+        'POST /resources:test-laravel-validations-application-json-request 200',
+        'POST /resources:test-laravel-validations-multipart-form-data-request 200',
+        'POST /resources:test-laravel-validations-non-available-content-type 200',
+        'POST /resources:test-generate-resource-bad-response-key 200',
+        'POST /resources:test-generate-without-properties 200',
+    ];
+
+    assertEquals(isset($appendFiles[$existTest]), $withControllerEntity);
+
+    if ($withControllerEntity) {
+        $appendTestData = $appendFiles[$existTest];
+        foreach ($appendData as $data) {
+            assertStringContainsString($data, $appendTestData);
+        }
+    }
+})->with([
+    [['-e' => 'pest_tests'], false],
+    [['-e' => 'controllers,pest_tests'], true],
+    [['-e' => 'pest_tests,controllers'], true],
+    [[], true],
+]);

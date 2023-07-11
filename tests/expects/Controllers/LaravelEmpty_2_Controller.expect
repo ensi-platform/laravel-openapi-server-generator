@@ -1,0 +1,7 @@
+/**
+ * Example docs
+ */
+class LaravelEmptyController
+{
+    public function test() {}
+}

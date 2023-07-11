@@ -10,6 +10,16 @@ use LogicException;
 
 class GenerateServer extends Command
 {
+    public const SUPPORTED_ENTITIES = [
+        'controllers',
+        'enums',
+        'requests',
+        'routes',
+        'pest_tests',
+        'resources',
+        'policies',
+    ];
+
     /** var @string */
     protected $signature = 'openapi:generate-server {--e|entities=}';
 
@@ -55,7 +65,12 @@ class GenerateServer extends Command
     {
         $specObject = $this->parseSpec($sourcePath);
 
-        foreach ($this->config['supported_entities'] as $entity => $generatorClass) {
+        foreach (static::SUPPORTED_ENTITIES as $entity) {
+            $generatorClass = $this->config['supported_entities'][$entity] ?? null;
+            if (!isset($generatorClass)) {
+                continue;
+            }
+
             if (!$this->shouldEntityBeGenerated($entity)) {
                 continue;
             }

@@ -24,9 +24,10 @@ class PSR4PathConverter
         if (is_null($namespace)) {
             return '';
         }
-        foreach ($this->mappings as $mappingNamescape => $mappingPath) {
-            if (str_starts_with($namespace, $mappingNamescape)) {
-                $namespaceWithoutBase = substr($namespace, strlen($mappingNamescape));
+
+        foreach ($this->mappings as $mappingNamespace => $mappingPath) {
+            if (str_starts_with($namespace, $mappingNamespace)) {
+                $namespaceWithoutBase = substr($namespace, strlen($mappingNamespace));
 
                 return $mappingPath . '/' . trim(str_replace("\\", '/', $namespaceWithoutBase), '/');
             }
