@@ -51,7 +51,7 @@ class PestTestsGenerator extends TestsGenerator
                     responseCode: $responseCode,
                 );
 
-                if ($onlyNewMethods && ($methodExists || $responseCode >= 300)) {
+                if ($onlyNewMethods && $methodExists) {
                     continue;
                 }
 
