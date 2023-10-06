@@ -24,6 +24,7 @@ class ClassParser
     {
         $this->ref = new ReflectionClass($className);
         $this->methods = null;
+        $this->traits = null;
 
         return $this;
     }
