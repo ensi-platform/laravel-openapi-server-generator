@@ -21,7 +21,7 @@ class OpenApi3Object
     {
         if (std_object_has($object, 'properties')) {
             foreach (get_object_vars($object->properties) as $propertyName => $property) {
-                /** @var OpenApi3ObjectProperty $objectProperty */
+                /** @var OpenApi3ObjectProperty|null $objectProperty */
                 $objectProperty = $this->properties->get($propertyName);
                 if (!$objectProperty) {
                     do_with_all_of($property, function (stdClass $p) use (&$objectProperty, $propertyName) {
@@ -80,12 +80,9 @@ class OpenApi3Object
         if ($enums) {
             throw_unless(isset($options['enums']['namespace']), EnumsNamespaceMissingException::class);
 
-            $enumStrings = [];
+            $enumStrings = ['use Illuminate\Validation\Rules\Enum;'];
             foreach ($enums as $enumClass => $value) {
                 $enumStrings[] = 'use ' . $options['enums']['namespace'] . "{$enumClass};";
-            }
-            if ($enumStrings) {
-                $enumStrings[] = 'use Illuminate\Validation\Rules\Enum;';
             }
             sort($enumStrings);
             $enumsString = implode("\n", $enumStrings);

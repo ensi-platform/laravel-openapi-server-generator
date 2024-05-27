@@ -31,9 +31,9 @@ class RoutesGenerator extends BaseGenerator implements GeneratorInterface
                     $handler = $this->formatHandler($handler, $controllerNamespaces);
 
                     $routesStrings .= "Route::{$method}('{$this->trimPath($path)}', {$handler})";
-                    $routesStrings .= $routeName ? "->name('{$routeName}')": "";
-                    $routesStrings .= $routeMiddleware ? "->middleware({$this->formatMiddleware($routeMiddleware)})": "";
-                    $routesStrings .= $routeWithoutMiddleware ? "->withoutMiddleware({$this->formatMiddleware($routeWithoutMiddleware)})": "";
+                    $routesStrings .= $routeName ? "->name('{$routeName}')" : "";
+                    $routesStrings .= $routeMiddleware ? "->middleware({$this->formatMiddleware($routeMiddleware)})" : "";
+                    $routesStrings .= $routeWithoutMiddleware ? "->withoutMiddleware({$this->formatMiddleware($routeWithoutMiddleware)})" : "";
                     $routesStrings .= ";\n";
                 }
             }

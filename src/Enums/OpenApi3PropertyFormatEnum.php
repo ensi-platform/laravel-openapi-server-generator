@@ -34,6 +34,7 @@ enum OpenApi3PropertyFormatEnum: string
             OpenApi3PropertyFormatEnum::PHONE => LaravelValidationRuleEnum::PHONE,
             OpenApi3PropertyFormatEnum::URL => LaravelValidationRuleEnum::URL,
             OpenApi3PropertyFormatEnum::UUID => LaravelValidationRuleEnum::UUID,
+            default => throw new \Exception('Can\'t convert to Laravel validation rule.'),
         };
     }
 }

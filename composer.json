@@ -1,17 +1,21 @@
 {
     "name": "ensi/laravel-openapi-server-generator",
-    "description": "",
+    "description": "laravel openapi server generator",
     "type": "library",
-    "authors": [
-        {
-            "name": "Nekrasov Ilya",
-            "email": "nekrasov@greensight.ru"
-        }
-    ],
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "devizzent/cebe-php-openapi": "^1.0"
+        "devizzent/cebe-php-openapi": "^1.0",
+        "laravel/framework": "^9.0 || ^10.0 || ^11.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.2",
+        "pestphp/pest": "^1.22 || ^2.0",
+        "pestphp/pest-plugin-laravel": "^1.1 || ^2.0",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan": "^1.11",
+        "spaze/phpstan-disallowed-calls": "^2.15",
+        "orchestra/testbench": "^7.0 || ^8.0 || ^9.0"
     },
     "autoload": {
         "psr-4": {
@@ -26,14 +30,12 @@
             "Ensi\\LaravelOpenApiServerGenerator\\Tests\\": "tests"
         }
     },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.2",
-        "mockery/mockery": ">=1.3.2",
-        "pestphp/pest": "^1.18 || ^2.0",
-        "pestphp/pest-plugin-laravel": "^1.1 || ^2.0",
-        "php-parallel-lint/php-var-dump-check": "^0.5.0",
-        "spatie/laravel-ray": "^1.23",
-        "orchestra/testbench": "^6.23 || ^7.0 || ^8.0 || ^9.0"
+    "scripts": {
+        "cs": "php-cs-fixer fix --config .php-cs-fixer.php",
+        "phpstan": "phpstan analyse",
+        "test": "./vendor/bin/pest --parallel --no-coverage",
+        "test-ci": "./vendor/bin/pest --no-coverage",
+        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --parallel --coverage"
     },
     "extra": {
         "laravel": {
@@ -42,16 +44,11 @@
             ]
         }
     },
-    "scripts": {
-        "cs": "php-cs-fixer fix --config .php-cs-fixer.php",
-        "test": "./vendor/bin/pest --no-coverage",
-        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage"
-    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "composer/package-versions-deprecated": true,
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     }
 }

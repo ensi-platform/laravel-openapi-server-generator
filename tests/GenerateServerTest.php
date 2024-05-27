@@ -4,6 +4,7 @@ use Ensi\LaravelOpenApiServerGenerator\Commands\GenerateServer;
 use Ensi\LaravelOpenApiServerGenerator\Tests\TestCase;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
+
 use function Pest\Laravel\artisan;
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertEqualsCanonicalizing;
@@ -164,10 +165,10 @@ test('namespace sorting', function () {
     artisan(GenerateServer::class, ['-e' => 'routes']);
 
     assertStringContainsString(
-        "use App\Http\Controllers\Controller11;\n".
-        "use App\Http\Controllers\Controller2;\n".
+        "use App\Http\Controllers\Controller11;\n" .
+        "use App\Http\Controllers\Controller2;\n" .
         "use App\Http\Controllers\Foo\TestController;\n" .
-        "use App\Http\Controllers\FooItemsController;\n".
+        "use App\Http\Controllers\FooItemsController;\n" .
         "use App\Http\Controllers\FoosController;\n",
         $routes
     );

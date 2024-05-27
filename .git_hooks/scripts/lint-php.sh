@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(pwd)/.git_hooks/external_runtime
+# Lint all added php-files via 'php -l'
 
 ROOT_DIR="$(pwd)/"
 LIST=$(git diff-index --cached --name-only --diff-filter=ACMR HEAD)
@@ -33,10 +33,10 @@ do
     fi
 done
 if [ "$ERRORS_BUFFER" != "" ]; then
-    echo 
+    echo
     echo "These errors were found in try-to-commit files: "
     echo -e $ERRORS_BUFFER
-    echo 
+    echo
     printf "$COL_RED%s$COL_RESET\r\n\r\n" "Can't commit, fix errors first."
     exit 1
 else

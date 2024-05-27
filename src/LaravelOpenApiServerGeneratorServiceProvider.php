@@ -10,12 +10,9 @@ use Illuminate\Support\ServiceProvider;
 
 class LaravelOpenApiServerGeneratorServiceProvider extends ServiceProvider
 {
-    const CONFIG_FILE_NAME = 'openapi-server-generator.php';
+    public const CONFIG_FILE_NAME = 'openapi-server-generator.php';
 
-    /**
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(
             __DIR__ . '/../config/' . self::CONFIG_FILE_NAME,
@@ -35,10 +32,7 @@ class LaravelOpenApiServerGeneratorServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../config/' . self::CONFIG_FILE_NAME => config_path(self::CONFIG_FILE_NAME),

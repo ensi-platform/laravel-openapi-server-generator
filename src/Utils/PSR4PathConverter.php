@@ -13,7 +13,7 @@ class PSR4PathConverter
     public function addMappings(array $mappings): static
     {
         foreach ($mappings as $namespace => $path) {
-            $this->mappings[$namespace] =  $path;
+            $this->mappings[$namespace] = $path;
         }
 
         return $this;
@@ -33,6 +33,6 @@ class PSR4PathConverter
             }
         }
 
-        throw new InvalidArgumentException("Namespace $namespace is unknown, supported namespaces must start with one of [". implode(array_keys($this->mappings)). "]");
+        throw new InvalidArgumentException("Namespace $namespace is unknown, supported namespaces must start with one of [" . implode(array_keys($this->mappings)) . "]");
     }
 }

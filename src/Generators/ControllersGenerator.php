@@ -64,7 +64,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
                     $requestNamespace = $this->getReplacedNamespace($handler->namespace, 'Controllers', 'Requests');
 
                     list($requestClassName, $requestNamespace) = $this->getActualClassNameAndNamespace($requestClassName, $requestNamespace);
-                    $requestNamespace .= '\\' .  ucfirst($requestClassName);
+                    $requestNamespace .= '\\' . ucfirst($requestClassName);
 
                     $controllers[$fqcn]['requestsNamespaces'][$requestNamespace] = $requestNamespace;
                 }
@@ -89,7 +89,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
     private function extractPathParameters(stdClass $route): array
     {
-        $oasRoutePath = array_filter($route->parameters ?? [], fn (stdClass $param) => $param?->in === "path");
+        $oasRoutePath = array_filter($route->parameters ?? [], fn (stdClass $param) => $param->in === "path");
 
         return array_map(fn (stdClass $param) => [
             'name' => $param->name,
