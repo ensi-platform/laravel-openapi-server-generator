@@ -39,5 +39,6 @@ return (new PhpCsFixer\Config())
         'single_trait_insert_per_statement' => true,
         'no_whitespace_in_blank_line' => true,
         'method_chaining_indentation' => true,
+        'single_space_around_construct' => true,
     ])
     ->setFinder($finder);
