@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(pwd)/.git_hooks/external_runtime
+# Check code style via '.php-cs-fixer.php'
 
 EXECUTABLE_NAME=php-cs-fixer
 EXECUTABLE_COMMAND=fix

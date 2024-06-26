@@ -106,7 +106,7 @@ class OpenApi3ObjectProperty
 
                         break;
                     case OpenApi3PropertyFormatEnum::BINARY:
-                        $validations[$name][] = "'". LaravelValidationRuleEnum::FILE->value . "'";
+                        $validations[$name][] = "'" . LaravelValidationRuleEnum::FILE->value . "'";
 
                         break;
                     default:

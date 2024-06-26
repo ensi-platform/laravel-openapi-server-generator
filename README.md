@@ -1,22 +1,39 @@
 # Laravel OpenApi Server Generator
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/ensi/laravel-openapi-server-generator.svg?style=flat-square)](https://packagist.org/packages/ensi/laravel-openapi-server-generator)
+[![Tests](https://github.com/ensi-platform/laravel-php-rdkafka/actions/workflows/run-tests.yml/badge.svg?branch=master)](https://github.com/ensi-platform/laravel-php-rdkafka/actions/workflows/run-tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/ensi/laravel-openapi-server-generator.svg?style=flat-square)](https://packagist.org/packages/ensi/laravel-openapi-server-generator)
+
 Generates Laravel application code from Open Api Specification files
 
 ## Installation
 
 You can install the package via composer:
 
-`composer require ensi/laravel-openapi-server-generator`
+```bash
+composer require ensi/laravel-openapi-server-generator --dev
+```
 
-Next you need to publish config file like this:
-
-`php artisan vendor:publish --provider="Ensi\LaravelOpenApiServerGenerator\LaravelOpenApiServerGeneratorServiceProvider"`
+Publish the config file with:
+```bash
+php artisan vendor:publish --provider="Ensi\LaravelOpenApiServerGenerator\LaravelOpenApiServerGeneratorServiceProvider"
+```
 
 and configure all the options.
 
 ### Migrating from version 0.x.x
 
 Delete `config/openapi-server-generator.php`, republish it using command above and recreate desired configuration.
+
+## Version Compatibility
+
+| Laravel OpenApi Server Generator | Laravel                    | PHP              |
+|----------------------------------|----------------------------|------------------|
+| ^0.0.2 - ^0.8.2                  | ^7.x                       | ^7.1.3           |
+| ^0.8.3 - ^0.9.0                  | ^7.x \|\| ^8.x             | ^7.1.3 \|\| ^8.0 |
+| ^1.0.0 - ^1.1.2                  | *                          | ^8.0             |
+| ^2.0.0 - ^3.0.3                  | *                          | ^8.1             |
+| ^4.0.0                           | ^9.x \|\| ^10.x \|\| ^11.x | ^8.1             |
 
 #### Basic Usage
 
@@ -138,15 +155,12 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 ### Testing
 
 1. composer install
-2. npm i
-3. composer test
+2. composer test
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-

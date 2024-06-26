@@ -100,7 +100,7 @@ class GenerateServer extends Command
         $supportedEntities = array_keys($this->config['supported_entities'] ?? []);
         foreach ($this->enabledEntities as $entity) {
             if (!in_array($entity, $supportedEntities)) {
-                $this->error("Invalid entity \"$entity\", supported entities: [" . implode(', ', $supportedEntities) ."]");
+                $this->error("Invalid entity \"$entity\", supported entities: [" . implode(', ', $supportedEntities) . "]");
 
                 return false;
             }

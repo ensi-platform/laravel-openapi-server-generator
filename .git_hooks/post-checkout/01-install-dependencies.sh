@@ -1,0 +1,1 @@
+../scripts/install-dependencies.sh

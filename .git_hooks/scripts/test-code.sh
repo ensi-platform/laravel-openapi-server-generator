@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(pwd)/.git_hooks/external_runtime
+# Run composer test
 
 ESC_SEQ="\x1b["
 COL_RESET=$ESC_SEQ"39;49;00m"

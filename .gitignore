@@ -1,15 +1,85 @@
-# IDE
+# Project #
+########################
+.php_cs.cache
+.php-cs-fixer.cache
+.huskyrc
+clients/*
+!clients/.gitkeep
+storage/ensi
+generated
+studio.json
+build
+/node_modules
+/vendor
+.phpunit.result.cache
+composer.lock
+composer.local.json
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# IDEs #
+###################
 *.sublime-project
 *.sublime-workspace
-/.idea/
+/.idea
+/.vscode
 *.komodoproject
 .vscode
-.phpunit.result.cache
-.php-cs-fixer.cache
-composer.lock
 
-build
-generated
-vendor
-node_modules
-coverage
+# Static content #
+###################
+*.csv
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.xml
+!phpunit.xml
+!psalm.xml
+*.yml
+*.txt
+*.wav
+*.mp3
+*.avi
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.box
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.tgz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.phar
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+.nfs*
+._*
+.Spotlight-V100
+.Trashes
+.vagrant
+ehthumbs.db
+Thumbs.db
+sftp-config.json
+auth.json

@@ -136,12 +136,12 @@ test('ClassParser check getContentWithAdditionalMethods success', function (
         'LaravelExists_1_Controller',
         "\n    public function test() {}\n",
         [
-            "App\Http\ApiV1\Support\Resources\EmptyResource" =>  "App\Http\ApiV1\Support\Resources\EmptyResource",
+            "App\Http\ApiV1\Support\Resources\EmptyResource" => "App\Http\ApiV1\Support\Resources\EmptyResource",
         ],
         [
-            "App\Http\ApiV1\Support\Resources\EmptyResource" =>  "App\Http\ApiV1\Support\Resources\EmptyResource",
-            "Illuminate\Contracts\Support\Responsable" =>  "Illuminate\Contracts\Support\Responsable",
-            "Illuminate\Http\Request" =>  "Illuminate\Http\Request",
+            "App\Http\ApiV1\Support\Resources\EmptyResource" => "App\Http\ApiV1\Support\Resources\EmptyResource",
+            "Illuminate\Contracts\Support\Responsable" => "Illuminate\Contracts\Support\Responsable",
+            "Illuminate\Http\Request" => "Illuminate\Http\Request",
         ],
     ],
     [
@@ -150,8 +150,8 @@ test('ClassParser check getContentWithAdditionalMethods success', function (
         "",
         [],
         [
-            "Illuminate\Contracts\Support\Responsable" =>  "Illuminate\Contracts\Support\Responsable",
-            "Illuminate\Http\Request" =>  "Illuminate\Http\Request",
+            "Illuminate\Contracts\Support\Responsable" => "Illuminate\Contracts\Support\Responsable",
+            "Illuminate\Http\Request" => "Illuminate\Http\Request",
         ],
     ],
     [LaravelEmptyController::class, 'LaravelEmpty_1_Controller'],

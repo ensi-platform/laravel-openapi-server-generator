@@ -1,0 +1,61 @@
+includes:
+    - ./vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - ./phpstan-package.neon
+
+parameters:
+    paths:
+        - src
+
+    scanFiles:
+
+        # Pest handles loading custom helpers only when running tests
+        # @see https://pestphp.com/docs/helpers#usage
+        - tests/Pest.php
+
+    # The level 9 is the highest level
+    level: 5
+
+    ignoreErrors:
+        - '#PHPDoc tag @var#'
+
+        - '#Unsafe usage of new static\(\)\.#'
+
+        # Pest implicitly binds $this to the current test case
+        # @see https://pestphp.com/docs/underlying-test-case
+        -
+            message: '#^Undefined variable: \$this$#'
+            path: '*Test.php'
+
+        # Pest custom expectations are dynamic and not conducive static analysis
+        # @see https://pestphp.com/docs/expectations#custom-expectations
+        -
+            message: '#Call to an undefined method Pest\\Expectation|Pest\\Support\\Extendable::#'
+            path: '*Test.php'
+
+        # Pest allow pass any array for TestCall::with
+        -
+            message: '#Parameter \#\d ...\$data of method Pest\\PendingCalls\\TestCall::with(.*) array(.*)given#'
+            path: '*Test.php'
+
+         # Ignore custom method for Faker\Generator
+        -
+            message: '#Call to an undefined method Faker\\Generator|Ensi\\TestFactories\\FakerProvider::#'
+            path: '*Factory.php'
+
+         # Ignore transfer of UploadedFile in auto-generated lib
+        -
+            message: '#expects SplFileObject\|null, Illuminate\\Http\\UploadedFile given.#'
+            path: '*Action.php'
+
+    excludePaths:
+        - ./*/*/FileToBeExcluded.php
+
+    disallowedFunctionCalls:
+        -
+            function: 'dd()'
+            message: 'use some logger instead'
+        -
+            function: 'dump()'
+            message: 'use some logger instead'
+
+    reportUnmatchedIgnoredErrors: false

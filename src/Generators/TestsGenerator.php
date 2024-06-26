@@ -57,9 +57,6 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
 
 
                 $className = str_replace("Controller", "", $handler->class) . "ComponentTest";
-                if (!$className) {
-                    continue;
-                }
 
                 $firstResponse = null;
                 if (isset($route->responses)) {
@@ -69,7 +66,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
                     continue;
                 }
 
-                $testFqcn = $handler->namespace . "\\". $className;
+                $testFqcn = $handler->namespace . "\\" . $className;
                 if (!isset($tests[$testFqcn])) {
                     $tests[$testFqcn] = [
                         'className' => $className,

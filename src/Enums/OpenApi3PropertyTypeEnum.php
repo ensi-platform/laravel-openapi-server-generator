@@ -14,11 +14,12 @@ enum OpenApi3PropertyTypeEnum: string
     public function toLaravelValidationRule(): LaravelValidationRuleEnum
     {
         return match ($this) {
-            OpenApi3PropertyTypeEnum::INTEGER   =>  LaravelValidationRuleEnum::INTEGER,
-            OpenApi3PropertyTypeEnum::STRING    =>  LaravelValidationRuleEnum::STRING,
-            OpenApi3PropertyTypeEnum::BOOLEAN   =>  LaravelValidationRuleEnum::BOOLEAN,
-            OpenApi3PropertyTypeEnum::NUMBER    =>  LaravelValidationRuleEnum::NUMERIC,
-            OpenApi3PropertyTypeEnum::ARRAY     =>  LaravelValidationRuleEnum::ARRAY,
+            OpenApi3PropertyTypeEnum::INTEGER => LaravelValidationRuleEnum::INTEGER,
+            OpenApi3PropertyTypeEnum::STRING => LaravelValidationRuleEnum::STRING,
+            OpenApi3PropertyTypeEnum::BOOLEAN => LaravelValidationRuleEnum::BOOLEAN,
+            OpenApi3PropertyTypeEnum::NUMBER => LaravelValidationRuleEnum::NUMERIC,
+            OpenApi3PropertyTypeEnum::ARRAY => LaravelValidationRuleEnum::ARRAY,
+            default => throw new \Exception('Can\'t convert to Laravel validation rule.'),
         };
     }
 }

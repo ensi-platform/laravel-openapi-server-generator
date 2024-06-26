@@ -40,9 +40,9 @@ class EnumsGenerator extends BaseGenerator implements GeneratorInterface
         }
     }
 
-    private function extractEnums(stdClass  $openApiData): array
+    private function extractEnums(stdClass $openApiData): array
     {
-        $schemas = (array) $openApiData?->components?->schemas;
+        $schemas = (array) $openApiData->components?->schemas;
 
         return array_filter($schemas, fn ($schema) => !empty($schema->enum));
     }

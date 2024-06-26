@@ -8,17 +8,18 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->mockClassParserGenerator();
-    }
-
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             LaravelOpenApiServerGeneratorServiceProvider::class,
         ];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->mockClassParserGenerator();
     }
 
     public function makeFilePath(string $path): string
@@ -42,10 +43,5 @@ class TestCase extends Orchestra
     protected function forgetMockClassParserGenerator(): void
     {
         $this->forgetMock(ClassParser::class);
-    }
-
-    public function getEnvironmentSetUp($app)
-    {
-        config()->set('database.default', 'testing');
     }
 }

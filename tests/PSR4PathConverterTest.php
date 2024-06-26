@@ -3,7 +3,7 @@
 use Ensi\LaravelOpenApiServerGenerator\Utils\PSR4PathConverter;
 
 it('throws InvalidArgumentException for unregistred namespaces', function () {
-    $converter = new PSR4PathConverter(["App\\" =>"/var/www/acme/app"]);
+    $converter = new PSR4PathConverter(["App\\" => "/var/www/acme/app"]);
     $converter->namespaceToPath("Foo\\Bar");
 })->throws(InvalidArgumentException::class);
 

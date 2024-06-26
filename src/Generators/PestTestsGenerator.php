@@ -56,7 +56,7 @@ class PestTestsGenerator extends TestsGenerator
                 }
 
                 $url = $serversUrl . $route['path'];
-                $testName = strtoupper($route['method']) . ' ' . $url. ' ' .  $responseCode;
+                $testName = strtoupper($route['method']) . ' ' . $url . ' ' . $responseCode;
                 $phpHttpMethod = $this->getPhpHttpTestMethod($route['method'], $route['responseContentType']);
                 $testsFunctions[] = <<<FUNC
 
