@@ -39,7 +39,7 @@ parameters:
 
          # Ignore custom method for Faker\Generator
         -
-            message: '#Call to an undefined method Faker\\Generator|Ensi\\TestFactories\\FakerProvider::#'
+            message: '#Call to an undefined method Faker\\Generator|Ensi\\LaravelTestFactories\\FakerProvider::#'
             path: '*Factory.php'
 
          # Ignore transfer of UploadedFile in auto-generated lib
