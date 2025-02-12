@@ -1,5 +1,5 @@
 {
-    "name": "c0rtez13/laravel-openapi-server-generator",
+    "name": "ensi/laravel-openapi-server-generator",
     "description": "laravel openapi server generator",
     "type": "library",
     "license": "MIT",
