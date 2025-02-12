@@ -57,7 +57,7 @@ class OpenApi3ObjectProperty
         }
     }
 
-    public function getLaravelValidationsAndEnums(array $options, array &$validations = [], array &$enums = [], string $namePrefix = null): array
+    public function getLaravelValidationsAndEnums(array $options, array &$validations = [], array &$enums = [], ?string $namePrefix = null): array
     {
         $name = "{$namePrefix}{$this->name}";
 
