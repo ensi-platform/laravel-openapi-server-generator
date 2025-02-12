@@ -22,7 +22,7 @@ if (!function_exists('do_with_all_of')) {
 }
 
 if (!function_exists('console_warning')) {
-    function console_warning(string $text, Throwable $e = null): void
+    function console_warning(string $text, ?Throwable $e = null): void
     {
         $output = resolve(ConsoleOutput::class);
 
