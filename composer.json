@@ -35,7 +35,8 @@
         "phpstan": "phpstan analyse",
         "test": "./vendor/bin/pest --parallel --no-coverage",
         "test-ci": "./vendor/bin/pest --no-coverage",
-        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --parallel --coverage"
+        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --parallel --coverage",
+        "test-mutate": "XDEBUG_MODE=coverage ./vendor/bin/pest --mutate --everything --parallel --covered-only"
     },
     "extra": {
         "laravel": {
