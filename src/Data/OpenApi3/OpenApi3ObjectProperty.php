@@ -82,7 +82,7 @@ class OpenApi3ObjectProperty
     protected function getValidationsAndEnumsByTypeAndFormat(array $options, array &$validations, array &$enums, string $name): array
     {
         $type = OpenApi3PropertyTypeEnum::from($this->type);
-        $format = OpenApi3PropertyFormatEnum::tryFrom($this->format);
+        $format = is_null($this->format) ? null : OpenApi3PropertyFormatEnum::tryFrom($this->format);
         switch ($type) {
             case OpenApi3PropertyTypeEnum::INTEGER:
             case OpenApi3PropertyTypeEnum::BOOLEAN:
