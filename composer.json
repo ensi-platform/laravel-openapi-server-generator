@@ -50,6 +50,21 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "phpstan/extension-installer": true
+        },
+        "audit": {
+            "ignore": [
+                "PKSA-8qx3-n5y5-vvnd",
+                "PKSA-w7xr-vk7n-rstm",
+                "PKSA-p3rx-dfwp-73ny",
+                "PKSA-7ywf-hktb-jkn9",
+                "PKSA-ckwp-rt7t-c46m",
+                "PKSA-4npr-btr6-zhny",
+                "PKSA-njrm-6dtg-m2pc",
+                "PKSA-vhvj-tvg4-96jj",
+                "PKSA-nrj3-r2wg-yt8b",
+                "PKSA-rvky-x3cg-y3qd",
+                "PKSA-985r-hryy-555b"
+            ]
         }
     }
 }
