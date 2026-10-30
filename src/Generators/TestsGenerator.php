@@ -23,7 +23,7 @@ abstract class TestsGenerator extends BaseGenerator implements GeneratorInterfac
         }
 
         $openApiData = $specObject->getSerializableData();
-        $serversUrl = $openApiData?->servers[0]?->url ?? '';
+        $serversUrl = $openApiData->servers[0]->url ?? '';
         $tests = $this->constructTests($openApiData, $namespaceData);
         $template = $this->templatesManager->getTemplate($this->getTemplateName());
 

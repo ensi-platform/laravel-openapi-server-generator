@@ -19,7 +19,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
     public function generate(SpecObjectInterface $specObject): void
     {
         $openApiData = $specObject->getSerializableData();
-        $this->serversUrl = $openApiData?->servers[0]?->url ?? '';
+        $this->serversUrl = $openApiData->servers[0]->url ?? '';
 
         $controllers = $this->extractControllers($specObject);
         $this->createControllersFiles($controllers);
@@ -93,7 +93,7 @@ class ControllersGenerator extends BaseGenerator implements GeneratorInterface
 
         return array_map(fn (stdClass $param) => [
             'name' => $param->name,
-            'type' => $this->typesMapper->openApiToPhp($param?->schema?->type ?? ''),
+            'type' => $this->typesMapper->openApiToPhp($param->schema->type ?? ''),
         ], $oasRoutePath);
     }
 

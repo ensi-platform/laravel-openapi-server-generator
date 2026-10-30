@@ -38,7 +38,7 @@ class ResourcesGenerator extends BaseGenerator implements GeneratorInterface
                     continue;
                 }
 
-                $responseSchema = $response->content?->{'application/json'}?->schema ?? null;
+                $responseSchema = $response->content->{'application/json'}->schema ?? null;
                 if (!$responseSchema) {
                     continue;
                 }
