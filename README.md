@@ -34,7 +34,7 @@ Delete `config/openapi-server-generator.php`, republish it using command above a
 | ^1.0.0 - ^1.1.2                  | *                                                | ^8.0             |
 | ^2.0.0 - ^3.0.3                  | *                                                | ^8.1             |
 | ^4.0.0                           | ^9.x \|\| ^10.x \|\| ^11.x                       | ^8.1             |
-| ^4.0.6                           | ^9.x \|\| ^10.x \|\| ^11.x \|\| ^12.x \|\| ^13.x | ^8.1             |
+| ^4.0.6                           | ^12.x \|\| ^13.x                                 | ^8.2             |
 
 #### Basic Usage
 
